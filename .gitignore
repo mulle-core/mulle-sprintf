@@ -1,0 +1,15 @@
+.DS_Store
+*[Bb]uild/
+.idea/
+mulle_mintomic/
+.repos/
+xcuserdata/
+project.xcworkspace/
+mulle_mintomic
+*.old
+.bootstrap.auto/
+.bootstrap.local/
+dependencies/
+mintomic/
+https://github.com/mulle-nat/mintomic/
+mulle-configuration/
