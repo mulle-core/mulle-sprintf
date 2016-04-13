@@ -86,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		413677851CBDA43400A944A9 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4141AFFD1CB561F700B0306A /* libmulle_sprintf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmulle_sprintf.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4141B0051CB5627200B0306A /* mulle_sprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf.c; sourceTree = "<group>"; };
 		4141B0061CB5627200B0306A /* mulle_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf.h; sourceTree = "<group>"; };
@@ -160,6 +161,7 @@
 		4141AFF41CB561F700B0306A = {
 			isa = PBXGroup;
 			children = (
+				413677851CBDA43400A944A9 /* CMakeLists.txt */,
 				4141B03E1CB565C800B0306A /* mulle-configuration */,
 				4141B0041CB561FE00B0306A /* src */,
 				41D53BA01CB7EFFB006BFF0E /* Libraries */,

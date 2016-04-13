@@ -2,23 +2,29 @@ cmake_minimum_required (VERSION 3.0)
 
 project (mulle-sprintf)
 
+
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/mulle-configuration)
+message(STATUS "CMAKE_MODULE_PATH is ${CMAKE_MODULE_PATH}")
+message(STATUS "CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
+if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  include( Debug)
+else()
+  include( Release)
+endif()
+
 #
 # dont forget to wipe all cmake produced files before
 # changing this
 #
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-   set (CMAKE_C_FLAGS "-Wno-parantheses")
-endif()
-
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g -DDEBUG -DMULLE_ATOMIC_TRACE")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g -DNDEBUG")
+include_directories(
+src
+src/functions
+)
 
 set(HEADERS
 src/mulle_sprintf.h
-src/mulle_standalone_sprintf.h
 src/functions/mulle_sprintf_character.h
-src/functions/mulle_sprintf_decimal.h
 src/functions/mulle_sprintf_escape.h
 src/functions/mulle_sprintf_fp.h
 src/functions/mulle_sprintf_function.h
@@ -31,9 +37,7 @@ src/functions/mulle_sprintf_string.h
 
 add_library(mulle_sprintf
 src/mulle_sprintf.c
-src/mulle_standalone_sprintf.c
 src/functions/mulle_sprintf_character.c
-src/functions/mulle_sprintf_decimal.c
 src/functions/mulle_sprintf_escape.c
 src/functions/mulle_sprintf_fp.c
 src/functions/mulle_sprintf_function.c
