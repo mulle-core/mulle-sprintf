@@ -81,6 +81,9 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
    union mulle_sprintf_argumentvalue   *sentinel;
    
    sentinel = &p[ n];
+   p        = &p[ 1];
+   type     = &type[ 1];
+   
    while( p < sentinel)
    {
       switch( *type)
@@ -141,6 +144,8 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
    union mulle_sprintf_argumentvalue   *sentinel;
    
    sentinel = &p[ n];
+   p        = &p[ 1];
+   type     = &type[ 1];
    while( p < sentinel)
    {
       switch( *type)
