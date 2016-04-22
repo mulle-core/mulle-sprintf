@@ -50,7 +50,7 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_character_argumenttype( struct m
 {
    if( info->modifier[ 0] == 'l')
       return( mulle_sprintf_wint_t_argumenttype);
-   return( mulle_sprintf_wint_t_argumenttype);
+   return( mulle_sprintf_char_argumenttype);
 }
 
 
