@@ -488,11 +488,12 @@ static inline int   parse_conversion_info( char *format,
             value = positive_int_value_from_memo( &parser, info);
             if( value <= 0)
                return( -1);
+            
             info->argv_index[ 0] = value;
-            argc = value + 1;
             info->memory.argument_index_found = 1;
-            parser.memo = NULL;
+            parser.memo  = NULL;
             parser.state = state_opt_flags;
+            argc         = value + 1;
             continue;
          }
          // asume it's width
@@ -510,6 +511,7 @@ state_width_entry:
                parser.memo = parser.curr + 1;
                continue;
             }
+            
             if( c >= '1' && c <= '9')
             {
                info->memory.width_found = 1;
@@ -526,22 +528,24 @@ state_width_entry:
             {
                if( ! info->memory.width_is_argument)
                   return( -1);
+               
                value = positive_int_value_from_memo( &parser, info);
                if( value <= 0)
                   return( -1);
+               
                info->argv_index[ 1] = value;
-               argc = value + 1;
-               parser.memo = NULL;
+               parser.memo  = NULL;
                parser.state = state_precision;
+               argc         = value + 1;
                continue;
             }
 
-            if( info->memory.width_is_argument)
-               return( -1);
-               
-            info->width = positive_int_value_from_memo( &parser, info);
-            if( info->width < 0)
-               return( -1);
+            if( ! info->memory.width_is_argument)
+            {
+               info->width = positive_int_value_from_memo( &parser, info);
+               if( info->width < 0)
+                  return( -1);
+            }
          }
          parser.state = state_precision;
          parser.memo = NULL;
@@ -565,7 +569,8 @@ state_width_entry:
                   return( -1); 
 
                info->memory.precision_is_argument = 1;
-               parser.memo = parser.curr + 1;
+               parser.memo  = parser.curr + 1;
+               parser.state = state_modifier;  // done here
                continue;
             }
             if( c >= '0' && c <= '9')
@@ -582,8 +587,8 @@ state_width_entry:
                
                info->memory.precision_is_indexed_argument = 1;
                info->argv_index[ 2] = value;
-               argc = value + 1;
-               parser.state = state_modifier;  // fall thru
+               parser.state = state_modifier;
+               argc         = value + 1;
                continue;
                // parser.memo = NULL;
             }
@@ -607,6 +612,7 @@ state_width_entry:
          case 'L' :
             if( parser.modifier_index >= 3)
                return( -1);
+   
             info->modifier[ parser.modifier_index++] = c;
             continue;
          }
