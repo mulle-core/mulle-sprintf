@@ -1,4 +1,4 @@
-#!/bin/bash -m -x
+#!/bin/bash -m
 #
 #  run-test.sh
 #  MulleObjC
