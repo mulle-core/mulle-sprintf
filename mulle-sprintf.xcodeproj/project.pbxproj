@@ -114,6 +114,7 @@
 		4141B0491CB565C800B0306A /* StaticLibraryIOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = StaticLibraryIOS.xcconfig; sourceTree = "<group>"; };
 		4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = StaticLibraryOSX.xcconfig; sourceTree = "<group>"; };
 		4141B04B1CB565C800B0306A /* ToolOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ToolOSX.xcconfig; sourceTree = "<group>"; };
+		41D2265B1CD65C4000C06D8C /* RELEASENOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASENOTES.md; sourceTree = "<group>"; };
 		41D53B871CB7EDA8006BFF0E /* libmulle_standalone_sprintf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmulle_standalone_sprintf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		41D53B901CB7EDE5006BFF0E /* libmulle_vararg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_vararg.a; path = dependencies/lib/Debug/libmulle_vararg.a; sourceTree = "<group>"; };
 		41D53B911CB7EDE5006BFF0E /* libmulle_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_thread.a; path = dependencies/lib/Debug/libmulle_thread.a; sourceTree = "<group>"; };
@@ -161,6 +162,7 @@
 		4141AFF41CB561F700B0306A = {
 			isa = PBXGroup;
 			children = (
+				41D2265B1CD65C4000C06D8C /* RELEASENOTES.md */,
 				413677851CBDA43400A944A9 /* CMakeLists.txt */,
 				4141B03E1CB565C800B0306A /* mulle-configuration */,
 				4141B0041CB561FE00B0306A /* src */,
@@ -455,6 +457,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 0.2;
 			};
 			name = Debug;
 		};
@@ -462,6 +465,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 0.2;
 			};
 			name = Release;
 		};
