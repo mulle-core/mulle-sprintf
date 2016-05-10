@@ -65,7 +65,7 @@ int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
    if( info->memory.left_justify || ! info->width)
    {
       if( info->memory.precision_found)
-         mulle_buffer_add_string_with_length( buffer, s, info->precision);
+         mulle_buffer_add_string_with_maxlength( buffer, s, info->precision);
       else
          mulle_buffer_add_string( buffer, s);
       length = mulle_buffer_get_length( buffer) - before;
@@ -81,7 +81,7 @@ int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
       
-   mulle_buffer_add_string_with_length( buffer, s, length);
+   mulle_buffer_add_string_with_maxlength( buffer, s, length);
    return( 0);
 }
 

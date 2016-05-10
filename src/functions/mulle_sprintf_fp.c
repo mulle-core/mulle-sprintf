@@ -67,6 +67,7 @@ int   mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
       produce_format_string( format, info, 1);
       snprintf( result, sizeof( result), format, v.ld);
    }
+   mulle_buffer_add_string_with_maxlength( buffer, result, sizeof( result));
    return( 0);
 }
 
