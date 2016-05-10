@@ -457,7 +457,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 0.2;
+				CURRENT_PROJECT_VERSION = 0.3;
 			};
 			name = Debug;
 		};
@@ -465,7 +465,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 0.2;
+				CURRENT_PROJECT_VERSION = 0.3;
 			};
 			name = Release;
 		};
