@@ -41,6 +41,7 @@
 		4141B0391CB5627200B0306A /* mulle_sprintf_return.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B01D1CB5627200B0306A /* mulle_sprintf_return.h */; };
 		4141B03B1CB5627200B0306A /* mulle_sprintf_string.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B01F1CB5627200B0306A /* mulle_sprintf_string.c */; };
 		4141B03C1CB5627200B0306A /* mulle_sprintf_string.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0201CB5627200B0306A /* mulle_sprintf_string.h */; };
+		418B17531CE905C10071A8C9 /* simple.c in Sources */ = {isa = PBXBuildFile; fileRef = 418B17521CE905C10071A8C9 /* simple.c */; };
 		41D53B8F1CB7EDC3006BFF0E /* libmulle_sprintf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4141AFFD1CB561F700B0306A /* libmulle_sprintf.a */; };
 		41D53B951CB7EDE5006BFF0E /* libmulle_vararg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B901CB7EDE5006BFF0E /* libmulle_vararg.a */; };
 		41D53B961CB7EDE5006BFF0E /* libmulle_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B911CB7EDE5006BFF0E /* libmulle_thread.a */; };
@@ -50,7 +51,6 @@
 		41D53B9D1CB7EE02006BFF0E /* mulle_standalone_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */; };
 		41D53B9E1CB7EE71006BFF0E /* mulle_standalone_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D53B9A1CB7EE02006BFF0E /* mulle_standalone_sprintf.c */; };
 		41D53B9F1CB7EE76006BFF0E /* mulle_standalone_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		41D53BAD1CB7F2B7006BFF0E /* simple.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D53BAC1CB7F2B7006BFF0E /* simple.c */; };
 		41D53BB01CB7F2DA006BFF0E /* libmulle_standalone_sprintf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B871CB7EDA8006BFF0E /* libmulle_standalone_sprintf.dylib */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +114,7 @@
 		4141B0491CB565C800B0306A /* StaticLibraryIOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = StaticLibraryIOS.xcconfig; sourceTree = "<group>"; };
 		4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = StaticLibraryOSX.xcconfig; sourceTree = "<group>"; };
 		4141B04B1CB565C800B0306A /* ToolOSX.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ToolOSX.xcconfig; sourceTree = "<group>"; };
+		418B17521CE905C10071A8C9 /* simple.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = simple.c; path = tests/integer/simple.c; sourceTree = SOURCE_ROOT; };
 		41D2265B1CD65C4000C06D8C /* RELEASENOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASENOTES.md; sourceTree = "<group>"; };
 		41D53B871CB7EDA8006BFF0E /* libmulle_standalone_sprintf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmulle_standalone_sprintf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		41D53B901CB7EDE5006BFF0E /* libmulle_vararg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_vararg.a; path = dependencies/lib/Debug/libmulle_vararg.a; sourceTree = "<group>"; };
@@ -124,7 +125,6 @@
 		41D53B9A1CB7EE02006BFF0E /* mulle_standalone_sprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_standalone_sprintf.c; sourceTree = "<group>"; };
 		41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_standalone_sprintf.h; sourceTree = "<group>"; };
 		41D53BA51CB7F295006BFF0E /* run-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "run-test"; sourceTree = BUILT_PRODUCTS_DIR; };
-		41D53BAC1CB7F2B7006BFF0E /* simple.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = simple.c; path = tests/integer/simple.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,7 +248,7 @@
 		41D53BA61CB7F295006BFF0E /* run-test */ = {
 			isa = PBXGroup;
 			children = (
-				41D53BAC1CB7F2B7006BFF0E /* simple.c */,
+				418B17521CE905C10071A8C9 /* simple.c */,
 			);
 			path = "run-test";
 			sourceTree = "<group>";
@@ -409,7 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				41D53BAD1CB7F2B7006BFF0E /* simple.c in Sources */,
+				418B17531CE905C10071A8C9 /* simple.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +457,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 0.3;
+				CURRENT_PROJECT_VERSION = 0.4;
 			};
 			name = Debug;
 		};
@@ -465,7 +465,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B04A1CB565C800B0306A /* StaticLibraryOSX.xcconfig */;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 0.3;
+				CURRENT_PROJECT_VERSION = 0.4;
 			};
 			name = Release;
 		};

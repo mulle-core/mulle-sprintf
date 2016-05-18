@@ -18,7 +18,7 @@
 #include <mulle_vararg/mulle_vararg.h>
 
 
-#define MULLE_SPRINTF_VERSION  ((0 << 20) | (3 << 8) | 0)
+#define MULLE_SPRINTF_VERSION  ((0 << 20) | (4 << 8) | 0)
 
 struct mulle_buffer;
 struct mulle_sprintf_conversion;
