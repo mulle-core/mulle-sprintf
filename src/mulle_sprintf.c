@@ -858,6 +858,7 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
 {
    struct mulle_sprintf_context   ctxt;
    int                            argc;
+   size_t                         len;
    
    // now grab values from all arguments
    // there is no arg #0
@@ -868,8 +869,9 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
    
    if( ! argc)
    {
-      mulle_buffer_make_inflexable( buffer, format, strlen( format) + 1);
-      return( (int) ( ctxt.startsBuf[ 0] - format));
+      len = strlen( format);
+      mulle_buffer_make_inflexable( buffer, format, len + 1);
+      return( (int) len);
    }
    
    mulle_mvsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
