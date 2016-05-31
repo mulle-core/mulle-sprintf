@@ -18,10 +18,6 @@
 #include <mulle_thread/mulle_thread.h>
 
 
-// stuff needed for %@
-//#import "NSData.h"
-//#import "NSString.h"
-
 #define OUT_OF_MEMORY  -1848
 #define STACKABLE_N     16
 
