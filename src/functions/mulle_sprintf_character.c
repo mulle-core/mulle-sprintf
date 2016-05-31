@@ -11,7 +11,7 @@
  *  $Id$
  *
  */
-#import "mulle_sprintf_character.h"
+#include "mulle_sprintf_character.h"
 
 
 static inline int   _char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,

@@ -11,7 +11,7 @@
  *  $Id$
  *
  */
-#import "mulle_sprintf_return.h"
+#include "mulle_sprintf_return.h"
 
 
 //

@@ -18,7 +18,7 @@
 #include <mulle_vararg/mulle_vararg.h>
 
 
-#define MULLE_SPRINTF_VERSION  ((0 << 20) | (4 << 8) | 0)
+#define MULLE_SPRINTF_VERSION  ((0 << 20) | (5 << 8) | 0)
 
 struct mulle_buffer;
 struct mulle_sprintf_conversion;
@@ -53,10 +53,10 @@ extern void   *(*mulle_sprintf_get_storage)( struct mulle_allocator *);
 extern void   (*mulle_sprintf_free_storage)( void);
 
 
-#if MULLE_ALLOCATOR_VERSION < ((1 << 20) | (3 << 8) | 0)
+#if MULLE_ALLOCATOR_VERSION < ((1 << 20) | (5 << 8) | 0)
 # error "mulle_allocator is too old"
 #endif
-#if MULLE_CONTAINER_VERSION < ((0 << 20) | (4 << 8) | 0)
+#if MULLE_CONTAINER_VERSION < ((0 << 20) | (5 << 8) | 0)
 # error "mulle_container is too old"
 #endif
 
