@@ -271,7 +271,7 @@ int   _mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion
    return( _mulle_sprintf_register_modifiers( table, "0123456789.#- +\'*$"));
 }
 
-
+void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table)
 {
    // ' ' && c <= '~'
@@ -289,9 +289,10 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
 }
 
 
+void  _mulle_sprintf_dump_available_defaultconversion_characters( void);
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void)
 {
-   return( _mulle_sprintf_dump_available_conversion_characters( &mulle_sprintf_defaultconversion));
+   _mulle_sprintf_dump_available_conversion_characters( &mulle_sprintf_defaultconversion);
 }
 
 

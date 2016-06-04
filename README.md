@@ -1,7 +1,7 @@
 # mulle-sprintf
 
-an extensible variant of sprintf. Because floating point is hard,
-FP conversion is handed down to sprintf.
+an extensible variant of sprintf written in C (C11). Because floating point is 
+hard, FP conversion is handed down to sprintf.
 
 The extensibility is used in **MulleObjCFoundation** to add the '@' conversion
 character for object conversion.
