@@ -6,6 +6,10 @@
  *  Copyright 2011 Mulle kybernetiK. All rights reserved.
  *
  */
+#ifndef __need_wint_t
+#define __need_wint_t
+#endif
+
 #include "mulle_sprintf_function.h"
 
 #include <stddef.h>
@@ -19,6 +23,8 @@
 
 struct mulle_sprintf_conversion   mulle_sprintf_defaultconversion;
 
+
+// order must match enum!
 
 unsigned char   mulle_sprintf_argumentsize[] = 
 {
@@ -37,36 +43,37 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( ptrdiff_t),
    SIZEOF( int64_t),
    SIZEOF( short),
-   SIZEOF( ssize_t),
-
    SIZEOF( size_t),
+
    SIZEOF( size_t *),
    SIZEOF( uint64_t),
    SIZEOF( uint64_t *),
-   
    SIZEOF( uintmax_t),
+
    SIZEOF( uintmax_t *),
    SIZEOF( unsigned char),
    SIZEOF( unsigned char *),
-   
    SIZEOF( unsigned int),
+
    SIZEOF( unsigned int *),
    SIZEOF( unsigned long),
    SIZEOF( unsigned long long),
-   
    SIZEOF( unsigned long long *),
+
    SIZEOF( unsigned long *),
    SIZEOF( unsigned __PTRDIFF_TYPE__),
    SIZEOF( unsigned __PTRDIFF_TYPE__ *),
-   
    SIZEOF( unsigned short),
+
    SIZEOF( unsigned short *),
    0,    // vector
    0,    // void
-   
    SIZEOF( void *),
+
    SIZEOF( wchar_t *),
-   0, 
+   SIZEOF( wint_t *),
+   SIZEOF( struct _NSDecimal *),
+   0,
 };
 
 
@@ -104,7 +111,6 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_object_argumenttype                 : p->obj  = va_arg( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = va_arg( va, int64_t); break;
       case mulle_sprintf_short_argumenttype                  : p->s    = (short) va_arg( va, int); break;  // promotion(!)
-      case mulle_sprintf_signed_size_t_argumenttype          : p->st   = va_arg( va, ssize_t); break;
       case mulle_sprintf_size_t_argumenttype                 : p->St   = va_arg( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = va_arg( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
@@ -166,7 +172,6 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_object_argumenttype                 : p->obj  = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = mulle_vararg_next_integer( va, int64_t); break;
       case mulle_sprintf_short_argumenttype                  : p->s    = (short) mulle_vararg_next_integer( va, int); break;  // promotion(!)
-      case mulle_sprintf_signed_size_t_argumenttype          : p->st   = mulle_vararg_next_integer( va, ssize_t); break;
       case mulle_sprintf_size_t_argumenttype                 : p->St   = mulle_vararg_next_integer( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = mulle_vararg_next_pointer( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;

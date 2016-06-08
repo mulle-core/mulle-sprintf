@@ -9,9 +9,10 @@
 
 set -m
 
+LIBRARY_SHORTNAME=sprintf
+
 # check if running a single test or all
-DEFAULTCFLAGS="-w -O0 -g"
-TESTLIBRARYNAME=libmulle_standalone_sprintf.dylib
+DEFAULT_CFLAGS="-v -w -O0 -g"
 
 executable=`basename "$0"`
 executable=`basename "$executable" .sh`
@@ -84,7 +85,7 @@ trap 'trace_ignore "${RESTORE_CRASHDUMP}"' 0 5 6
 
 if [ -z "${CFLAGS}" ]
 then
-   CFLAGS="${DEFAULTCFLAGS}"
+   CFLAGS="${DEFAULT_CFLAGS}"
 fi
 
 if [ -z "${CC}" ]
@@ -96,6 +97,7 @@ then
       echo "c compiler can not be found" >&2
       exit 1
    fi
+fi
 
 # find runtime and headers
 #
@@ -108,34 +110,32 @@ then
 #        ./mulle-clang-install/tests
 #        ./mulle-objc-runtime
 #
-   TESTLIBRARY_DEPENDENCIES_INCLUDE=/usr/local/bin
 
-   lib="`ls -1 ../lib/${TESTLIBRARYNAME}.dylib 2> /dev/null | tail -1`"
-   TESTLIBRARY_DEPENDENCIES_INCLUDE="../include"
+lib="`ls -1 "../lib/libmulle_standalone_${LIBRARY_SHORTNAME}.dylib" 2> /dev/null | tail -1`"
+DEPENDENCIES_INCLUDE="../include"
 
-   if [ ! -x "${lib}" ]
-   then
-      lib="`ls -1 "../build/Products/Debug/${TESTLIBRARYNAME}" | tail -1 2> /dev/null`"
-      TESTLIBRARY_DEPENDENCIES_INCLUDE="../dependencies/include"
-   fi
+if [ ! -x "${lib}" ]
+then
+   lib="`ls -1 "../build/Products/Debug/libmulle_standalone_${LIBRARY_SHORTNAME}.dylib" | tail -1 2> /dev/null`"
+   DEPENDENCIES_INCLUDE="../dependencies/include"
+fi
 
-   TESTLIBRARY="${1:-${lib}}"
-   [ -z $# ] || shift
+LIBRARY="${1:-${lib}}"
+[ -z $# ] || shift
 
-   if [ -z "${TESTLIBRARY}" ]
-   then
-      echo "${TESTLIBRARYNAME} can not be found" >&2
-      exit 1
-   fi
+if [ -z "${LIBRARY}" ]
+then
+   echo "libmulle_standalone_${LIBRARY_SHORTNAME}.dylib can not be found" >&2
+   exit 1
+fi
 
-   TESTLIBRARY_INCLUDE="`dirname "${TESTLIBRARY}"`"
+LIBRARY_INCLUDE="`dirname "${LIBRARY}"`"
 
-   if [ -d "${TESTLIBRARY_INCLUDE}/usr/local/include" ]
-   then
-      TESTLIBRARY_INCLUDE="${TESTLIBRARY_INCLUDE}/usr/local/include"
-   else
-      TESTLIBRARY_INCLUDE="${TESTLIBRARY_INCLUDE}/include"
-   fi
+if [ -d "${LIBRARY_INCLUDE}/usr/local/include" ]
+then
+   LIBRARY_INCLUDE="${LIBRARY_INCLUDE}/usr/local/include"
+else
+   LIBRARY_INCLUDE="${LIBRARY_INCLUDE}/include"
 fi
 
 DIR=${1:-`pwd`}
@@ -274,14 +274,14 @@ fail_test()
    a_out="$2"
    stdin="$3"
 
-   [ ! -z "${CC}" ] && exit 1
+   [ -z "${CC}" ] && exit 1
 
    echo "DEBUG: " >&2
    echo "rebuilding with -O0 and debug symbols..." >&2
     "${CC}" -O0 -g -o "${a_out}" \
-      "-I${TESTLIBRARY_INCLUDE}" \
-      "-I${TESTLIBRARY_DEPENDENCIES_INCLUDE}" \
-      "${TESTLIBRARY}" \
+      "-I${LIBRARY_INCLUDE}" \
+      "-I${DEPENDENCIES_INCLUDE}" \
+      "${LIBRARY}" \
       "${c_source}" > "$errput" 2>&1
 
    echo "MallocStackLogging=1 \
@@ -348,9 +348,9 @@ run()
    local rval
 
    "${CC}" ${CFLAGS} -o "${a_out}" \
-   "-I${TESTLIBRARY_INCLUDE}" \
-   "-I${TESTLIBRARY_DEPENDENCIES_INCLUDE}" \
-   "${TESTLIBRARY}" \
+   "-I${LIBRARY_INCLUDE}" \
+   "-I${DEPENDENCIES_INCLUDE}" \
+   "${LIBRARY}" \
    "${c_source}" > "$errput" 2>&1
    rval=$?
 
@@ -566,14 +566,14 @@ scan_current_directory()
 
 
 
-TESTLIBRARY="`absolute_path_if_relative "$TESTLIBRARY"`"
-TESTLIBRARY_INCLUDE="`absolute_path_if_relative "$TESTLIBRARY_INCLUDE"`"
-TESTLIBRARY_DEPENDENCIES_INCLUDE="`absolute_path_if_relative "$TESTLIBRARY_DEPENDENCIES_INCLUDE"`"
+LIBRARY="`absolute_path_if_relative "$LIBRARY"`"
+LIBRARY_INCLUDE="`absolute_path_if_relative "$LIBRARY_INCLUDE"`"
+DEPENDENCIES_INCLUDE="`absolute_path_if_relative "$DEPENDENCIES_INCLUDE"`"
 
 # OS X
-DYLD_FALLBACK_LIBRARY_PATH="`dirname "${TESTLIBRARY}"`" ; export DYLD_FALLBACK_LIBRARY_PATH
+DYLD_FALLBACK_LIBRARY_PATH="`dirname "${LIBRARY}"`" ; export DYLD_FALLBACK_LIBRARY_PATH
 # Linux
-LD_LIBRARY_PATH="`dirname "${TESTLIBRARY}"`" ; export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="`dirname "${LIBRARY}"`" ; export LD_LIBRARY_PATH
 
 
 if [ "$TEST" = "" ]

@@ -33,9 +33,9 @@ static void  produce_format_string( char format[ 64],
    
    if( info->memory.width_found)
       if( info->memory.precision_found)
-         snprintf( format, 64, "%%%d.%d%s%c", info->width, info->precision, prefix, info->conversion);
+         snprintf( format, 64, "%%%ld.%d%s%c", (long) info->width, info->precision, prefix, info->conversion);
       else
-         snprintf( format, 64, "%%%d%s%c", info->width, prefix, info->conversion);
+         snprintf( format, 64, "%%%ld%s%c", (long) info->width, prefix, info->conversion);
       else
          if( info->memory.precision_found)
             snprintf( format, 64, "%%.%d%s%c", info->precision, prefix, info->conversion);
