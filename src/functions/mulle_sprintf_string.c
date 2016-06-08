@@ -50,11 +50,11 @@ static int   wstring_conversion( struct mulle_buffer *buffer,
 
 
 int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
-                                   struct mulle_sprintf_formatconversioninfo *info,
-                                   char *s)
+                                        struct mulle_sprintf_formatconversioninfo *info,
+                                        char *s)
 { 
-   size_t   before;
-   ssize_t  length;
+   size_t      before;
+   ptrdiff_t   length;
    
    if( ! s)
       s = "(null)";
@@ -68,15 +68,15 @@ int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
          mulle_buffer_add_string_with_maxlength( buffer, s, info->precision);
       else
          mulle_buffer_add_string( buffer, s);
-      length = mulle_buffer_get_length( buffer) - before;
+      length = (ptrdiff_t) (mulle_buffer_get_length( buffer) - before);
       if( info->width > length)
          mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
       return( 0);
    }
 
-   length = (int) strlen( s);
+   length = strlen( s);
    if( info->memory.precision_found)
-      length = info->precision > length ? length : info->precision;
+      length = info->precision > (int) length ? length : info->precision;
       
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);

@@ -54,7 +54,7 @@ struct mulle_sprintf_malloc_storage
 {
    char                                        **starts;
    size_t                                      s_starts;
-   struct mulle_sprintf_argumentarray              arguments;
+   struct mulle_sprintf_argumentarray          arguments;
    struct mulle_sprintf_formatconversioninfo   *infos;
    size_t                                      s_infos;
    struct mulle_allocator                      *allocator;
@@ -299,7 +299,7 @@ static inline int   convert_argument( mulle_sprintf_vector_t jumptable,
                                       struct mulle_sprintf_formatconversioninfo *info,
                                       struct mulle_sprintf_argumentarray *arguments,
                                       int *arg,
-                                      size_t before)
+                                      int before)
 {
    if( info->modifier[ 0] == 'v' || info->modifier[ 1] == 'v' || info->modifier[ 2] == 'v')
    {  
@@ -663,7 +663,7 @@ struct mulle_sprintf_context
    struct mulle_sprintf_formatconversioninfo   conversionBuf[ STACKABLE_N];  // this is the biggy
    union mulle_sprintf_argumentvalue           valueBuf[ STACKABLE_N];
    unsigned char                               typesBuf[ STACKABLE_N];
-   size_t                                      before;
+   int                                         before;
    int                                         n;
 };
 
@@ -728,7 +728,7 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
       return( 0);
    
    allocator    = mulle_buffer_get_allocator( buffer);
-   ctxt->before = mulle_buffer_get_length( buffer);
+   ctxt->before = (int) mulle_buffer_get_length( buffer);
    
    ctxt->starts = ctxt->startsBuf;
    ctxt->infos  = ctxt->conversionBuf;
@@ -800,7 +800,7 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
    int                                         arg;
    int                                         fail;
    int                                         i;
-   ssize_t                                     length;
+   ptrdiff_t                                   length;
    struct mulle_sprintf_formatconversioninfo   *info;
    
    // finally, finally oh so finally

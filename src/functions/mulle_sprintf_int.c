@@ -20,18 +20,17 @@ typedef struct
    char  *(*convert_locale_unsigned_int)( unsigned int value, char *s);
    char  *(*convert_unsigned_long_long)( unsigned long long value, char *s);
    char  *(*convert_locale_unsigned_long_long)( unsigned long long value, char *s);
-   ssize_t   (*set_prefix)( char *s, int value_is_zero, size_t length,
-                        size_t precision);
+   int   (*set_prefix)( char *s, int value_is_zero, int length, int precision);
 } integer_converters;
 
 
 #pragma mark -
 #pragma mark decimal
 
-static ssize_t   set_decimal_prefix( char *s,
+static int   set_decimal_prefix( char *s,
                                  int value_is_zero, 
-                                 size_t length,
-                                 size_t precision)
+                                 int length,
+                                 int precision)
 {
    return( 0);
 }
@@ -76,18 +75,18 @@ static integer_converters  decimal_converters =
 void   mulle_sprintf_justified( struct mulle_buffer *buffer, 
                                 struct mulle_sprintf_formatconversioninfo *info,
                                 char *p,
-                                ssize_t p_length,
+                                int p_length,
                                 char *q,
-                                ssize_t q_length,
-                                ssize_t  precision,
+                                int q_length,
+                                int  precision,
                                 char prefix)
 {
-   ssize_t    length;
-   ssize_t    total;
-   ssize_t    used;
-   ssize_t    width;
-   char       precision_char;
-   char       width_char;
+   int       length;
+   size_t    total;
+   size_t    used;
+   size_t    width;
+   char      precision_char;
+   char      width_char;
 
    length         = p_length + q_length;
    precision_char = '0';
@@ -133,13 +132,13 @@ void   mulle_sprintf_justified( struct mulle_buffer *buffer,
 void   mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer, 
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              char *p,
-                                             ssize_t p_length,
+                                             int p_length,
                                              char prefix,
                                              int is_zero,
-                                             ssize_t (*set_prefix)( char *, int, size_t, size_t))
+                                             int (*set_prefix)( char *, int, int, int))
 {
-   ssize_t    precision;
-   ssize_t    q_length;
+   int    precision;
+   int    q_length;
    char       tmp2[ 4];
 
    precision = info->memory.precision_found ? info->precision : 1; 
@@ -172,7 +171,7 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    char                                prefix;
    char                                tmp[ sizeof( long long) * 4];
    char                                *p;
-   ssize_t                             p_length;
+   ptrdiff_t                           p_length;
    unsigned long long                  vLL;
    long long                           vll;
    
@@ -220,7 +219,7 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    p_length = &tmp[ sizeof( tmp)] - p;
 
    // p is a the front now
-   mulle_sprintf_justified_and_prefixed( buffer, info, p, p_length, prefix, vLL == 0, converters->set_prefix);
+   mulle_sprintf_justified_and_prefixed( buffer, info, p, (int) p_length, prefix, vLL == 0, converters->set_prefix);
    
    return( 0);
 }
@@ -274,10 +273,7 @@ static char  *convert_octal_unsigned_long_long( unsigned long long value,
 }
 
 
-static ssize_t   set_octal_prefix( char *s,
-                                   int value_is_zero,
-                                   size_t length,
-                                   size_t precision)
+static int   set_octal_prefix( char *s, int value_is_zero, int length, int precision)
 {
    if( length && precision <= length)
       return( -1);      // increase precision
@@ -341,8 +337,7 @@ static char   *convert_hex_unsigned_long_long( unsigned long long value,
 }
 
 
-static ssize_t   set_hex_prefix( char *s, int value_is_zero,
-                                 size_t length, size_t precision)
+static int   set_hex_prefix( char *s, int value_is_zero, int length, int precision)
 {
    if( length)
    {
@@ -431,7 +426,6 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_signed_int_argumenttype( struct 
       case 'j' : return( mulle_sprintf_intmax_t_argumenttype);
       case 'q' : return( mulle_sprintf_int64_t_argumenttype);
       case 't' : return( mulle_sprintf_ptrdiff_t_argumenttype);
-      case 'z' : return( mulle_sprintf_signed_size_t_argumenttype);
       }
       return( mulle_sprintf_int_argumenttype);
 }

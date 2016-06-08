@@ -52,10 +52,10 @@ struct mulle_sprintf_formatconversioninfo
 {
    void    *mystery;       // used for return type...
    
-   int     width;          // %100d = 100
-   int     precision;      // %.3d  = 3
-   int     argv_index[ 3];
-   int     length;         // width of conversion format: e.g.%%=2, %20d = 4
+   ptrdiff_t   width;          // %100d = 100
+   int         precision;      // %.3d  = 3
+   int         argv_index[ 3];
+   int         length;         // width of conversion format: e.g.%%=2, %20d = 4
    
    struct mulle_sprintf_formatconversionflags   memory;
    
@@ -82,34 +82,33 @@ enum
    mulle_sprintf_ptrdiff_t_argumenttype,
    mulle_sprintf_int64_t_argumenttype,
    mulle_sprintf_short_argumenttype,
-   mulle_sprintf_signed_size_t_argumenttype,
-
    mulle_sprintf_size_t_argumenttype,
+
    mulle_sprintf_size_t_pointer_argumenttype,
    mulle_sprintf_uint64_t_argumenttype,
    mulle_sprintf_uint64_t_pointer_argumenttype,
-
    mulle_sprintf_uintmax_t_argumenttype,
+
    mulle_sprintf_uintmax_t_pointer_argumenttype,
    mulle_sprintf_unsigned_char_argumenttype,
    mulle_sprintf_unsigned_char_pointer_argumenttype,
-
    mulle_sprintf_unsigned_int_argumenttype,
+
    mulle_sprintf_unsigned_int_pointer_argumenttype,
    mulle_sprintf_unsigned_long_argumenttype,
    mulle_sprintf_unsigned_long_long_argumenttype,
-
    mulle_sprintf_unsigned_long_long_pointer_argumenttype,
+
    mulle_sprintf_unsigned_long_pointer_argumenttype,
    mulle_sprintf_unsigned_ptrdiff_t_argumenttype,
    mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype,
-
    mulle_sprintf_unsigned_short_argumenttype,
+
    mulle_sprintf_unsigned_short_pointer_argumenttype,
    mulle_sprintf_vector_argumenttype,
    mulle_sprintf_void_argumenttype,
-
    mulle_sprintf_void_pointer_argumenttype,
+
    mulle_sprintf_wchar_pointer_argumenttype,
    mulle_sprintf_wint_t_argumenttype,
    mulle_sprintf_NSDecimal_pointer_argumenttype
@@ -133,7 +132,6 @@ union mulle_sprintf_argumentvalue
    void                *obj;
    int64_t             qt;
    short               s;
-   ssize_t             st;
    size_t              St;
    size_t              *pSt;
    uint64_t            Qt;

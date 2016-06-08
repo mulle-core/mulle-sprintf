@@ -11,6 +11,7 @@ static void   simple_int_test()
 {
    struct mulle_buffer   *buffer;
    int                   len;
+   
    buffer = mulle_buffer_create( NULL);
 
    len = mulle_sprintf( buffer, "%d", 1848);

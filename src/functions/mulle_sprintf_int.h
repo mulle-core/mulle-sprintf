@@ -20,19 +20,19 @@
 void   mulle_sprintf_justified( struct mulle_buffer *buffer,
                                 struct mulle_sprintf_formatconversioninfo *info,
                                 char *p,
-                                ssize_t p_length,
+                                int p_length,
                                 char *q,
-                                ssize_t q_length,
-                                ssize_t  precision,
+                                int q_length,
+                                int  precision,
                                 char prefix);
                             
 void   mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              char *p,
-                                             ssize_t p_length,
+                                             int p_length,
                                              char prefix,
                                              int is_zero,
-                                            ssize_t (*set_prefix)( char *, int, size_t, size_t));
+                                             int (*set_prefix)( char *, int, int, int));
 
 int   mulle_sprintf_int_decimal_conversion( struct mulle_buffer *buffer,
                                                 struct mulle_sprintf_formatconversioninfo *info,
