@@ -6,16 +6,13 @@
  *  Copyright 2011 Mulle kybernetiK. All rights reserved.
  *
  */
-#ifndef __need_wint_t
-#define __need_wint_t
-#endif
-
 #include "mulle_sprintf_function.h"
 
 #include <stddef.h>
 #include <stdint.h>
 #include <limits.h>
 #include <stdio.h>
+#include <wctype.h>
 #include <mulle_vararg/mulle_vararg.h>
 
 
@@ -23,8 +20,6 @@
 
 struct mulle_sprintf_conversion   mulle_sprintf_defaultconversion;
 
-
-// order must match enum!
 
 unsigned char   mulle_sprintf_argumentsize[] = 
 {
@@ -71,9 +66,8 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( void *),
 
    SIZEOF( wchar_t *),
-   SIZEOF( wint_t *),
-   SIZEOF( struct _NSDecimal *),
-   0,
+   SIZEOF( wint_t),
+   SIZEOF( struct _NSDecimal *)
 };
 
 
@@ -131,7 +125,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = va_arg( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = va_arg( va, wchar_t *); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = va_arg( va, struct _NSDecimal *); break;
-         //case mulle_sprintf_wint_t_argumenttype                 : p->wit  = va_arg( va, wint_t); break;
+      case mulle_sprintf_wint_t_argumenttype                 : p->wc   = va_arg( va, wint_t); break;
          
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = va_arg( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned __PTRDIFF_TYPE__ *); break;
@@ -191,8 +185,8 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = mulle_vararg_next_pointer( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = mulle_vararg_next_pointer( va, wchar_t *); break;
+      case mulle_sprintf_wint_t_argumenttype                 : p->wc   = mulle_vararg_next_integer( va, wint_t); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = mulle_vararg_next_pointer( va, struct _NSDecimal *); break;
-         //case mulle_sprintf_wint_t_argumenttype                 : p->wit  = mulle_vararg_next_integer( va, wint_t); break;
          
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = mulle_vararg_next_pointer( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = mulle_vararg_next_pointer( va, unsigned __PTRDIFF_TYPE__ *); break;

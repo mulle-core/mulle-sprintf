@@ -22,6 +22,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4128F8001D0AC6D500C85D6A /* libmulle_utf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4128F7FF1D0AC6D500C85D6A /* libmulle_utf.a */; };
 		4141B0221CB5627200B0306A /* mulle_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0051CB5627200B0306A /* mulle_sprintf.c */; };
 		4141B0231CB5627200B0306A /* mulle_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0061CB5627200B0306A /* mulle_sprintf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4141B0241CB5627200B0306A /* mulle_sprintf_character.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0081CB5627200B0306A /* mulle_sprintf_character.c */; };
@@ -86,6 +87,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4128F7FF1D0AC6D500C85D6A /* libmulle_utf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_utf.a; path = dependencies/lib/Debug/libmulle_utf.a; sourceTree = "<group>"; };
 		413677851CBDA43400A944A9 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4141AFFD1CB561F700B0306A /* libmulle_sprintf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmulle_sprintf.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4141B0051CB5627200B0306A /* mulle_sprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf.c; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4128F8001D0AC6D500C85D6A /* libmulle_utf.a in Frameworks */,
 				41D53B951CB7EDE5006BFF0E /* libmulle_vararg.a in Frameworks */,
 				41D53B961CB7EDE5006BFF0E /* libmulle_thread.a in Frameworks */,
 				41D53B971CB7EDE5006BFF0E /* libmulle_test_allocator.a in Frameworks */,
@@ -238,6 +241,7 @@
 		41D53BA01CB7EFFB006BFF0E /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				4128F7FF1D0AC6D500C85D6A /* libmulle_utf.a */,
 				41D53B901CB7EDE5006BFF0E /* libmulle_vararg.a */,
 				41D53B911CB7EDE5006BFF0E /* libmulle_thread.a */,
 				41D53B921CB7EDE5006BFF0E /* libmulle_test_allocator.a */,
@@ -489,6 +493,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B0421CB565C800B0306A /* DynamicLibraryOSX.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dependencies/lib/Debug",
+				);
 			};
 			name = Debug;
 		};
@@ -496,6 +504,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4141B0421CB565C800B0306A /* DynamicLibraryOSX.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dependencies/lib/Debug",
+				);
 			};
 			name = Release;
 		};

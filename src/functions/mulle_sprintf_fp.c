@@ -13,6 +13,7 @@
  */
 #include "mulle_sprintf_fp.h"
 
+#include <mulle_container/mulle_container.h>
 #include <float.h>
 #include <stdio.h>
 

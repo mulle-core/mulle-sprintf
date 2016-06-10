@@ -13,6 +13,9 @@
  */
 #include "mulle_sprintf_character.h"
 
+#include "mulle_sprintf_string.h"
+
+
 
 static inline int   _char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                              struct mulle_buffer *buffer,
@@ -25,18 +28,44 @@ static inline int   _char_string_conversion( struct mulle_sprintf_formatconversi
       mulle_buffer_memset( buffer, width_char, info->width - 1);
    mulle_buffer_add_byte( buffer, c);
    return( 0);
-}                   
+}
 
 
 int   mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
-                                     struct mulle_sprintf_formatconversioninfo *info,
-                                     struct mulle_sprintf_argumentarray *arguments,
-                                     int argc)
+                                         struct mulle_sprintf_formatconversioninfo *info,
+                                         struct mulle_sprintf_argumentarray *arguments,
+                                         int argc)
 {
    union mulle_sprintf_argumentvalue  v;
    
    v = arguments->values[ argc];
    return( _char_string_conversion( info, buffer, v.c));
+}
+
+
+
+static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                                  struct mulle_buffer *buffer,
+                                                  wint_t c)
+{
+   wchar_t   s[ 2];
+   
+   s[ 0] = c;
+   s[ 1] = 0;
+   
+   return( mulle_sprintf_wcharstring_conversion( buffer, info, s));
+}
+
+
+int   mulle_sprintf_wide_character_conversion( struct mulle_buffer *buffer,
+                                               struct mulle_sprintf_formatconversioninfo *info,
+                                               struct mulle_sprintf_argumentarray *arguments,
+                                               int argc)
+{
+   union mulle_sprintf_argumentvalue  v;
+   
+   v = arguments->values[ argc];
+   return( _wide_char_string_conversion( info, buffer, v.wc));
 }
 
 
@@ -64,7 +93,7 @@ struct mulle_sprintf_function     mulle_sprintf_character_functions =
 struct mulle_sprintf_function     mulle_sprintf_widecharacter_functions = 
 {
    mulle_sprintf_get_widecharacter_argumenttype,
-   mulle_sprintf_character_conversion   
+   mulle_sprintf_wide_character_conversion
 };
 
 
