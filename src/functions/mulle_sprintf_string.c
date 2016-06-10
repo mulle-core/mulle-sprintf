@@ -13,48 +13,117 @@
  */
 #include "mulle_sprintf_string.h"
 
+// other files in this library
+
+// std-c and dependencies
+#include <mulle_container/mulle_container.h>
+#include <mulle_utf/mulle_utf.h>
 #include <string.h>
 
 
-static int   no_conversion( struct mulle_buffer *buffer,
-                          struct mulle_sprintf_formatconversioninfo *info,
-                          wchar_t *s)
+
+static int   mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
+                                             struct mulle_sprintf_formatconversioninfo *info,
+                                             mulle_utf16_t *s)
 {
-   return( -1);
+   int                    length;
+   int                    o_length;
+   size_t                 before;
+   static mulle_utf16_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
+   
+   if( ! s)
+      s = null_description;
+   
+   before = mulle_buffer_get_length( buffer);
+   
+   o_length = (int) mulle_utf16_strlen( s);
+   length   = (int) o_length;
+   if( info->memory.precision_found)
+      length = (info->precision > o_length) ? o_length  : info->precision;
+   
+   // left justify or no width is faster
+   if( info->memory.left_justify || ! info->width)
+   {
+      mulle_utf16_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      
+      if( info->width > length)
+         mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+      return( 0);
+   }
+   
+   if( info->width > length)
+      mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+   
+   mulle_utf16_convert_to_utf8_bytebuffer( s, length, buffer,  (void *) mulle_buffer_add_bytes);
+   return( 0);
 }
 
 
-int  (*mulle_sprintfsystemwidestring_conversion)( struct mulle_buffer *buffer,
-                                             struct mulle_sprintf_formatconversioninfo *info,
-                                             wchar_t *s) = no_conversion;
-
-
-
-// push it to unicode ...
-static int   wstring_conversion( struct mulle_buffer *buffer,
-                                 struct mulle_sprintf_formatconversioninfo *info,
-                                 struct mulle_sprintf_argumentarray *arguments,
-                                 int argc)
+static int   mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            mulle_utf32_t *s)
 {
-   union mulle_sprintf_argumentvalue   v;
-   wchar_t                   *ws;
+   int                    length;
+   int                    o_length;
+   size_t                 before;
+   static mulle_utf32_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
    
-   v  = arguments->values[ argc];
-   ws = v.pwc;
+   if( ! s)
+      s = null_description;
    
-   if( ! info->memory.width_found && ! info->memory.precision_found)
-      info = NULL;
+   before = mulle_buffer_get_length( buffer);
    
-   return( (*mulle_sprintfsystemwidestring_conversion)( buffer, info, ws));
-}             
+   o_length = (int) mulle_utf32_strlen( s);
+   length   = (int) o_length;
+   if( info->memory.precision_found)
+      length = (info->precision > o_length) ? o_length  : info->precision;
+   
+   // left justify or no width is faster
+   if( info->memory.left_justify || ! info->width)
+   {
+      mulle_utf32_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      
+      if( info->width > length)
+         mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+      return( 0);
+   }
+   
+   if( info->width > length)
+      mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+   
+   mulle_utf32_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+   return( 0);
+}
 
 
-int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
-                                        struct mulle_sprintf_formatconversioninfo *info,
-                                        char *s)
+int   mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            wchar_t  *s)
+{
+   if( sizeof( wchar_t) == sizeof( mulle_utf16_t))
+      return( mulle_sprintf_utf16conversion( buffer, info, (mulle_utf16_t *) s));
+   return( mulle_sprintf_utf32conversion( buffer, info, (mulle_utf32_t *) s));
+}
+
+
+int   mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
+                                           struct mulle_sprintf_formatconversioninfo *info,
+                                           struct mulle_sprintf_argumentarray *arguments,
+                                           int argc)
+{
+   union mulle_sprintf_argumentvalue  v;
+   
+   v = arguments->values[ argc];
+   return( mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
+}
+
+
+int   mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
+                                           struct mulle_sprintf_formatconversioninfo *info,
+                                           char *s)
 { 
-   size_t      before;
-   ptrdiff_t   length;
+   size_t     before;
+   ptrdiff_t  length;
    
    if( ! s)
       s = "(null)";
@@ -68,15 +137,15 @@ int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
          mulle_buffer_add_string_with_maxlength( buffer, s, info->precision);
       else
          mulle_buffer_add_string( buffer, s);
-      length = (ptrdiff_t) (mulle_buffer_get_length( buffer) - before);
+      length = mulle_buffer_get_length( buffer) - before;
       if( info->width > length)
          mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
       return( 0);
    }
 
-   length = strlen( s);
+   length = (int) strlen( s);
    if( info->memory.precision_found)
-      length = info->precision > (int) length ? length : info->precision;
+      length = info->precision > length ? length : info->precision;
       
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
@@ -87,26 +156,23 @@ int   mulle_sprintf_cstring_conversion( struct mulle_buffer *buffer,
 
 
 int   mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
-                                  struct mulle_sprintf_formatconversioninfo *info,
-                                  struct mulle_sprintf_argumentarray *arguments,
-                                  int argc)
+                                       struct mulle_sprintf_formatconversioninfo *info,
+                                       struct mulle_sprintf_argumentarray *arguments,
+                                       int argc)
 {
    union mulle_sprintf_argumentvalue  v;
-   mulle_sprintf_argumenttype_t   t;
-   char                     *s;
+   mulle_sprintf_argumenttype_t       t;
    
    t = arguments->types[ argc];
    if( t == mulle_sprintf_wchar_pointer_argumenttype)
-      return( wstring_conversion( buffer, info, arguments, argc));
-      
+      return( mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
+
    v = arguments->values[ argc];
-   s = v.pc;
-   
-   return( mulle_sprintf_cstring_conversion( buffer, info, s));
+   return( mulle_sprintf_charstring_conversion( buffer, info, v.pc));
 }                   
 
 
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_systemwidestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    return( mulle_sprintf_wchar_pointer_argumenttype);
 }
@@ -127,17 +193,17 @@ struct mulle_sprintf_function     mulle_string_functions =
 };
 
 
-struct mulle_sprintf_function     mulle_systemwidestring_functions = 
+struct mulle_sprintf_function     mulle_widestring_functions = 
 {
-   mulle_sprintf_get_systemwidestring_argumenttype,
-   mulle_sprintf_string_conversion
+   mulle_sprintf_get_widestring_argumenttype,
+   mulle_sprintf_widestring_conversion
 };
 
 
 void  _mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables) 
 {
    _mulle_sprintf_register_functions( tables, &mulle_string_functions,'s');
-   _mulle_sprintf_register_functions( tables, &mulle_systemwidestring_functions, 'S');
+   _mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
    _mulle_sprintf_register_modifier( tables, 'l');
 }
 

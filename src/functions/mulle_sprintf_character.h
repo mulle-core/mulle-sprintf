@@ -18,6 +18,11 @@
 #include "mulle_sprintf_function.h"
  
 
+int   mulle_sprintf_wide_character_conversion( struct mulle_buffer *buffer,
+                                              struct mulle_sprintf_formatconversioninfo *info,
+                                              struct mulle_sprintf_argumentarray *arguments,
+                                              int argc);
+
 int   mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
                                      struct mulle_sprintf_formatconversioninfo *info,
                                      struct mulle_sprintf_argumentarray *arguments,
