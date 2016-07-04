@@ -42,6 +42,7 @@ static void  produce_format_string( char format[ 64],
             snprintf( format, 64, "%%.%d%s%c", info->precision, prefix, info->conversion);
          else
             snprintf( format, 64, "%%%s%c", prefix, info->conversion);
+    fprintf( stderr, "format: %s\n", format);
 }
 
 

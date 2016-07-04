@@ -23,51 +23,52 @@ struct mulle_sprintf_conversion   mulle_sprintf_defaultconversion;
 
 unsigned char   mulle_sprintf_argumentsize[] = 
 {
-   SIZEOF( int),
-
+   SIZEOF( int),              // mulle_sprintf_int_argumenttype
    SIZEOF( char),                   // promotion(!)
    SIZEOF( char *),
    SIZEOF( double),
-   SIZEOF( intmax_t),
 
+   SIZEOF( intmax_t),         // mulle_sprintf_intmax_t_argumenttype
    SIZEOF( long),
    SIZEOF( long double),
    SIZEOF( long long),
-   SIZEOF( void *),
-   
+
+   SIZEOF( void *),           // mulle_sprintf_object_argumenttype
    SIZEOF( ptrdiff_t),
    SIZEOF( int64_t),
    SIZEOF( short),
-   SIZEOF( size_t),
 
+   SIZEOF( size_t),           // mulle_sprintf_signed_size_t_argumenttype
+   SIZEOF( size_t),
    SIZEOF( size_t *),
    SIZEOF( uint64_t),
-   SIZEOF( uint64_t *),
-   SIZEOF( uintmax_t),
 
+   SIZEOF( uint64_t *),      // mulle_sprintf_uint64_t_pointer_argumenttype
+   SIZEOF( uintmax_t),
    SIZEOF( uintmax_t *),
    SIZEOF( unsigned char),
-   SIZEOF( unsigned char *),
-   SIZEOF( unsigned int),
 
+   SIZEOF( unsigned char *), // mulle_sprintf_unsigned_char_pointer_argumenttype
+   SIZEOF( unsigned int),
    SIZEOF( unsigned int *),
    SIZEOF( unsigned long),
-   SIZEOF( unsigned long long),
+   
+   SIZEOF( unsigned long long), // mulle_sprintf_unsigned_long_long_argumenttype
    SIZEOF( unsigned long long *),
-
    SIZEOF( unsigned long *),
    SIZEOF( unsigned __PTRDIFF_TYPE__),
-   SIZEOF( unsigned __PTRDIFF_TYPE__ *),
+   
+   SIZEOF( unsigned __PTRDIFF_TYPE__ *), // mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype
    SIZEOF( unsigned short),
-
    SIZEOF( unsigned short *),
    0,    // vector
-   0,    // void
+   
+   0,    // void                 // mulle_sprintf_void_argumenttype
    SIZEOF( void *),
-
    SIZEOF( wchar_t *),
    SIZEOF( wint_t),
-   SIZEOF( struct _NSDecimal *)
+
+   SIZEOF( struct _NSDecimal *)  // mulle_sprintf_NSDecimal_pointer_argumenttype
 };
 
 

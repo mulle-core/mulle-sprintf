@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 #
 #  run-test.sh
 #  MulleObjC
@@ -9,10 +8,37 @@
 
 set -m
 
-LIBRARY_SHORTNAME=sprintf
+
+SOURCE_EXTENSION=".c"
+
+LIBRARY_SHORTNAME="sprintf"
+SHLIB_PREFIX="lib"
+SHLIB_EXTENSION=".so"
+
+case `uname` in
+   Darwin)
+      SHLIB_EXTENSION=".dylib"
+      ;;
+esac
+
+LIBRARY_FILENAME="${SHLIB_PREFIX}mulle_standalone_${LIBRARY_SHORTNAME}${SHLIB_EXTENSION}"
+
+
+if [ -z "${DEBUGGER}" ]
+then
+   DEBUGGER=lldb
+fi
+
+DEBUGGER="`which "${DEBUGGER}"`"
+
+if [ -z "${DEBUGGER_LIBRARY_PATH}" ]
+then
+   DEBUGGER_LIBRARY_PATH="`dirname "${DEBUGGER}"`/../lib"
+fi
+
 
 # check if running a single test or all
-DEFAULT_CFLAGS="-v -w -O0 -g"
+DEFAULTCFLAGS="-w -O0 -g"
 
 executable=`basename "$0"`
 executable=`basename "$executable" .sh`
@@ -85,18 +111,7 @@ trap 'trace_ignore "${RESTORE_CRASHDUMP}"' 0 5 6
 
 if [ -z "${CFLAGS}" ]
 then
-   CFLAGS="${DEFAULT_CFLAGS}"
-fi
-
-if [ -z "${CC}" ]
-then
-   CC=clang
-   CC="`which ${CC}`"
-   if [ -z "${CC}" ]
-   then
-      echo "c compiler can not be found" >&2
-      exit 1
-   fi
+   CFLAGS="${DEFAULTCFLAGS}"
 fi
 
 # find runtime and headers
@@ -111,12 +126,12 @@ fi
 #        ./mulle-objc-runtime
 #
 
-lib="`ls -1 "../lib/libmulle_standalone_${LIBRARY_SHORTNAME}.dylib" 2> /dev/null | tail -1`"
+lib="`ls -1 "../lib/${LIBRARY_FILENAME}" 2> /dev/null | tail -1`"
 DEPENDENCIES_INCLUDE="../include"
 
-if [ ! -x "${lib}" ]
+if [ ! -f "${lib}" ]
 then
-   lib="`ls -1 "../build/Products/Debug/libmulle_standalone_${LIBRARY_SHORTNAME}.dylib" | tail -1 2> /dev/null`"
+   lib="`ls -1 "../build/Products/Debug/${LIBRARY_FILENAME}" | tail -1 2> /dev/null`"
    DEPENDENCIES_INCLUDE="../dependencies/include"
 fi
 
@@ -125,7 +140,7 @@ LIBRARY="${1:-${lib}}"
 
 if [ -z "${LIBRARY}" ]
 then
-   echo "libmulle_standalone_${LIBRARY_SHORTNAME}.dylib can not be found" >&2
+   echo "${LIBRARY_FILENAME} can not be found" >&2
    exit 1
 fi
 
@@ -137,6 +152,8 @@ then
 else
    LIBRARY_INCLUDE="${LIBRARY_INCLUDE}/include"
 fi
+
+
 
 DIR=${1:-`pwd`}
 shift
@@ -266,29 +283,32 @@ search_for_strings()
 
 fail_test()
 {
-   local c_source
+   local m_source
    local a_out
    local stdin
 
-   c_source="$1"
+   m_source="$1"
    a_out="$2"
    stdin="$3"
 
-   [ -z "${CC}" ] && exit 1
-
    echo "DEBUG: " >&2
    echo "rebuilding with -O0 and debug symbols..." >&2
-    "${CC}" -O0 -g -o "${a_out}" \
+   $MULLE_CLANG -O0 -g -o "${a_out}.debug" \
+      -fobjc-runtime=mulle \
       "-I${LIBRARY_INCLUDE}" \
       "-I${DEPENDENCIES_INCLUDE}" \
+      ${LDFLAGS} \
       "${LIBRARY}" \
-      "${c_source}" > "$errput" 2>&1
+      "${m_source}" > "$errput" 2>&1
 
-   echo "MallocStackLogging=1 \
+   echo "MULLE_OBJC_AUTORELEASEPOOL_TRACE=15 \
+MULLE_OBJC_TEST_ALLOCATOR=1 \
+MULLE_TEST_ALLOCATOR_TRACE=2 \
+MallocStackLogging=1 \
 MALLOC_FILL_SPACE=1 \
 DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib \
 DYLD_FALLBACK_LIBRARY_PATH=\"${DYLD_FALLBACK_LIBRARY_PATH}\" \
-LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" lldb ${a_out}" >&2
+LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}:${DEBUGGER_LIBRARY_PATH}\" ${DEBUGGER} ${a_out}.debug" >&2
    if [ "${stdin}" != "/dev/null" ]
    then
       echo "run < ${stdin}" >&2
@@ -300,14 +320,14 @@ LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" lldb ${a_out}" >&2
 
 run()
 {
-   local c_source
+   local m_source
    local root
    local stdin
    local stdout
    local stderr
    local ccdiag
 
-   c_source="$1"
+   m_source="$1"
    root="$2"
    stdin="$3"
    stdout="$4"
@@ -320,22 +340,22 @@ run()
    local fail
    local match
 
-   random=`mktemp -t "MulleObjC"`
+   random=`mktemp -t "MulleObjCOSFoundation.XXXX"`
    output="$random.stdout"
    errput="$random.stderr"
-   errors=`basename $c_source .c`.errors
+   errors=`basename $m_source ${SOURCE_EXTENSION}`.errors
 
    local owd
 
    owd=`pwd`
-   pretty_source=`relpath "$owd"/"$c_source" "$root"`
+   pretty_source=`relpath "$owd"/"$m_source" "$root"`
 
    if [ "$VERBOSE" = "yes" ]
    then
       echo "$pretty_source" >&2
    fi
 
-   a_out="${owd}/`basename "$c_source" .c`.exe"
+   a_out="${owd}/`basename "$m_source" ${SOURCE_EXTENSION}`.exe"
 
    RUNS=`expr "$RUNS" + 1`
 
@@ -347,12 +367,20 @@ run()
 
    local rval
 
-   "${CC}" ${CFLAGS} -o "${a_out}" \
-   "-I${LIBRARY_INCLUDE}" \
-   "-I${DEPENDENCIES_INCLUDE}" \
-   "${LIBRARY}" \
-   "${c_source}" > "$errput" 2>&1
-   rval=$?
+   if [ -z "${CC}" ]
+   then
+      $MULLE_CLANG ${CFLAGS} -o "${a_out}" \
+      -fobjc-runtime=mulle \
+      "-I${LIBRARY_INCLUDE}" \
+      "-I${DEPENDENCIES_INCLUDE}" \
+      "${LIBRARY}" \
+      ${LDFLAGS} \
+      "${m_source}" > "$errput" 2>&1
+      rval=$?
+   else
+      "${CC}" ${CFLAGS} -o "${a_out}" ${LDFLAGS} -framework Foundation "${m_source}" > "$errput" 2>&1
+      rval=$?
+   fi
 
    if [ $rval -ne 0 ]
    then
@@ -373,8 +401,8 @@ run()
       fi
    fi
 
+   MULLE_OBJC_TEST_ALLOCATOR=1 \
 MallocStackLogging=1 \
-MallocStackLoggingNoCompact=1 \
 MallocScribble=1 \
 MallocPreScribble=1 \
 MallocGuardEdges=1 \
@@ -390,7 +418,7 @@ MallocCheckHeapEach=1 \
          echo "TEST CRASHED: \"$pretty_source\" (${a_out}, ${errput})" >&2
          maybe_show_diagnostics "$errput" >&2
 
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       else
          search_for_strings "TEST FAILED TO PRODUCE ERRORS: \"$pretty_source\" ($errput)" \
                             "$errput" "$errors"
@@ -399,14 +427,14 @@ MallocCheckHeapEach=1 \
             return 0
          fi
          maybe_show_diagnostics "$errput" >&2
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       fi
    else
       if [ -f "$errors" ]
       then
          echo "TEST FAILED TO CRASH: \"$pretty_source\" (${a_out})" >&2
          maybe_show_diagnostics "$errput" >&2
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       fi
    fi
 
@@ -432,7 +460,7 @@ MallocCheckHeapEach=1 \
          maybe_show_diagnostics "$errput" >&2
          maybe_show_output "$output"
 
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       fi
    else
       contents="`head -2 "$output"`" 2> /dev/null
@@ -443,7 +471,7 @@ MallocCheckHeapEach=1 \
          maybe_show_diagnostics "$errput" >&2
          maybe_show_output "$output"
 
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       fi
    fi
 
@@ -457,7 +485,7 @@ MallocCheckHeapEach=1 \
          diff "$stderr" "$errput" >&2
 
          maybe_show_diagnostics "$errput"
-         fail_test "${c_source}" "${a_out}" "${stdin}"
+         fail_test "${m_source}" "${a_out}" "${stdin}"
       fi
    fi
 }
@@ -465,10 +493,10 @@ MallocCheckHeapEach=1 \
 
 run_test()
 {
-   local c_source
+   local m_source
    local root
 
-   c_source="$1.c"
+   m_source="$1${SOURCE_EXTENSION}"
    root="$2"
 
    local stdin
@@ -532,7 +560,7 @@ run_test()
       ccdiag="-"
    fi
 
-   run "$c_source" "$root" "$stdin" "$stdout" "$stderr" "$ccdiag"
+   run "$m_source" "$root" "$stdin" "$stdout" "$stderr" "$ccdiag"
 }
 
 
@@ -555,7 +583,7 @@ scan_current_directory()
          scan_current_directory "$root"
          cd "$dir"
       else
-         filename=`basename "$i" .c`
+         filename=`basename "$i" ${SOURCE_EXTENSION}`
          if [ "$filename" != "$i" ]
          then
             run_test "$filename" "$root"
@@ -564,6 +592,20 @@ scan_current_directory()
    done
 }
 
+
+test_binary()
+{
+   "$MULLE_CLANG" > /dev/null 2>&1
+   code=$?
+
+   if [ $code -eq 127 ]
+   then
+      echo "mulle-clang can not be found" >&2
+      exit 1
+   fi
+
+   echo "using ${MULLE_CLANG} to test" >&2
+}
 
 
 LIBRARY="`absolute_path_if_relative "$LIBRARY"`"
@@ -574,6 +616,13 @@ DEPENDENCIES_INCLUDE="`absolute_path_if_relative "$DEPENDENCIES_INCLUDE"`"
 DYLD_FALLBACK_LIBRARY_PATH="`dirname "${LIBRARY}"`" ; export DYLD_FALLBACK_LIBRARY_PATH
 # Linux
 LD_LIBRARY_PATH="`dirname "${LIBRARY}"`" ; export LD_LIBRARY_PATH
+
+
+if [ -z "${CC}" ]
+then
+   MULLE_CLANG="`absolute_path_if_relative "mulle-clang"`"
+   test_binary "$MULLE_CLANG"
+fi
 
 
 if [ "$TEST" = "" ]
@@ -595,11 +644,11 @@ else
        dirname="."
     fi
     file=`basename "$TEST"`
-    filename=`basename "$file" .c`
+    filename=`basename "$file" "${SOURCE_EXTENSION}"`
 
     if [ "$file" = "$filename" ]
     then
-       echo "error: source file must have .c extension" >&2
+       echo "error: source file must have ${SOURCE_EXTENSION} extension" >&2
        exit 1
     fi
 
@@ -616,3 +665,4 @@ else
     cd "${old}" || exit 1
     exit $rval
 fi
+

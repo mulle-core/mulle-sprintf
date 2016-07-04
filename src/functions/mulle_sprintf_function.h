@@ -69,50 +69,50 @@ struct mulle_sprintf_formatconversioninfo
 enum
 {
    mulle_sprintf_int_argumenttype = 0,
-
    mulle_sprintf_char_argumenttype,
    mulle_sprintf_char_pointer_argumenttype,
    mulle_sprintf_double_argumenttype,
+
    mulle_sprintf_intmax_t_argumenttype,
-   
    mulle_sprintf_long_argumenttype,
    mulle_sprintf_long_double_argumenttype,
    mulle_sprintf_long_long_argumenttype,
-   mulle_sprintf_object_argumenttype,
 
+   mulle_sprintf_object_argumenttype,
    mulle_sprintf_ptrdiff_t_argumenttype,
    mulle_sprintf_int64_t_argumenttype,
    mulle_sprintf_short_argumenttype,
-   mulle_sprintf_signed_size_t_argumenttype,
 
+   mulle_sprintf_signed_size_t_argumenttype,
    mulle_sprintf_size_t_argumenttype,
    mulle_sprintf_size_t_pointer_argumenttype,
    mulle_sprintf_uint64_t_argumenttype,
-   mulle_sprintf_uint64_t_pointer_argumenttype,
 
+   mulle_sprintf_uint64_t_pointer_argumenttype,
    mulle_sprintf_uintmax_t_argumenttype,
    mulle_sprintf_uintmax_t_pointer_argumenttype,
    mulle_sprintf_unsigned_char_argumenttype,
-   mulle_sprintf_unsigned_char_pointer_argumenttype,
 
+   mulle_sprintf_unsigned_char_pointer_argumenttype,
    mulle_sprintf_unsigned_int_argumenttype,
    mulle_sprintf_unsigned_int_pointer_argumenttype,
    mulle_sprintf_unsigned_long_argumenttype,
-   mulle_sprintf_unsigned_long_long_argumenttype,
 
+   mulle_sprintf_unsigned_long_long_argumenttype,
    mulle_sprintf_unsigned_long_long_pointer_argumenttype,
    mulle_sprintf_unsigned_long_pointer_argumenttype,
    mulle_sprintf_unsigned_ptrdiff_t_argumenttype,
-   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype,
 
+   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype,
    mulle_sprintf_unsigned_short_argumenttype,
    mulle_sprintf_unsigned_short_pointer_argumenttype,
    mulle_sprintf_vector_argumenttype,
-   mulle_sprintf_void_argumenttype,
 
+   mulle_sprintf_void_argumenttype,
    mulle_sprintf_void_pointer_argumenttype,
    mulle_sprintf_wchar_pointer_argumenttype,
    mulle_sprintf_wint_t_argumenttype,
+
    mulle_sprintf_NSDecimal_pointer_argumenttype
 };
 
@@ -171,12 +171,12 @@ struct mulle_sprintf_argumentarray
 
 void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                   mulle_sprintf_argumenttype_t  *type,
-                                  unsigned int   n,
+                                  unsigned int n,
                                   mulle_vararg_list va);
 
 void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                  mulle_sprintf_argumenttype_t  *type,
-                                 unsigned int   n,
+                                 unsigned int n,
                                  va_list va);
 
 
