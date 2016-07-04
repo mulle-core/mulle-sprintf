@@ -27,22 +27,25 @@ static void  produce_format_string( char format[ 64],
                                     struct mulle_sprintf_formatconversioninfo *info,
                                     int is_long)
 {
-   char  prefix[ 2];
+   char   prefix[ 2];
    
    prefix[ 0] = is_long ? 'L' : 0;
    prefix[ 1] = 0;
    
    if( info->memory.width_found)
+   {
       if( info->memory.precision_found)
          snprintf( format, 64, "%%%ld.%d%s%c", (long) info->width, info->precision, prefix, info->conversion);
       else
          snprintf( format, 64, "%%%ld%s%c", (long) info->width, prefix, info->conversion);
-      else
-         if( info->memory.precision_found)
-            snprintf( format, 64, "%%.%d%s%c", info->precision, prefix, info->conversion);
-         else
-            snprintf( format, 64, "%%%s%c", prefix, info->conversion);
-    fprintf( stderr, "format: %s\n", format);
+
+      return;
+   }
+
+   if( info->memory.precision_found)
+      snprintf( format, 64, "%%.%d%s%c", info->precision, prefix, info->conversion);
+   else
+      snprintf( format, 64, "%%%s%c", prefix, info->conversion);
 }
 
 
