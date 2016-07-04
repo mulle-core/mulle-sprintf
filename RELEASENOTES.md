@@ -1,3 +1,6 @@
+## 0.6
+  * fixed an offset bug 
+
 ## 0.5
    * added mulle_utf to dependencies
    * wrote the wide character routines
