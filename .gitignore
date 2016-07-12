@@ -14,5 +14,9 @@ mintomic/
 https://github.com/mulle-nat/mintomic/
 mulle-configuration/
 *.exe
+*.exe.debug
 *.dSYM/
-tmp/
+/lib
+/include
+tmp/.repos/mulle-utf/mulle-configuration/
+.repos/mulle-utf/mulle-configuration/
