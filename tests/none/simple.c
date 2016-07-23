@@ -1,4 +1,4 @@
-#include <mulle_standalone_sprintf/mulle_standalone_sprintf.h>
+#include <mulle_sprintf/mulle_sprintf.h>
 #include <mulle_test_allocator/mulle_test_allocator.h>
 
 #include <stdio.h>
@@ -10,7 +10,7 @@ static void   simple_none_test()
    va_list               va;
    mulle_vararg_list     args;
    int                   len;
-   
+
    buffer = mulle_buffer_create( NULL);
 
    len = mulle_sprintf( buffer, "none");
@@ -23,7 +23,7 @@ static void   simple_none_test()
 
    len = mulle_mvsprintf( buffer, "none", args);
    printf( "%s (%d)\n", mulle_buffer_get_bytes( buffer), len);
-   
+
    mulle_buffer_destroy( buffer);
 }
 

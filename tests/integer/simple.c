@@ -1,4 +1,4 @@
-#include <mulle_standalone_sprintf/mulle_standalone_sprintf.h>
+#include <mulle_sprintf/mulle_sprintf.h>
 #include <mulle_test_allocator/mulle_test_allocator.h>
 
 #include <stdio.h>
@@ -11,7 +11,7 @@ static void   simple_int_test()
 {
    struct mulle_buffer   *buffer;
    int                   len;
-   
+
    buffer = mulle_buffer_create( NULL);
 
    len = mulle_sprintf( buffer, "%d", 1848);
