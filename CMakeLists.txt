@@ -48,6 +48,24 @@ src/functions/mulle_sprintf_string.c
 )
 
 
-INSTALL(TARGETS mulle_sprintf DESTINATION "lib")
+add_library( mulle_sprintf_standalone SHARED
+src/mulle_sprintf_standalone.c
+)
+
+add_dependencies( mulle_sprintf_standalone mulle_sprintf)
+
+TARGET_LINK_LIBRARIES( mulle_sprintf_standalone
+${BEGIN_ALL_LOAD}
+mulle_sprintf
+mulle_utf
+mulle_container
+mulle_allocator
+mulle_test_allocator
+${END_ALL_LOAD}
+)
+
+
+
+INSTALL(TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
 INSTALL(FILES ${HEADERS} DESTINATION "include/mulle_sprintf")
 

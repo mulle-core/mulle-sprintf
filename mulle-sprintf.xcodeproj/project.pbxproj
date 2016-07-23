@@ -49,9 +49,7 @@
 		41D53B971CB7EDE5006BFF0E /* libmulle_test_allocator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B921CB7EDE5006BFF0E /* libmulle_test_allocator.a */; };
 		41D53B981CB7EDE5006BFF0E /* libmulle_container.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B931CB7EDE5006BFF0E /* libmulle_container.a */; };
 		41D53B991CB7EDE5006BFF0E /* libmulle_allocator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B941CB7EDE5006BFF0E /* libmulle_allocator.a */; };
-		41D53B9D1CB7EE02006BFF0E /* mulle_standalone_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */; };
-		41D53B9E1CB7EE71006BFF0E /* mulle_standalone_sprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D53B9A1CB7EE02006BFF0E /* mulle_standalone_sprintf.c */; };
-		41D53B9F1CB7EE76006BFF0E /* mulle_standalone_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		41D53B9E1CB7EE71006BFF0E /* mulle_sprintf_standalone.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D53B9A1CB7EE02006BFF0E /* mulle_sprintf_standalone.c */; };
 		41D53BB01CB7F2DA006BFF0E /* libmulle_standalone_sprintf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41D53B871CB7EDA8006BFF0E /* libmulle_standalone_sprintf.dylib */; };
 /* End PBXBuildFile section */
 
@@ -125,8 +123,7 @@
 		41D53B921CB7EDE5006BFF0E /* libmulle_test_allocator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_test_allocator.a; path = dependencies/lib/Debug/libmulle_test_allocator.a; sourceTree = "<group>"; };
 		41D53B931CB7EDE5006BFF0E /* libmulle_container.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_container.a; path = dependencies/lib/Debug/libmulle_container.a; sourceTree = "<group>"; };
 		41D53B941CB7EDE5006BFF0E /* libmulle_allocator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmulle_allocator.a; path = dependencies/lib/Debug/libmulle_allocator.a; sourceTree = "<group>"; };
-		41D53B9A1CB7EE02006BFF0E /* mulle_standalone_sprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_standalone_sprintf.c; sourceTree = "<group>"; };
-		41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_standalone_sprintf.h; sourceTree = "<group>"; };
+		41D53B9A1CB7EE02006BFF0E /* mulle_sprintf_standalone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_standalone.c; sourceTree = "<group>"; };
 		41D53BA51CB7F295006BFF0E /* run-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "run-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -166,9 +163,9 @@
 		4141AFF41CB561F700B0306A = {
 			isa = PBXGroup;
 			children = (
+				413677851CBDA43400A944A9 /* CMakeLists.txt */,
 				415867FD1CF4991E003CF8CF /* README.md */,
 				41D2265B1CD65C4000C06D8C /* RELEASENOTES.md */,
-				413677851CBDA43400A944A9 /* CMakeLists.txt */,
 				4141B03E1CB565C800B0306A /* mulle-configuration */,
 				4141B0041CB561FE00B0306A /* src */,
 				41D53BA01CB7EFFB006BFF0E /* Libraries */,
@@ -192,8 +189,7 @@
 			children = (
 				4141B0061CB5627200B0306A /* mulle_sprintf.h */,
 				4141B0051CB5627200B0306A /* mulle_sprintf.c */,
-				41D53B9B1CB7EE02006BFF0E /* mulle_standalone_sprintf.h */,
-				41D53B9A1CB7EE02006BFF0E /* mulle_standalone_sprintf.c */,
+				41D53B9A1CB7EE02006BFF0E /* mulle_sprintf_standalone.c */,
 				4141B0071CB5627200B0306A /* Functions */,
 			);
 			path = src;
@@ -269,7 +265,6 @@
 				4141B0231CB5627200B0306A /* mulle_sprintf.h in Headers */,
 				4141B0301CB5627200B0306A /* mulle_sprintf_function.h in Headers */,
 				4141B0281CB5627200B0306A /* mulle_sprintf_decimal.h in Headers */,
-				41D53B9D1CB7EE02006BFF0E /* mulle_standalone_sprintf.h in Headers */,
 				4141B02B1CB5627200B0306A /* mulle_sprintf_escape.h in Headers */,
 				4141B0361CB5627200B0306A /* mulle_sprintf_pointer.h in Headers */,
 				4141B02D1CB5627200B0306A /* mulle_sprintf_fp.h in Headers */,
@@ -284,7 +279,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				41D53B9F1CB7EE76006BFF0E /* mulle_standalone_sprintf.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,7 +401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				41D53B9E1CB7EE71006BFF0E /* mulle_standalone_sprintf.c in Sources */,
+				41D53B9E1CB7EE71006BFF0E /* mulle_sprintf_standalone.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
