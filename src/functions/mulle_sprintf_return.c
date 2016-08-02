@@ -26,9 +26,9 @@ int   mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
    union mulle_sprintf_argumentvalue  v;
    mulle_sprintf_argumenttype_t   t;
    size_t          len;
-   size_t          before;
+   int             before;
    
-   before = (size_t) info->mystery;
+   before = (int) (intptr_t) info->mystery;
 
    v = arguments->values[ argc];
    t = arguments->types[ argc];

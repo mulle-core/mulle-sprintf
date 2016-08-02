@@ -28,13 +28,10 @@ static int   mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
 {
    int                    length;
    int                    o_length;
-   size_t                 before;
    static mulle_utf16_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
    
    if( ! s)
       s = null_description;
-   
-   before = mulle_buffer_get_length( buffer);
    
    o_length = (int) mulle_utf16_strlen( s);
    length   = (int) o_length;
@@ -65,13 +62,10 @@ static int   mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
 {
    int                    length;
    int                    o_length;
-   size_t                 before;
    static mulle_utf32_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
    
    if( ! s)
       s = null_description;
-   
-   before = mulle_buffer_get_length( buffer);
    
    o_length = (int) mulle_utf32_strlen( s);
    length   = (int) o_length;

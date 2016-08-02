@@ -322,7 +322,7 @@ static inline int   convert_argument( mulle_sprintf_vector_t jumptable,
    // conversion call
    // there's just two things we can't vector
    //
-   info->mystery = (void *) before;  // for return conversion
+   info->mystery = (void *) (intptr_t) before;  // for return conversion
    return( jump_convert_argument( jumptable, buffer, info, arguments, *arg));
 }
 
