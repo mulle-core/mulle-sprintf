@@ -18,7 +18,7 @@ static void   simple_float_test()
    printf( "%s\n", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "%3.1f", 1848);
+   mulle_sprintf( buffer, "%3.1f", 18.48);
    printf( "%s\n", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
