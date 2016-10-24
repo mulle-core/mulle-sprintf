@@ -93,8 +93,6 @@ static void   mulle_sprintf_malloc_storage_free( struct mulle_sprintf_malloc_sto
 }
 
 
-
-
 static void   *get_storage( struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;

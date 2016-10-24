@@ -21,3 +21,16 @@ mulle-configuration/
 tmp/.repos/mulle-utf/mulle-configuration/
 .repos/mulle-utf/mulle-configuration/
 mulle-tests/
+addictions/
+
+/tests/mulle-tests/
+
+/bin/mulle-homebrew/
+tests/float/longdouble
+tests/float/simple
+tests/integer/simple
+tests/none/simple
+tests/string/positional
+tests/string/string
+tests/include/
+tests/lib/

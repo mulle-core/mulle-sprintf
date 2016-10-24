@@ -1,6 +1,6 @@
 # mulle-sprintf
 
-an extensible variant of sprintf written in C (C11). Because floating point is 
+an extensible variant of sprintf written in C (C11). Because floating point is
 hard, FP conversion is handed down to sprintf.
 
 The extensibility is used in **MulleObjCFoundation** to add the '@' conversion
@@ -18,3 +18,10 @@ arguments.
 * xcodebuild for OS X
 * cmake 3.0 for other Unixes
 
+* MulleObjCExpatFoundation
+
+## Author
+
+[Nat!](//www.mulle-kybernetik.com/weblog) for
+[Mulle kybernetiK](//www.mulle-kybernetik.com) and
+[Codeon GmbH](//www.codeon.de)
