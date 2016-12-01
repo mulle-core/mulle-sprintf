@@ -13,7 +13,8 @@
  */
 #include "mulle_sprintf_fp.h"
 
-#include <mulle_container/mulle_container.h>
+#include "mulle_sprintf.h"
+#include <mulle_buffer/mulle_buffer.h>
 #include <float.h>
 #include <stdio.h>
 
@@ -94,25 +95,25 @@ struct mulle_sprintf_function     mulle_sprintf_fp_functions =
 
 
 
-void  _mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'a');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'e');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'f');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'g');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'a');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'e');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'f');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'g');
 
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'A');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'E');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'F');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'G');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'A');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'E');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'F');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'G');
 
-   _mulle_sprintf_register_modifier( tables, 'L');
+   mulle_sprintf_register_modifier( tables, 'L');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_fp_functions()
 {
-  _mulle_sprintf_register_fp_functions( &mulle_sprintf_defaultconversion);
+  mulle_sprintf_register_fp_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
  

@@ -5,6 +5,6 @@
 # override the branches like so:
 #    echo "master" > .bootstrap.local/MULLE_UTF_BRANCH
 
-${MULLE_REPOSITORIES}/mulle-container;;${MULLE_CONTAINER_BRANCH:-release}
+${MULLE_REPOSITORIES}/mulle-buffer;;${MULLE_BUFFER_BRANCH:-release}
 ${MULLE_REPOSITORIES}/mulle-utf;;${MULLE_UTF_BRANCH:-release}
 ${MULLE_REPOSITORIES}/mulle-vararg;;${MULLE_VARARG_BRANCH:-release}

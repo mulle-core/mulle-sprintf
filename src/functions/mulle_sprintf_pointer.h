@@ -1,7 +1,7 @@
 /*
  *  MulleFoundation - A tiny Foundation replacement
  *
- *  _NSPointerString_conversion.h is a part of MulleFoundation
+ *  mulle_sprintf_pointer is a part of MulleFoundation
  *
  *  Copyright (C) 2011 Nat!, Mulle kybernetiK 
  *  All rights reserved.
@@ -23,6 +23,6 @@ int  mulle_sprintf_pointer_conversion( struct mulle_buffer *buffer,
                                           
 mulle_sprintf_argumenttype_t  mulle_sprintf_get_pointer_argumenttype( struct mulle_sprintf_formatconversioninfo *info);
 
-void  _mulle_sprintf_register_pointer_functions( struct mulle_sprintf_conversion *tables);
+void  mulle_sprintf_register_pointer_functions( struct mulle_sprintf_conversion *tables);
    
 #endif

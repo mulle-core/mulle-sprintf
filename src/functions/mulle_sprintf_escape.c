@@ -14,13 +14,19 @@
 
 #include "mulle_sprintf_escape.h"
 
+#include "mulle_sprintf.h"
 
-int   mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
-                                  struct mulle_sprintf_formatconversioninfo *info,
-                                  struct mulle_sprintf_argumentarray *arguments,
-                                  int argc)
+
+static int   _mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
+                                               struct mulle_sprintf_formatconversioninfo *info,
+                                               struct mulle_sprintf_argumentarray *arguments,
+                                               int argc)
 {
    char   width_char;
+   
+   assert( buffer);
+   assert( info);
+   assert( arguments);
    
    width_char = info->memory.zero_found ? '0' : ' ';
    if( info->width > 1)
@@ -31,7 +37,7 @@ int   mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
 
 
 
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_escape_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_escape_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    return( mulle_sprintf_void_argumenttype);
 }
@@ -40,21 +46,21 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_escape_argumenttype( struct mull
 struct mulle_sprintf_function     mulle_sprintf_escape_functions = 
 {
    mulle_sprintf_get_escape_argumenttype,
-   mulle_sprintf_escape_conversion   
+   _mulle_sprintf_escape_conversion
 };
 
 
 
-void  _mulle_sprintf_register_escape_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_escape_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_escape_functions, '%');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_escape_functions, '%');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register__default_escape_functions()
 {
-  _mulle_sprintf_register_escape_functions( &mulle_sprintf_defaultconversion);
+  mulle_sprintf_register_escape_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    
 

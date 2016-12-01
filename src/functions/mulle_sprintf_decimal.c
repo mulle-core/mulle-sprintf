@@ -78,7 +78,7 @@ void  _mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_decimal_functions()
 {
-  _mulle_sprintf_register_decimal_functions( &mulle_sprintf_defaultconversion);
+  _mulle_sprintf_register_decimal_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    
 

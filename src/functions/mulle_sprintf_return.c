@@ -13,6 +13,8 @@
  */
 #include "mulle_sprintf_return.h"
 
+#include "mulle_sprintf.h"
+
 
 //
 // in the spec, it's declared as a signed return value (but what for ?)
@@ -127,15 +129,15 @@ struct mulle_sprintf_function     mulle_sprintf_return_functions =
 
 
 
-void  _mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_return_functions, 'n');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_return_functions, 'n');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_return_functions()
 {
-  _mulle_sprintf_register_return_functions( &mulle_sprintf_defaultconversion);
+   mulle_sprintf_register_return_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    

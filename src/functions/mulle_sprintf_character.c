@@ -13,16 +13,21 @@
  */
 #include "mulle_sprintf_character.h"
 
+#include "mulle_sprintf_function.h"
 #include "mulle_sprintf_string.h"
+#include "mulle_sprintf.h"
 
 
 
-static inline int   _char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
-                                             struct mulle_buffer *buffer,
+static inline int   _char_string_conversion( struct mulle_buffer *buffer,
+                                             struct mulle_sprintf_formatconversioninfo *info,
                                              char c)
 {
    char   width_char;
-   
+
+   assert( info);
+   assert( buffer);
+
    width_char = info->memory.zero_found ? '0' : ' ';
    if( info->width > 1)
       mulle_buffer_memset( buffer, width_char, info->width - 1);
@@ -32,14 +37,14 @@ static inline int   _char_string_conversion( struct mulle_sprintf_formatconversi
 
 
 int   mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
-                                         struct mulle_sprintf_formatconversioninfo *info,
-                                         struct mulle_sprintf_argumentarray *arguments,
-                                         int argc)
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          struct mulle_sprintf_argumentarray *arguments,
+                                          int argc)
 {
    union mulle_sprintf_argumentvalue  v;
    
    v = arguments->values[ argc];
-   return( _char_string_conversion( info, buffer, v.c));
+   return( _char_string_conversion( buffer, info, v.c));
 }
 
 
@@ -100,15 +105,15 @@ struct mulle_sprintf_function     mulle_sprintf_widecharacter_functions =
 
 void  _mulle_sprintf_register_character_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_character_functions, 'c');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_widecharacter_functions, 'C');
-   _mulle_sprintf_register_modifier( tables, 'l');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_character_functions, 'c');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_widecharacter_functions, 'C');
+   mulle_sprintf_register_modifier( tables, 'l');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_character_functions()
 {
-  _mulle_sprintf_register_character_functions( &mulle_sprintf_defaultconversion);
+  _mulle_sprintf_register_character_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    

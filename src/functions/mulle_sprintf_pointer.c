@@ -1,7 +1,7 @@
 /*
  *  MulleFoundation - A tiny Foundation replacement
  *
- *  mulle_sprintf_pointer_conversion.c is a part of MulleFoundation
+ *  mulle_sprintf_pointer.c is a part of MulleFoundation
  *
  *  Copyright (C) 2011 Nat!, Mulle kybernetiK 
  *  All rights reserved.
@@ -12,7 +12,9 @@
  *
  */
 #include "mulle_sprintf_pointer.h"
+
 #include "mulle_sprintf_int.h"
+#include "mulle_sprintf.h"
 
 
 
@@ -55,16 +57,16 @@ struct mulle_sprintf_function     mulle_sprintf_pointer_functions =
 
 
 
-void  _mulle_sprintf_register_pointer_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_pointer_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_pointer_functions, 'p');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_pointer_functions, 'p');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_pointer_functions()
 {
-  _mulle_sprintf_register_pointer_functions( &mulle_sprintf_defaultconversion);
+  mulle_sprintf_register_pointer_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    
 

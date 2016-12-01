@@ -13,6 +13,8 @@
  */
 #include "mulle_sprintf_int.h"
 
+#include "mulle_sprintf.h"
+
 
 typedef struct
 {
@@ -72,14 +74,14 @@ static integer_converters  decimal_converters =
 };
 
 
-void   mulle_sprintf_justified( struct mulle_buffer *buffer, 
-                                struct mulle_sprintf_formatconversioninfo *info,
-                                char *p,
-                                int p_length,
-                                char *q,
-                                int q_length,
-                                int  precision,
-                                char prefix)
+void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
+                                 struct mulle_sprintf_formatconversioninfo *info,
+                                 char *p,
+                                 int p_length,
+                                 char *q,
+                                 int q_length,
+                                 int  precision,
+                                 char prefix)
 {
    int       length;
    size_t    total;
@@ -88,6 +90,11 @@ void   mulle_sprintf_justified( struct mulle_buffer *buffer,
    char      precision_char;
    char      width_char;
 
+   assert( buffer);
+   assert( info);
+   assert( p);
+   assert( q);
+   
    length         = p_length + q_length;
    precision_char = '0';
    width          = info->width;
@@ -129,17 +136,22 @@ void   mulle_sprintf_justified( struct mulle_buffer *buffer,
 }
 
 
-void   mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer, 
-                                             struct mulle_sprintf_formatconversioninfo *info,
-                                             char *p,
-                                             int p_length,
-                                             char prefix,
-                                             int is_zero,
-                                             int (*set_prefix)( char *, int, int, int))
+void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
+                                              struct mulle_sprintf_formatconversioninfo *info,
+                                              char *p,
+                                              int p_length,
+                                              char prefix,
+                                              int is_zero,
+                                              int (*set_prefix)( char *, int, int, int))
 {
-   int    precision;
-   int    q_length;
-   char       tmp2[ 4];
+   int     precision;
+   int     q_length;
+   char    tmp2[ 4];
+
+   assert( buffer);
+   assert( info);
+   assert( p);
+   assert( set_prefix);
 
    precision = info->memory.precision_found ? info->precision : 1; 
    q_length  = 0;
@@ -154,7 +166,7 @@ void   mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
       }
    }
    
-   mulle_sprintf_justified( buffer, info, p, p_length, tmp2, q_length, precision, prefix);
+   _mulle_sprintf_justified( buffer, info, p, p_length, tmp2, q_length, precision, prefix);
 }
 
 
@@ -219,7 +231,7 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    p_length = &tmp[ sizeof( tmp)] - p;
 
    // p is a the front now
-   mulle_sprintf_justified_and_prefixed( buffer, info, p, (int) p_length, prefix, vLL == 0, converters->set_prefix);
+   _mulle_sprintf_justified_and_prefixed( buffer, info, p, (int) p_length, prefix, vLL == 0, converters->set_prefix);
    
    return( 0);
 }
@@ -454,83 +466,83 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_unsigned_int_argumenttype( struc
 }
 
 
-struct mulle_sprintf_function     mulle_sprintf_int_decimal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_int_decimal_functions =
 {
    mulle_sprintf_get_signed_int_argumenttype,
    mulle_sprintf_long_decimal_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_unsigned_int_decimal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_unsigned_int_decimal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_unsigned_int_decimal_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_int_octal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_int_octal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_long_octal_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_int_hex_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_int_hex_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_int_hex_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_long_decimal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_long_decimal_functions =
 {
    mulle_sprintf_get_signed_int_argumenttype,
    mulle_sprintf_long_decimal_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_unsigned_long_decimal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_unsigned_long_decimal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_long_decimal_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_long_hex_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_long_hex_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_long_hex_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_long_octal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_long_octal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    mulle_sprintf_long_octal_conversion
 };
 
 
-void  _mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'i');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'd');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_long_decimal_functions, 'D');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'i');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'd');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_long_decimal_functions, 'D');
 
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_unsigned_int_decimal_functions, 'u');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_int_octal_functions, 'o');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_int_hex_functions, 'x');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_unsigned_int_decimal_functions, 'u');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_int_octal_functions, 'o');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_int_hex_functions, 'x');
 
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_unsigned_long_decimal_functions, 'U');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_long_octal_functions, 'O');
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_long_hex_functions, 'X');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_unsigned_long_decimal_functions, 'U');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_long_octal_functions, 'O');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_long_hex_functions, 'X');
    
-   _mulle_sprintf_register_modifiers( tables, "hljtzq");
+   mulle_sprintf_register_modifiers( tables, "hljtzq");
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_integer_functions()
 {
-  _mulle_sprintf_register_integer_functions( &mulle_sprintf_defaultconversion);
+   mulle_sprintf_register_integer_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
  

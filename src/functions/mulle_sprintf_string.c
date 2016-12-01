@@ -14,9 +14,10 @@
 #include "mulle_sprintf_string.h"
 
 // other files in this library
+#include "mulle_sprintf.h"
 
 // std-c and dependencies
-#include <mulle_container/mulle_container.h>
+#include <mulle_buffer/mulle_buffer.h>
 #include <mulle_utf/mulle_utf.h>
 #include <string.h>
 
@@ -180,30 +181,30 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_string_argumenttype( struct mull
 }
 
 
-struct mulle_sprintf_function     mulle_string_functions = 
+static struct mulle_sprintf_function     mulle_string_functions =
 {
    mulle_sprintf_get_string_argumenttype,
    mulle_sprintf_string_conversion   
 };
 
 
-struct mulle_sprintf_function     mulle_widestring_functions = 
+static struct mulle_sprintf_function     mulle_widestring_functions =
 {
    mulle_sprintf_get_widestring_argumenttype,
    mulle_sprintf_widestring_conversion
 };
 
 
-void  _mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables) 
+void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables) 
 {
-   _mulle_sprintf_register_functions( tables, &mulle_string_functions,'s');
-   _mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
-   _mulle_sprintf_register_modifier( tables, 'l');
+   mulle_sprintf_register_functions( tables, &mulle_string_functions,'s');
+   mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
+   mulle_sprintf_register_modifier( tables, 'l');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_string_functions()
 {
-  _mulle_sprintf_register_string_functions( &mulle_sprintf_defaultconversion);
+   mulle_sprintf_register_string_functions( &mulle_sprintf_get_config()->defaultconversion);
 }

@@ -11,8 +11,8 @@
  *  $Id$
  *
  */
-#ifndef _NS_SPRINTF_DECIMAL_FUNCTIONS__H__
-#define _NS_SPRINTF_DECIMAL_FUNCTIONS__H__
+#ifndef _MULLE_SPRINTF_DECIMAL_FUNCTIONS__H__
+#define _MULLE_SPRINTF_DECIMAL_FUNCTIONS__H__
  
 #include "mulle_sprintf_int.h"
 
