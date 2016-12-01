@@ -1,5 +1,5 @@
 //
-//  mulle_sprintf_escape.h
+//  mulle_sprintf_integer.h
 //  mulle-sprintf
 //
 //  Created by Nat!
@@ -35,11 +35,16 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef mulle_sprintf_escape_h__
-#define mulle_sprintf_escape_h__
+#ifndef mulle_sprintf_integer_h__
+#define mulle_sprintf_integer_h__
 
 #include "mulle_sprintf_function.h"
- 
-void  mulle_sprintf_register_escape_functions( struct mulle_sprintf_conversion *tables);
-   
+
+int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          struct mulle_sprintf_argumentarray *arguments,
+                                          int argc);
+
+void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables);
+
 #endif

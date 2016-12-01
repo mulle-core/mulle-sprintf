@@ -14,17 +14,21 @@
 #include "mulle_sprintf_decimal.h"
 
 
-int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
-                                     struct mulle_sprintf_formatconversioninfo *info,
-                                     struct mulle_sprintf_argumentarray *arguments,
-                                     int argc)
+static int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_sprintf_argumentarray *arguments,
+                                            int argc)
 {
-   union mulle_sprintf_argumentvalue  v;
-   char            *tmp;
-   char            *p;
-   NSDecimal       *v_decimal;
-   _NSDecimalFormattingInfo   format_info;
-   unsigned int    len;
+   union mulle_sprintf_argumentvalue   v;
+   char                                *tmp;
+   char                                *p;
+   NSDecimal                           *v_decimal;
+   _NSDecimalFormattingInfo            format_info;
+   unsigned int                        len;
+   
+   assert( buffer);
+   assert( info);
+   assert( arguments);
    
    v = arguments->values[ argc];
    
@@ -55,13 +59,13 @@ int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
 }
 
 
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_decimal_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_decimal_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    return( mulle_sprintf_voidargumenttype);
 }
 
 
-struct mulle_sprintf_function     mulle_sprintf_decimal_functions = 
+static struct mulle_sprintf_function     mulle_sprintf_decimal_functions =
 {
    mulle_sprintf_get_decimal_argumenttype,
    mulle_sprintf_convert_decimal   
@@ -69,16 +73,16 @@ struct mulle_sprintf_function     mulle_sprintf_decimal_functions =
 
 
 
-void  _mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion *tables)
+void  mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion *tables)
 {
-   _mulle_sprintf_register_functions( tables, &mulle_sprintf_decimal_functions, 'N');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_decimal_functions, 'N');
 }
 
 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_decimal_functions()
 {
-  _mulle_sprintf_register_decimal_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_decimal_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
    
 

@@ -1,16 +1,40 @@
-/*
- *  MulleFoundation - A tiny Foundation replacement
- *
- *  mulle_tring_conversion.c is a part of MulleFoundation
- *
- *  Copyright (C) 2011 Nat!, Mulle kybernetiK 
- *  All rights reserved.
- *
- *  Coded by Nat!
- *
- *  $Id$
- *
- */
+//
+//  mulle_sprintf_string.c
+//  mulle-sprintf
+//
+//  Created by Nat!
+//  Copyright (c) 2011 Nat! - Mulle kybernetiK.
+//  Copyright (c) 2011 Codeon GmbH.
+//  All rights reserved.
+//
+//
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//  Redistributions of source code must retain the above copyright notice, this
+//  list of conditions and the following disclaimer.
+//
+//  Redistributions in binary form must reproduce the above copyright notice,
+//  this list of conditions and the following disclaimer in the documentation
+//  and/or other materials provided with the distribution.
+//
+//  Neither the name of Mulle kybernetiK nor the names of its contributors
+//  may be used to endorse or promote products derived from this software
+//  without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+//
+
 #include "mulle_sprintf_string.h"
 
 // other files in this library
@@ -23,13 +47,16 @@
 
 
 
-static int   mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
+static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              mulle_utf16_t *s)
 {
    int                    length;
    int                    o_length;
    static mulle_utf16_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
+   
+   assert( buffer);
+   assert( info);
    
    if( ! s)
       s = null_description;
@@ -57,9 +84,9 @@ static int   mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
-                                            struct mulle_sprintf_formatconversioninfo *info,
-                                            mulle_utf32_t *s)
+static int   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
+                                             struct mulle_sprintf_formatconversioninfo *info,
+                                             mulle_utf32_t *s)
 {
    int                    length;
    int                    o_length;
@@ -91,31 +118,31 @@ static int   mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
 }
 
 
-int   mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
-                                            struct mulle_sprintf_formatconversioninfo *info,
-                                            wchar_t  *s)
+int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
+                                             struct mulle_sprintf_formatconversioninfo *info,
+                                             wchar_t  *s)
 {
    if( sizeof( wchar_t) == sizeof( mulle_utf16_t))
-      return( mulle_sprintf_utf16conversion( buffer, info, (mulle_utf16_t *) s));
-   return( mulle_sprintf_utf32conversion( buffer, info, (mulle_utf32_t *) s));
+      return( _mulle_sprintf_utf16conversion( buffer, info, (mulle_utf16_t *) s));
+   return( _mulle_sprintf_utf32conversion( buffer, info, (mulle_utf32_t *) s));
 }
 
 
-int   mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
-                                           struct mulle_sprintf_formatconversioninfo *info,
-                                           struct mulle_sprintf_argumentarray *arguments,
-                                           int argc)
+static int   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
+                                                   struct mulle_sprintf_formatconversioninfo *info,
+                                                   struct mulle_sprintf_argumentarray *arguments,
+                                                   int argc)
 {
    union mulle_sprintf_argumentvalue  v;
    
    v = arguments->values[ argc];
-   return( mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
+   return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
 }
 
 
-int   mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
-                                           struct mulle_sprintf_formatconversioninfo *info,
-                                           char *s)
+static int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
+                                                   struct mulle_sprintf_formatconversioninfo *info,
+                                                   char *s)
 { 
    size_t     before;
    ptrdiff_t  length;
@@ -150,30 +177,30 @@ int   mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
 }
 
 
-int   mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
-                                       struct mulle_sprintf_formatconversioninfo *info,
-                                       struct mulle_sprintf_argumentarray *arguments,
-                                       int argc)
+static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
+                                               struct mulle_sprintf_formatconversioninfo *info,
+                                               struct mulle_sprintf_argumentarray *arguments,
+                                               int argc)
 {
    union mulle_sprintf_argumentvalue  v;
    mulle_sprintf_argumenttype_t       t;
    
    t = arguments->types[ argc];
    if( t == mulle_sprintf_wchar_pointer_argumenttype)
-      return( mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
+      return( _mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
 
    v = arguments->values[ argc];
-   return( mulle_sprintf_charstring_conversion( buffer, info, v.pc));
+   return( _mulle_sprintf_charstring_conversion( buffer, info, v.pc));
 }                   
 
 
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    return( mulle_sprintf_wchar_pointer_argumenttype);
 }
 
 
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    if( info->modifier[ 0] == 'l')
       return( mulle_sprintf_wchar_pointer_argumenttype);
@@ -183,15 +210,15 @@ mulle_sprintf_argumenttype_t  mulle_sprintf_get_string_argumenttype( struct mull
 
 static struct mulle_sprintf_function     mulle_string_functions =
 {
-   mulle_sprintf_get_string_argumenttype,
-   mulle_sprintf_string_conversion   
+   _mulle_sprintf_get_string_argumenttype,
+   _mulle_sprintf_string_conversion   
 };
 
 
 static struct mulle_sprintf_function     mulle_widestring_functions =
 {
    mulle_sprintf_get_widestring_argumenttype,
-   mulle_sprintf_widestring_conversion
+   _mulle_sprintf_widestring_conversion
 };
 
 
