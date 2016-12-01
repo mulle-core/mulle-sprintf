@@ -18,14 +18,14 @@
 
  
 int   mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
-                                  struct mulle_sprintf_formatconversioninfo *info,
-                                  struct mulle_sprintf_argumentarray *arguments,
-                                  int argc);
+                                       struct mulle_sprintf_formatconversioninfo *info,
+                                       struct mulle_sprintf_argumentarray *arguments,
+                                       int argc);
                                     
 mulle_sprintf_argumenttype_t  mulle_sprintf_get_return_argumenttype( struct mulle_sprintf_formatconversioninfo *info);
 
 extern struct mulle_sprintf_function     _NSReturnString_functions;
 
-void  _mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *tables);
+void  mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

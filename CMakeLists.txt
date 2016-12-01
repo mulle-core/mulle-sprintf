@@ -58,7 +58,7 @@ TARGET_LINK_LIBRARIES( mulle_sprintf_standalone
 ${BEGIN_ALL_LOAD}
 mulle_sprintf
 mulle_utf
-mulle_container
+mulle_buffer
 mulle_allocator
 mulle_test_allocator
 ${END_ALL_LOAD}

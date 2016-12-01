@@ -18,7 +18,6 @@
 #include <mulle_thread/mulle_thread.h>
 
 
-#define OUT_OF_MEMORY  -1848
 #define STACKABLE_N     16
 
 
@@ -80,35 +79,37 @@ static void   mulle_sprintf_malloc_storage_done( struct mulle_sprintf_malloc_sto
 }
 
 
-static mulle_thread_tss_t    key;
-
-
 static void   mulle_sprintf_malloc_storage_free( struct mulle_sprintf_malloc_storage *storage)
 {
-   mulle_sprintf_malloc_storage_done( storage);
+   struct mulle_sprintf_config           *config;
+
+   config = mulle_sprintf_get_config();
    
+   mulle_sprintf_malloc_storage_done( storage);
    mulle_allocator_free( storage->allocator, storage);
-   mulle_thread_tss_free( key);
-   key = 0;
+   mulle_thread_tss_free( config->key);
+   config->key = 0;
 }
 
 
 static void   *get_storage( struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
+   struct mulle_sprintf_config           *config;
 
-   if( ! key)
-      if( mulle_thread_tss_create( (void *) mulle_sprintf_free_storage, &key))
+   config = mulle_sprintf_get_config();
+   if( ! config->key)
+      if( mulle_thread_tss_create( (void *) config->free_storage, &config->key))
       {
          perror( "mulle_thread_tss_create");
          abort();
       }
 
-   storage = mulle_thread_tss_get( key);
+   storage = mulle_thread_tss_get( config->key);
    if( ! storage)
    {
       storage = mulle_sprintf_malloc_storage_create( allocator);
-      mulle_thread_tss_set( key, storage);
+      mulle_thread_tss_set( config->key, storage);
    }
    return( storage);
 }
@@ -117,30 +118,39 @@ static void   *get_storage( struct mulle_allocator *allocator)
 static void   free_storage( void)
 {
    struct mulle_sprintf_malloc_storage   *storage;
+   struct mulle_sprintf_config           *config;
+
+   config = mulle_sprintf_get_config();
    
-   if( ! key)
+   if( ! config->key)
       return;
    
-   storage = mulle_thread_tss_get( key);
+   storage = mulle_thread_tss_get( config->key);
    if( ! storage)
       return;
    
    mulle_sprintf_malloc_storage_free( storage);
-   mulle_thread_tss_set( key, NULL);
+   mulle_thread_tss_set( config->key, NULL);
 }
 
 
-
-void   *(*mulle_sprintf_get_storage)( struct mulle_allocator *) = get_storage;
-void   (*mulle_sprintf_free_storage)() = free_storage;
+struct mulle_sprintf_config    mulle_sprintf_config =
+{
+   0,
+   get_storage,
+   free_storage,
+   { { 0}, { 0 } }
+};
 
 
 static void   *space_for_starts( unsigned int n, struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
+   struct mulle_sprintf_config           *config;
    size_t                                size;
-   
-   storage = (*mulle_sprintf_get_storage)( allocator);
+
+   config  = mulle_sprintf_get_config();
+   storage = (*config->get_storage)( allocator);
 
    size = n * sizeof( char *);
    if( size > storage->s_starts)
@@ -153,12 +163,14 @@ static void   *space_for_starts( unsigned int n, struct mulle_allocator *allocat
 
 
 static struct mulle_sprintf_argumentarray   *space_for_arguments( unsigned int n,
-                                                              struct mulle_allocator *allocator)
+                                                                  struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
-   struct mulle_sprintf_argumentarray        *args;
+   struct mulle_sprintf_config           *config;
+   struct mulle_sprintf_argumentarray    *args;
    
-   storage = (*mulle_sprintf_get_storage)( allocator);
+   config  = mulle_sprintf_get_config();
+   storage = (*config->get_storage)( allocator);
 
    ++n;  // leave one empty at 0
 
@@ -176,9 +188,11 @@ static struct mulle_sprintf_argumentarray   *space_for_arguments( unsigned int n
 static void   *space_for_infos( unsigned int n, struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
+   struct mulle_sprintf_config           *config;
    size_t                                size;
    
-   storage = (*mulle_sprintf_get_storage)( allocator);
+   config  = mulle_sprintf_get_config();
+   storage = (*config->get_storage)( allocator);
 
    ++n;
    size = n * sizeof( struct mulle_sprintf_formatconversioninfo);
@@ -824,13 +838,21 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
    }
    
    if( fail)
+   {
+      errno = EDOM;
       return( -1);
+   }
    
    mulle_buffer_add_string( buffer, s);
    length = mulle_buffer_get_length( buffer) - ctxt->before;
    mulle_buffer_add_byte( buffer, 0);
 
-   return( mulle_buffer_has_overflown( buffer) ? OUT_OF_MEMORY : (int) length);
+   if( mulle_buffer_has_overflown( buffer))
+   {
+      errno = ENOMEM;
+      return( -1);
+   }
+   return( (int) length);
 }
                           
                            
@@ -877,7 +899,13 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
 
 int   mulle_mvsprintf( struct mulle_buffer *buffer, char *format, mulle_vararg_list arguments)
 {
-   return( _mulle_mvsprintf( buffer, format, arguments, &mulle_sprintf_defaultconversion));
+   if( ! buffer || ! format)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   return( _mulle_mvsprintf( buffer, format, arguments, &mulle_sprintf_get_config()->defaultconversion));
 }
 
 
@@ -917,7 +945,12 @@ int   _mulle_vsprintf( struct mulle_buffer *buffer,
 
 int   mulle_vsprintf( struct mulle_buffer *buffer, char *format, va_list args)
 {
-   return( _mulle_vsprintf( buffer, format, args, &mulle_sprintf_defaultconversion));
+   if( ! buffer || ! format)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+   return( _mulle_vsprintf( buffer, format, args, &mulle_sprintf_get_config()->defaultconversion));
 }
 
 
@@ -929,8 +962,14 @@ int   mulle_sprintf( struct mulle_buffer *buffer, char *format, ...)
    va_list   args;
    int       rval;
    
+   if( ! buffer || ! format)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+   
    va_start( args, format );
-   rval = _mulle_vsprintf( buffer, format, args, &mulle_sprintf_defaultconversion);
+   rval = _mulle_vsprintf( buffer, format, args, &mulle_sprintf_get_config()->defaultconversion);
    va_end( args);
    return( rval);
 }

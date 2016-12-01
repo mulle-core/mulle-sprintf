@@ -14,10 +14,12 @@
 #ifndef mulle_sprintf_function_h__
 #define mulle_sprintf_function_h__
 
-#include <mulle_container/mulle_container.h>
+#include <mulle_buffer/mulle_buffer.h>
 #include <mulle_vararg/mulle_vararg.h>
 
 #include <wctype.h>  
+#include <stdarg.h>
+
 
 struct _NSDecimal;
 
@@ -195,7 +197,7 @@ struct mulle_sprintf_function
 
 typedef char  mulle_sprintf_modifiercharacter;
 
-typedef struct mulle_sprintf_function           *mulle_sprintf_vector_t[  mulle_sprintf_vectorsize];
+typedef struct mulle_sprintf_function      *mulle_sprintf_vector_t[  mulle_sprintf_vectorsize];
 typedef mulle_sprintf_modifiercharacter    mulle_sprintf_modifier_t[ mulle_sprintf_modifiersize];
 
 
@@ -204,9 +206,6 @@ struct mulle_sprintf_conversion
    mulle_sprintf_vector_t     jumps;
    mulle_sprintf_modifier_t   modifiers;
 };
-
-extern struct mulle_sprintf_conversion     mulle_sprintf_defaultconversion;
-
 
 
 static inline unsigned int   mulle_sprintf_index_for_character( int c)
@@ -225,35 +224,20 @@ static inline int   mulle_sprintf_is_modifier_character( mulle_sprintf_modifier_
 }
 
 
-int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table, 
-                                   mulle_sprintf_modifiercharacter c);
-int  _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table, 
-                                   struct mulle_sprintf_function *functions,
-                                   mulle_sprintf_conversioncharacter_t c);
-int  _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table, 
-                                    mulle_sprintf_modifiercharacter *s);
+int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
+                                        struct mulle_sprintf_function *functions,
+                                        mulle_sprintf_conversioncharacter_t c);
+int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
+                                       mulle_sprintf_modifiercharacter c);
+int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
+                                        mulle_sprintf_modifiercharacter *s);
 
-
-static inline int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
-                                                        mulle_sprintf_conversioncharacter_t c)
-{
-   return( _mulle_sprintf_register_functions( &mulle_sprintf_defaultconversion, 
-                                         functions, 
-                                         c));
-}                                                                                 
-
-static inline int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c)
-{
-   return( _mulle_sprintf_register_modifier( &mulle_sprintf_defaultconversion, c));
-}                                                                                 
-
-
-static inline int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s)
-{
-   return( _mulle_sprintf_register_modifiers( &mulle_sprintf_defaultconversion, s));
-}
+int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
+                                                mulle_sprintf_conversioncharacter_t c);
+int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c);
+int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s);
 
 void  mulle_sprintf_register_default_modifiers_on_load( void);
-int   _mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
+int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 #endif

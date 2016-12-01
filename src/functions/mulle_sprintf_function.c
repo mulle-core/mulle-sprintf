@@ -8,23 +8,22 @@
  */
 #include "mulle_sprintf_function.h"
 
+#include <errno.h>
+#include <limits.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <limits.h>
 #include <stdio.h>
 #include <wctype.h>
 #include <mulle_vararg/mulle_vararg.h>
+#include "mulle_sprintf.h"
 
 
 #define SIZEOF( type)  sizeof( type) < sizeof( int) ? sizeof( int) : sizeof( type)
 
-struct mulle_sprintf_conversion   mulle_sprintf_defaultconversion;
-
-
 unsigned char   mulle_sprintf_argumentsize[] = 
 {
    SIZEOF( int),              // mulle_sprintf_int_argumenttype
-   SIZEOF( char),                   // promotion(!)
+   SIZEOF( char),             // promotion(!)
    SIZEOF( char *),
    SIZEOF( double),
 
@@ -198,24 +197,16 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
 }
 
 
-#if DEBUG
-#define return_abort( x)   abort()
-# else
-#define return_abort( x)   return( x)
-#endif
-
-
-int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table, 
-                                        mulle_sprintf_modifiercharacter c)
+static int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
+                                               mulle_sprintf_modifiercharacter c)
 {
    unsigned int   i;
 
-   if( c < ' ' || c > '~')
-      return_abort( -3);
+   assert( c >= ' ' && c <= '~');
 
    i = mulle_sprintf_index_for_character( c);
    if( table->jumps[ i])
-      return_abort( -1);
+      return( EEXIST);
    
    //
    // just mark as used, override is OK, since modifiers are
@@ -226,23 +217,21 @@ int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
 }  
 
 
-int  _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table, 
-                                        struct mulle_sprintf_function *functions,
-                                        mulle_sprintf_conversioncharacter_t c)
+static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
+                                                struct mulle_sprintf_function *functions,
+                                                mulle_sprintf_conversioncharacter_t c)
 {
    struct mulle_sprintf_function   **p;
-   unsigned int          i;
+   unsigned int                    i;
 
-   if( c < '!' || c > '~')
-      return_abort( -3);
+   assert( c >= '!' && c <= '~');
 
    i = mulle_sprintf_index_for_character( c);
    if( table->modifiers[ i])
-      return_abort( -2);
+      return( EEXIST);
       
    p = &table->jumps[ i];
-   if( *p)
-      return_abort( -1);
+   assert( ! *p);
 
    *p = functions;
    return( 0);
@@ -250,7 +239,8 @@ int  _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
 
 
                                                                        
-int  _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table, mulle_sprintf_modifiercharacter *s)
+static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
+                                                mulle_sprintf_modifiercharacter *s)
 {
    int   rval;
    int   c;
@@ -266,9 +256,9 @@ int  _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table, 
 }
 
 
-int   _mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
+int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
 {
-   return( _mulle_sprintf_register_modifiers( table, "0123456789.#- +\'*$"));
+   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'*$"));
 }
 
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
@@ -292,12 +282,100 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void);
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void)
 {
-   _mulle_sprintf_dump_available_conversion_characters( &mulle_sprintf_defaultconversion);
+   _mulle_sprintf_dump_available_conversion_characters( &mulle_sprintf_get_config()->defaultconversion);
+}
+
+
+#pragma mark - API
+
+int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
+                                        struct mulle_sprintf_function *functions,
+                                        mulle_sprintf_conversioncharacter_t c)
+{
+   int   rval;
+   
+   if( ! table || ! functions || c < '!' || c > '~')
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   rval = _mulle_sprintf_register_functions( table, functions, c);
+   if( rval)
+   {
+      errno = rval;
+      return( -1);
+   }
+   return( 0);
+}
+
+
+int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
+                                        mulle_sprintf_modifiercharacter *s)
+{
+   int   rval;
+   
+   if( ! table || ! s)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   rval = _mulle_sprintf_register_modifiers( table, s);
+   if( rval)
+   {
+      errno = rval;
+      return( -1);
+   }
+   return( 0);
+}
+
+
+int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
+                                       mulle_sprintf_modifiercharacter c)
+{
+   int   rval;
+   
+   if( ! table || c < '!' || c > '~')
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+   
+   rval = _mulle_sprintf_register_modifier( table, c);
+   if( rval)
+   {
+      errno = rval;
+      return( -1);
+   }
+   return( 0);
+}
+
+
+
+int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
+                                                        mulle_sprintf_conversioncharacter_t c)
+{
+   return( mulle_sprintf_register_functions( &mulle_sprintf_get_config()->defaultconversion,
+                                         functions, 
+                                         c));
+}                                                                                 
+
+
+int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c)
+{
+   return( mulle_sprintf_register_modifier( &mulle_sprintf_get_config()->defaultconversion, c));
+}                                                                                 
+
+
+int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s)
+{
+   return( mulle_sprintf_register_modifiers( &mulle_sprintf_get_config()->defaultconversion, s));
 }
 
 
 __attribute__((constructor))
 void  mulle_sprintf_register_default_modifiers_on_load()
 {
-   _mulle_sprintf_register_standardmodifiers( &mulle_sprintf_defaultconversion);
+   mulle_sprintf_register_standardmodifiers( &mulle_sprintf_get_config()->defaultconversion);
 }

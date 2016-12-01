@@ -18,12 +18,12 @@
 
 
 int   mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
-                                         struct mulle_sprintf_formatconversioninfo *info,
-                                         struct mulle_sprintf_argumentarray *arguments,
-                                         int argc);
+                                   struct mulle_sprintf_formatconversioninfo *info,
+                                   struct mulle_sprintf_argumentarray *arguments,
+                                   int argc);
 
 mulle_sprintf_argumenttype_t  mulle_sprintf_get_fp_argumenttype( struct mulle_sprintf_formatconversioninfo *info);
 
-void  _mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables);
+void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

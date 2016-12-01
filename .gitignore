@@ -34,3 +34,13 @@ tests/string/positional
 tests/string/string
 tests/include/
 tests/lib/
+
+/.bootstrap.auto
+
+/.bootstrap.local
+
+/dependencies
+
+/addictions
+
+/.repos
