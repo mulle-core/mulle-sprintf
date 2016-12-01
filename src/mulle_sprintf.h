@@ -43,7 +43,7 @@
 #include <mulle_thread/mulle_thread.h>
 
 
-#define MULLE_SPRINTF_VERSION  ((0 << 20) | (6 << 8) | 0)
+#define MULLE_SPRINTF_VERSION  ((0 << 20) | (7 << 8) | 1)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -55,7 +55,7 @@
 struct mulle_buffer;
 struct mulle_sprintf_conversion;
 
-
+// will not append '\0' !
 int   mulle_sprintf( struct mulle_buffer *buffer,
                      char *format,
                      ...);
@@ -95,6 +95,13 @@ static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
    
    return( &mulle_sprintf_config);
 }
+
+
+static inline struct mulle_sprintf_conversion   *mulle_sprintf_get_defaultconversion( void)
+{
+   return( &mulle_sprintf_get_config()->defaultconversion);
+}
+
 
 
 static inline void    mulle_sprintf_free_storage( void)

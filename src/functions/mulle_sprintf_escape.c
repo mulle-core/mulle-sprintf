@@ -83,7 +83,7 @@ void  mulle_sprintf_register_escape_functions( struct mulle_sprintf_conversion *
 __attribute__((constructor))
 static void  mulle_sprintf_register__default_escape_functions()
 {
-  mulle_sprintf_register_escape_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_escape_functions( mulle_sprintf_get_defaultconversion());
 }
    
 

@@ -869,7 +869,6 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
    
    mulle_buffer_add_string( buffer, s);
    length = mulle_buffer_get_length( buffer) - ctxt->before;
-   mulle_buffer_add_byte( buffer, 0);
 
    if( mulle_buffer_has_overflown( buffer))
    {
@@ -929,7 +928,7 @@ int   mulle_mvsprintf( struct mulle_buffer *buffer, char *format, mulle_vararg_l
       return( -1);
    }
 
-   return( _mulle_mvsprintf( buffer, format, arguments, &mulle_sprintf_get_config()->defaultconversion));
+   return( _mulle_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion()));
 }
 
 
@@ -974,7 +973,7 @@ int   mulle_vsprintf( struct mulle_buffer *buffer, char *format, va_list args)
       errno = EINVAL;
       return( -1);
    }
-   return( _mulle_vsprintf( buffer, format, args, &mulle_sprintf_get_config()->defaultconversion));
+   return( _mulle_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion()));
 }
 
 
@@ -993,7 +992,7 @@ int   mulle_sprintf( struct mulle_buffer *buffer, char *format, ...)
    }
    
    va_start( args, format );
-   rval = _mulle_vsprintf( buffer, format, args, &mulle_sprintf_get_config()->defaultconversion);
+   rval = _mulle_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
    va_end( args);
    return( rval);
 }

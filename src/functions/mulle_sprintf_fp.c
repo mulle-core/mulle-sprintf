@@ -142,6 +142,6 @@ void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tabl
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_fp_functions()
 {
-   mulle_sprintf_register_fp_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_fp_functions( mulle_sprintf_get_defaultconversion());
 }
  

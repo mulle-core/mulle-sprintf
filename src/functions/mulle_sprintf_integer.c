@@ -546,7 +546,7 @@ static struct mulle_sprintf_function     mulle_sprintf_long_octal_functions =
 };
 
 
-void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables)
+void   mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables)
 {
    mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'i');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_int_decimal_functions, 'd');
@@ -567,6 +567,6 @@ void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion 
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_integer_functions()
 {
-   mulle_sprintf_register_integer_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_integer_functions( mulle_sprintf_get_defaultconversion());
 }
  

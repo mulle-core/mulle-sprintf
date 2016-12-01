@@ -54,13 +54,32 @@ src/mulle_sprintf_standalone.c
 
 add_dependencies( mulle_sprintf_standalone mulle_sprintf)
 
+find_library( MULLE_ALLOCATOR_LIBRARY      NAMES mulle_allocator)
+find_library( MULLE_BUFFER_LIBRARY         NAMES mulle_buffer)
+find_library( MULLE_TEST_ALLOCATOR_LIBRARY NAMES mulle_test_allocator)
+find_library( MULLE_THREAD_LIBRARY         NAMES mulle_thread)
+find_library( MULLE_UTF_LIBRARY            NAMES mulle_utf)
+
+message(STATUS "MULLE_ALLOCATOR_LIBRARY is ${MULLE_ALLOCATOR_LIBRARY}")
+message(STATUS "MULLE_BUFFER_LIBRARY is ${MULLE_BUFFER_LIBRARY}")
+message(STATUS "MULLE_TEST_ALLOCATOR_LIBRARY is ${MULLE_TEST_ALLOCATOR_LIBRARY}")
+message(STATUS "MULLE_THREAD_LIBRARY is ${MULLE_THREAD_LIBRARY}")
+message(STATUS "MULLE_UTF_LIBRARY is ${MULLE_UTF_LIBRARY}")
+
+
+set( DEPENDENCY_LIBRARIES
+${MULLE_ALLOCATOR_LIBRARY}
+${MULLE_BUFFER_LIBRARY}
+${MULLE_TEST_ALLOCATOR_LIBRARY}
+${MULLE_THREAD_LIBRARY}
+${MULLE_UTF_LIBRARY}
+)
+
 TARGET_LINK_LIBRARIES( mulle_sprintf_standalone
 ${BEGIN_ALL_LOAD}
 mulle_sprintf
-mulle_utf
-mulle_buffer
-mulle_allocator
-mulle_test_allocator
+${DEPENDENCY_LIBRARIES}
+
 ${END_ALL_LOAD}
 )
 

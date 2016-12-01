@@ -44,3 +44,7 @@ tests/lib/
 /addictions
 
 /.repos
+tests/extension/bool
+tests/extension/bool.debug
+tests/string/positional.debug
+tests/string/string.debug
