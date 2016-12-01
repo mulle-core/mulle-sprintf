@@ -165,6 +165,6 @@ void  mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_return_functions()
 {
-   mulle_sprintf_register_return_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_return_functions( mulle_sprintf_get_defaultconversion());
 }
    

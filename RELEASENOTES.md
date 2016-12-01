@@ -1,3 +1,7 @@
+## 0.7.1
+
+* do not append a '\0' any more for the sake of flushable buffers
+
 ## 0.6
   * fixed an offset bug 
 

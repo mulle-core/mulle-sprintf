@@ -140,9 +140,9 @@ static int   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
-                                                   struct mulle_sprintf_formatconversioninfo *info,
-                                                   char *s)
+int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            char *s)
 { 
    size_t     before;
    ptrdiff_t  length;
@@ -233,5 +233,5 @@ void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *
 __attribute__((constructor))
 static void  mulle_sprintf_register_default_string_functions()
 {
-   mulle_sprintf_register_string_functions( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_string_functions( mulle_sprintf_get_defaultconversion());
 }

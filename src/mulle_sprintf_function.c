@@ -311,7 +311,7 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void);
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void)
 {
-   _mulle_sprintf_dump_available_conversion_characters( &mulle_sprintf_get_config()->defaultconversion);
+   _mulle_sprintf_dump_available_conversion_characters( mulle_sprintf_get_defaultconversion());
 }
 
 
@@ -323,12 +323,15 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
 {
    int   rval;
    
-   if( ! table || ! functions || c < '!' || c > '~')
+   if( ! functions || c < '!' || c > '~')
    {
       errno = EINVAL;
       return( -1);
    }
 
+   if( ! table)
+      table = mulle_sprintf_get_defaultconversion();
+   
    rval = _mulle_sprintf_register_functions( table, functions, c);
    if( rval)
    {
@@ -344,11 +347,14 @@ int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
 {
    int   rval;
    
-   if( ! table || ! s)
+   if( ! s)
    {
       errno = EINVAL;
       return( -1);
    }
+   
+   if( ! table)
+      table = mulle_sprintf_get_defaultconversion();
 
    rval = _mulle_sprintf_register_modifiers( table, s);
    if( rval)
@@ -365,11 +371,15 @@ int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
 {
    int   rval;
    
-   if( ! table || c < '!' || c > '~')
+   if( c < '!' || c > '~')
    {
       errno = EINVAL;
       return( -1);
    }
+   
+   if( ! table)
+      table = mulle_sprintf_get_defaultconversion();
+   
    
    rval = _mulle_sprintf_register_modifier( table, c);
    if( rval)
@@ -385,7 +395,7 @@ int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
 int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
                                                         mulle_sprintf_conversioncharacter_t c)
 {
-   return( mulle_sprintf_register_functions( &mulle_sprintf_get_config()->defaultconversion,
+   return( mulle_sprintf_register_functions( mulle_sprintf_get_defaultconversion(),
                                          functions, 
                                          c));
 }                                                                                 
@@ -393,18 +403,18 @@ int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *f
 
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c)
 {
-   return( mulle_sprintf_register_modifier( &mulle_sprintf_get_config()->defaultconversion, c));
+   return( mulle_sprintf_register_modifier( mulle_sprintf_get_defaultconversion(), c));
 }                                                                                 
 
 
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s)
 {
-   return( mulle_sprintf_register_modifiers( &mulle_sprintf_get_config()->defaultconversion, s));
+   return( mulle_sprintf_register_modifiers( mulle_sprintf_get_defaultconversion(), s));
 }
 
 
 __attribute__((constructor))
 void  mulle_sprintf_register_default_modifiers_on_load()
 {
-   mulle_sprintf_register_standardmodifiers( &mulle_sprintf_get_config()->defaultconversion);
+   mulle_sprintf_register_standardmodifiers( mulle_sprintf_get_defaultconversion());
 }

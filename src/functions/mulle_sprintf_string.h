@@ -39,6 +39,10 @@
 
 #include "mulle_sprintf_function.h"
 
+int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            char *s);
+
 int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              wchar_t *s);

@@ -6,46 +6,68 @@
 
 
 
+static void   printf_string_test()
+{
+   printf( "p: |%s|\n", "VfL Bochum 1848");
+   printf( "p: |%.3s|\n", "VfL Bochum 1848");
+   printf( "p: |\"%.100s\"|\n", "VfL Bochum 1848");
+   printf( "p: |\"%100s\"|\n", "VfL Bochum 1848");
+   printf( "p: |\"%100.100s\"|\n", "VfL Bochum 1848");
+   printf( "p: |\"%.*s\"|\n", 100, "VfL Bochum 1848");
+   printf( "p: |\"%*s\"|\n", 100, "VfL Bochum 1848");
+   printf( "p: |\"%*.*s\"|\n", 100, 100, "VfL Bochum 1848");
+   printf( "p: |%s|\n", "");
+}
+
+
 static void   simple_string_test()
 {
    struct mulle_buffer   *buffer;
 
    buffer = mulle_buffer_create( NULL);
 
-
-   mulle_sprintf( buffer, "%s\n", "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |%s|\n", "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "%.3s\n", "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |%.3s|\n", "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%.100s\"\n", "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%.100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%100s\"\n", "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%100.100s\"\n", "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%100.100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%.*s\"\n", 100, "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%.*s\"|\n", 100, "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%*s\"\n", 100, "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%*s\"|\n", 100, "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "\"%*.*s\"\n", 100, 100, "VfL Bochum 1848");
+   mulle_sprintf( buffer, "m: |\"%*.*s\"|\n", 100, 100, "VfL Bochum 1848");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "%s", "");
+   mulle_sprintf( buffer, "m: |%s|\n", "");
+   mulle_buffer_add_byte( buffer, 0);
    printf( "%s", mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
@@ -60,6 +82,7 @@ int  main()
    mulle_default_allocator = mulle_test_allocator;
 
    simple_string_test();
+   printf_string_test();
 
    mulle_sprintf_free_storage();
    mulle_test_allocator_reset();

@@ -77,7 +77,7 @@ struct mulle_sprintf_formatconversionflags
 
 struct mulle_sprintf_formatconversioninfo
 {
-   void    *mystery;       // used for return type...
+   void    *mystery;       // used for return type conversion...
    
    int     width;          // %100d = 100
    int     precision;      // %.3d  = 3
@@ -139,12 +139,12 @@ enum
    mulle_sprintf_wchar_pointer_argumenttype,
    mulle_sprintf_wint_t_argumenttype,
 
+   // ugliness ensues...
    mulle_sprintf_NSDecimal_pointer_argumenttype
 };
 
 typedef unsigned char   mulle_sprintf_argumenttype_t;
 typedef unsigned char   mulle_sprintf_conversioncharacter_t;
-
 
 union mulle_sprintf_argumentvalue
 {
@@ -182,7 +182,7 @@ union mulle_sprintf_argumentvalue
    wchar_t             *pwc;
    wint_t              wc;
    struct _NSDecimal   *pDecimal;
-} ;
+};
 
 
 extern unsigned char   mulle_sprintf_argumentsize[];
