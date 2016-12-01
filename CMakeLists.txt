@@ -24,11 +24,11 @@ src/functions
 
 set(HEADERS
 src/mulle_sprintf.h
+src/mulle_sprintf_function.h
 src/functions/mulle_sprintf_character.h
 src/functions/mulle_sprintf_escape.h
 src/functions/mulle_sprintf_fp.h
-src/functions/mulle_sprintf_function.h
-src/functions/mulle_sprintf_int.h
+src/functions/mulle_sprintf_integer.h
 src/functions/mulle_sprintf_pointer.h
 src/functions/mulle_sprintf_return.h
 src/functions/mulle_sprintf_string.h
@@ -37,11 +37,11 @@ src/functions/mulle_sprintf_string.h
 
 add_library(mulle_sprintf
 src/mulle_sprintf.c
+src/mulle_sprintf_function.c
 src/functions/mulle_sprintf_character.c
 src/functions/mulle_sprintf_escape.c
 src/functions/mulle_sprintf_fp.c
-src/functions/mulle_sprintf_function.c
-src/functions/mulle_sprintf_int.c
+src/functions/mulle_sprintf_integer.c
 src/functions/mulle_sprintf_pointer.c
 src/functions/mulle_sprintf_return.c
 src/functions/mulle_sprintf_string.c

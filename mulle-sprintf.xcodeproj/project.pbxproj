@@ -27,15 +27,14 @@
 		4141B0231CB5627200B0306A /* mulle_sprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0061CB5627200B0306A /* mulle_sprintf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4141B0241CB5627200B0306A /* mulle_sprintf_character.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0081CB5627200B0306A /* mulle_sprintf_character.c */; };
 		4141B0251CB5627200B0306A /* mulle_sprintf_character.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0091CB5627200B0306A /* mulle_sprintf_character.h */; };
-		4141B0281CB5627200B0306A /* mulle_sprintf_decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B00C1CB5627200B0306A /* mulle_sprintf_decimal.h */; };
 		4141B02A1CB5627200B0306A /* mulle_sprintf_escape.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B00E1CB5627200B0306A /* mulle_sprintf_escape.c */; };
 		4141B02B1CB5627200B0306A /* mulle_sprintf_escape.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B00F1CB5627200B0306A /* mulle_sprintf_escape.h */; };
 		4141B02C1CB5627200B0306A /* mulle_sprintf_fp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0101CB5627200B0306A /* mulle_sprintf_fp.c */; };
 		4141B02D1CB5627200B0306A /* mulle_sprintf_fp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0111CB5627200B0306A /* mulle_sprintf_fp.h */; };
 		4141B02F1CB5627200B0306A /* mulle_sprintf_function.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0131CB5627200B0306A /* mulle_sprintf_function.c */; };
 		4141B0301CB5627200B0306A /* mulle_sprintf_function.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0141CB5627200B0306A /* mulle_sprintf_function.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4141B0321CB5627200B0306A /* mulle_sprintf_int.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0161CB5627200B0306A /* mulle_sprintf_int.c */; };
-		4141B0331CB5627200B0306A /* mulle_sprintf_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0171CB5627200B0306A /* mulle_sprintf_int.h */; };
+		4141B0321CB5627200B0306A /* mulle_sprintf_integer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0161CB5627200B0306A /* mulle_sprintf_integer.c */; };
+		4141B0331CB5627200B0306A /* mulle_sprintf_integer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B0171CB5627200B0306A /* mulle_sprintf_integer.h */; };
 		4141B0351CB5627200B0306A /* mulle_sprintf_pointer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B0191CB5627200B0306A /* mulle_sprintf_pointer.c */; };
 		4141B0361CB5627200B0306A /* mulle_sprintf_pointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4141B01A1CB5627200B0306A /* mulle_sprintf_pointer.h */; };
 		4141B0381CB5627200B0306A /* mulle_sprintf_return.c in Sources */ = {isa = PBXBuildFile; fileRef = 4141B01C1CB5627200B0306A /* mulle_sprintf_return.c */; };
@@ -93,16 +92,14 @@
 		4141B0061CB5627200B0306A /* mulle_sprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf.h; sourceTree = "<group>"; };
 		4141B0081CB5627200B0306A /* mulle_sprintf_character.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_character.c; sourceTree = "<group>"; };
 		4141B0091CB5627200B0306A /* mulle_sprintf_character.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_character.h; sourceTree = "<group>"; };
-		4141B00B1CB5627200B0306A /* mulle_sprintf_decimal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_decimal.c; sourceTree = "<group>"; };
-		4141B00C1CB5627200B0306A /* mulle_sprintf_decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_decimal.h; sourceTree = "<group>"; };
 		4141B00E1CB5627200B0306A /* mulle_sprintf_escape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_escape.c; sourceTree = "<group>"; };
 		4141B00F1CB5627200B0306A /* mulle_sprintf_escape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_escape.h; sourceTree = "<group>"; };
 		4141B0101CB5627200B0306A /* mulle_sprintf_fp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_fp.c; sourceTree = "<group>"; };
 		4141B0111CB5627200B0306A /* mulle_sprintf_fp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_fp.h; sourceTree = "<group>"; };
 		4141B0131CB5627200B0306A /* mulle_sprintf_function.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_function.c; sourceTree = "<group>"; };
 		4141B0141CB5627200B0306A /* mulle_sprintf_function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_function.h; sourceTree = "<group>"; };
-		4141B0161CB5627200B0306A /* mulle_sprintf_int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_int.c; sourceTree = "<group>"; };
-		4141B0171CB5627200B0306A /* mulle_sprintf_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_int.h; sourceTree = "<group>"; };
+		4141B0161CB5627200B0306A /* mulle_sprintf_integer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_integer.c; sourceTree = "<group>"; };
+		4141B0171CB5627200B0306A /* mulle_sprintf_integer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_integer.h; sourceTree = "<group>"; };
 		4141B0191CB5627200B0306A /* mulle_sprintf_pointer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_pointer.c; sourceTree = "<group>"; };
 		4141B01A1CB5627200B0306A /* mulle_sprintf_pointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mulle_sprintf_pointer.h; sourceTree = "<group>"; };
 		4141B01C1CB5627200B0306A /* mulle_sprintf_return.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mulle_sprintf_return.c; sourceTree = "<group>"; };
@@ -192,6 +189,8 @@
 			children = (
 				4141B0061CB5627200B0306A /* mulle_sprintf.h */,
 				4141B0051CB5627200B0306A /* mulle_sprintf.c */,
+				4141B0141CB5627200B0306A /* mulle_sprintf_function.h */,
+				4141B0131CB5627200B0306A /* mulle_sprintf_function.c */,
 				41D53B9A1CB7EE02006BFF0E /* mulle_sprintf_standalone.c */,
 				4141B0071CB5627200B0306A /* Functions */,
 			);
@@ -203,16 +202,12 @@
 			children = (
 				4141B0091CB5627200B0306A /* mulle_sprintf_character.h */,
 				4141B0081CB5627200B0306A /* mulle_sprintf_character.c */,
-				4141B00C1CB5627200B0306A /* mulle_sprintf_decimal.h */,
-				4141B00B1CB5627200B0306A /* mulle_sprintf_decimal.c */,
 				4141B00F1CB5627200B0306A /* mulle_sprintf_escape.h */,
 				4141B00E1CB5627200B0306A /* mulle_sprintf_escape.c */,
 				4141B0111CB5627200B0306A /* mulle_sprintf_fp.h */,
 				4141B0101CB5627200B0306A /* mulle_sprintf_fp.c */,
-				4141B0141CB5627200B0306A /* mulle_sprintf_function.h */,
-				4141B0131CB5627200B0306A /* mulle_sprintf_function.c */,
-				4141B0171CB5627200B0306A /* mulle_sprintf_int.h */,
-				4141B0161CB5627200B0306A /* mulle_sprintf_int.c */,
+				4141B0171CB5627200B0306A /* mulle_sprintf_integer.h */,
+				4141B0161CB5627200B0306A /* mulle_sprintf_integer.c */,
 				4141B01A1CB5627200B0306A /* mulle_sprintf_pointer.h */,
 				4141B0191CB5627200B0306A /* mulle_sprintf_pointer.c */,
 				4141B01D1CB5627200B0306A /* mulle_sprintf_return.h */,
@@ -268,11 +263,10 @@
 			files = (
 				4141B0231CB5627200B0306A /* mulle_sprintf.h in Headers */,
 				4141B0301CB5627200B0306A /* mulle_sprintf_function.h in Headers */,
-				4141B0281CB5627200B0306A /* mulle_sprintf_decimal.h in Headers */,
 				4141B02B1CB5627200B0306A /* mulle_sprintf_escape.h in Headers */,
 				4141B0361CB5627200B0306A /* mulle_sprintf_pointer.h in Headers */,
 				4141B02D1CB5627200B0306A /* mulle_sprintf_fp.h in Headers */,
-				4141B0331CB5627200B0306A /* mulle_sprintf_int.h in Headers */,
+				4141B0331CB5627200B0306A /* mulle_sprintf_integer.h in Headers */,
 				4141B0251CB5627200B0306A /* mulle_sprintf_character.h in Headers */,
 				4141B03C1CB5627200B0306A /* mulle_sprintf_string.h in Headers */,
 				4141B0391CB5627200B0306A /* mulle_sprintf_return.h in Headers */,
@@ -392,7 +386,7 @@
 				4141B02A1CB5627200B0306A /* mulle_sprintf_escape.c in Sources */,
 				4141B02F1CB5627200B0306A /* mulle_sprintf_function.c in Sources */,
 				4141B03B1CB5627200B0306A /* mulle_sprintf_string.c in Sources */,
-				4141B0321CB5627200B0306A /* mulle_sprintf_int.c in Sources */,
+				4141B0321CB5627200B0306A /* mulle_sprintf_integer.c in Sources */,
 				4141B0221CB5627200B0306A /* mulle_sprintf.c in Sources */,
 				4141B02C1CB5627200B0306A /* mulle_sprintf_fp.c in Sources */,
 				4141B0351CB5627200B0306A /* mulle_sprintf_pointer.c in Sources */,

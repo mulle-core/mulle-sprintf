@@ -11,19 +11,12 @@
  *  $Id$
  *
  */
-#ifndef _MULLE_SPRINTF_DECIMAL_FUNCTIONS__H__
-#define _MULLE_SPRINTF_DECIMAL_FUNCTIONS__H__
+#ifndef MULLE_SPRINTF_DECIMAL__H__
+#define MULLE_SPRINTF_DECIMAL__H__
  
-#include "mulle_sprintf_int.h"
+#include "mulle_sprintf_function.h"
 
 
-int  mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
-                                 struct mulle_sprintf_formatconversioninfo *info,
-                                 struct mulle_sprintf_argumentarray *arguments,
-                                 int argc);
-                                          
-mulle_sprintf_argumenttype_t  mulle_sprintf_get_decimal_argumenttype( struct mulle_sprintf_formatconversioninfo *info);
-
-void  _mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion *tables);
+void  mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion *tables);
    
 #endif
