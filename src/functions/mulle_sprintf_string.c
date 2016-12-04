@@ -69,7 +69,7 @@ static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
    {
-      mulle_utf16_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      mulle_utf16_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
       
       if( info->width > length)
          mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
@@ -79,7 +79,7 @@ static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
    
-   mulle_utf16_convert_to_utf8_bytebuffer( s, length, buffer,  (void *) mulle_buffer_add_bytes);
+   mulle_utf16_bufferconvert_to_utf8( s, length, buffer,  (void *) mulle_buffer_add_bytes);
    return( 0);
 }
 
@@ -103,7 +103,7 @@ static int   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
    {
-      mulle_utf32_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      mulle_utf32_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
       
       if( info->width > length)
          mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
@@ -113,7 +113,7 @@ static int   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
    
-   mulle_utf32_convert_to_utf8_bytebuffer( s, length, buffer, (void *) mulle_buffer_add_bytes);
+   mulle_utf32_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
    return( 0);
 }
 
