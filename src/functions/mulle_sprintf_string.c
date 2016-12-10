@@ -42,9 +42,16 @@
 
 // std-c and dependencies
 #include <mulle_buffer/mulle_buffer.h>
-#include <mulle_utf/mulle_utf.h>
 #include <string.h>
 
+
+// if no widechar support
+#ifndef DONT_HAVE_MULLE_UTF
+#include <mulle_utf/mulle_utf.h>
+
+#if MULLE_UTF_VERSION < ((1 << 20) | (0 << 8) | 7)
+# error "mulle_utf is too old"
+#endif
 
 
 static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
@@ -140,6 +147,20 @@ static int   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
 }
 
 
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+{
+   return( mulle_sprintf_wchar_pointer_argumenttype);
+}
+
+static struct mulle_sprintf_function     mulle_widestring_functions =
+{
+   mulle_sprintf_get_widestring_argumenttype,
+   _mulle_sprintf_widestring_conversion
+};
+
+#endif
+
+
 int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
                                             struct mulle_sprintf_formatconversioninfo *info,
                                             char *s)
@@ -185,25 +206,23 @@ static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
    union mulle_sprintf_argumentvalue  v;
    mulle_sprintf_argumenttype_t       t;
    
+#ifndef DONT_HAVE_MULLE_UTF
    t = arguments->types[ argc];
    if( t == mulle_sprintf_wchar_pointer_argumenttype)
       return( _mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
-
+#endif
+   
    v = arguments->values[ argc];
    return( _mulle_sprintf_charstring_conversion( buffer, info, v.pc));
 }                   
 
 
-static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
-{
-   return( mulle_sprintf_wchar_pointer_argumenttype);
-}
-
-
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+#ifndef DONT_HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
       return( mulle_sprintf_wchar_pointer_argumenttype);
+#endif
    return( mulle_sprintf_char_pointer_argumenttype);
 }
 
@@ -215,18 +234,13 @@ static struct mulle_sprintf_function     mulle_string_functions =
 };
 
 
-static struct mulle_sprintf_function     mulle_widestring_functions =
+void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables)
 {
-   mulle_sprintf_get_widestring_argumenttype,
-   _mulle_sprintf_widestring_conversion
-};
-
-
-void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables) 
-{
-   mulle_sprintf_register_functions( tables, &mulle_string_functions,'s');
+   mulle_sprintf_register_functions( tables, &mulle_string_functions, 's');
+#ifndef DONT_HAVE_MULLE_UTF
    mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
    mulle_sprintf_register_modifier( tables, 'l');
+#endif
 }
 
 
