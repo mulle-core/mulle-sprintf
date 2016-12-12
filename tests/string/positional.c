@@ -7,7 +7,8 @@
 
 static void   printf_complex_width_tests()
 {
-   printf( "printf: |%2$*1$s/%.*s|\n", 3, "VfL Bochum 1848", 5, "VfL Bochum 1848");
+// mixed: positional and sequential is undefined actually by the standard
+//   printf( "printf: |%2$*1$s/%.*s|\n", 3, "VfL Bochum 1848", 5, "VfL Bochum 1848");
    printf( "printf: |%*.*s/%*.*s|\n", 3, 5, "VfL Bochum 1848", 5, 3, "VfL Bochum 1848");
    printf( "printf: |%*s/%.*s|\n", 3, "VfL Bochum 1848", 5, "VfL Bochum 1848");
 }
