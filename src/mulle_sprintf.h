@@ -43,7 +43,7 @@
 #include <mulle_thread/mulle_thread.h>
 
 
-#define MULLE_SPRINTF_VERSION  ((0 << 20) | (7 << 8) | 5)
+#define MULLE_SPRINTF_VERSION  ((0 << 20) | (7 << 8) | 7)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
