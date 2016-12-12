@@ -48,3 +48,5 @@ tests/extension/bool
 tests/extension/bool.debug
 tests/string/positional.debug
 tests/string/string.debug
+tests/integer/free
+tests/integer/free.debug

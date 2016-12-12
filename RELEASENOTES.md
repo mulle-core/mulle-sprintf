@@ -1,3 +1,7 @@
+### 0.7.5
+
+* fix general bug that manifested on linux
+
 ### 0.7.3
 
 * improve documentation
