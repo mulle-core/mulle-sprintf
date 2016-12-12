@@ -43,7 +43,7 @@
 #include <mulle_thread/mulle_thread.h>
 
 
-#define MULLE_SPRINTF_VERSION  ((0 << 20) | (7 << 8) | 1)
+#define MULLE_SPRINTF_VERSION  ((0 << 20) | (7 << 8) | 3)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -92,7 +92,7 @@ struct mulle_sprintf_config
 static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
 {
    MULLE_SPRINTF_EXTERN_GLOBAL struct mulle_sprintf_config   mulle_sprintf_config;
-   
+
    return( &mulle_sprintf_config);
 }
 
