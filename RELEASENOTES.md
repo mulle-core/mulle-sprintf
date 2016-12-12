@@ -1,3 +1,7 @@
+### 0.7.7
+
+* fix tests to use mulle_buffer
+
 ### 0.7.5
 
 * fix general bug that manifested on linux

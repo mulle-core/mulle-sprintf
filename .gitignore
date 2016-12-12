@@ -50,3 +50,8 @@ tests/string/positional.debug
 tests/string/string.debug
 tests/integer/free
 tests/integer/free.debug
+/tests/mulle-tests
+
+/bin/mulle-homebrew
+
+/mulle-configuration
