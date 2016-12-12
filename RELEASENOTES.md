@@ -1,3 +1,7 @@
+### 0.7.9
+
+* don't troll stdlib in tests
+
 ### 0.7.7
 
 * fix tests to use mulle_buffer
