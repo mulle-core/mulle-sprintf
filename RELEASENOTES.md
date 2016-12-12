@@ -1,9 +1,13 @@
+### 0.7.3
+
+* improve documentation
+
 ## 0.7.1
 
 * do not append a '\0' any more for the sake of flushable buffers
 
 ## 0.6
-  * fixed an offset bug 
+  * fixed an offset bug
 
 ## 0.5
    * added mulle_utf to dependencies
@@ -11,7 +15,7 @@
 
 ## 0.4
    * fix bug when no conversion is needed
-   
+
 ## 0.3
    * fix FP output
 

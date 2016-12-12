@@ -4,19 +4,16 @@
 
 ### `mulle_sprintf`
 
+```
 int   mulle_sprintf( struct mulle_buffer *buffer,
                      char *format,
                      ...);
+```
 
 The 'C' version of mulle_sprintf with variable arguments.  `buffer` will be used
 to hold the output string. This protects against buffer overflows. The contents
 of `buffer` will not be zero terminated. This allows you to easily to the
-buffer with maybe another `mulle_sprintf` call. See the example how to properly
-treat the buffer contents.
-
-Example
-```
-
+buffer with maybe another `mulle_sprintf` call. 
 
 Returns the length of the produced buffer in bytes.
 Returns -1 on failure and sets `errno` to
@@ -55,7 +52,7 @@ int   mulle_vsprintf( struct mulle_buffer *buffer,
                       va_list va);
 ```
 
-The `<stdarg.h> va_list`  variant of `mulle_sprintf`.
+The `<stdarg.h>` `va_list` variant of `mulle_sprintf`.
 
 
 ### `mulle_mvsprintf`
@@ -66,7 +63,7 @@ int   mulle_mvsprintf( struct mulle_buffer *buffer,
                        mulle_vararg_list va);
 ```
 
-The `<mulle_vararg/mulle_vararh.h> mulle_vararg_list` variant of `mulle_sprintf`.
+The `<mulle_vararg/mulle_vararh.h>` `mulle_vararg_list` variant of `mulle_sprintf`.
 
 
 ### `mulle_sprintf_free_storage`
@@ -75,7 +72,7 @@ The `<mulle_vararg/mulle_vararh.h> mulle_vararg_list` variant of `mulle_sprintf`
 mulle_sprintf_free_storage();
 ```
 
-mulle-sprintf uses a thread local storage system to maintain a memory cache.
+**mulle-sprintf** uses a thread local storage system to maintain a memory cache.
 It may be useful to clear the thread local cache before running the leak
 checker with `mulle_sprintf_free_storage`.
 
@@ -88,8 +85,8 @@ Vou can augment the available "conversion specifiers"
 like `%d` or `%s` with your own characters. This can be
 used by an Objective-C Foundation for the `%@` conversion for instance.
 
-Here is an example that registers a conversion rotine for a BOOL
-type (based on `int`) to be used as '%b', that outputs "YES" or "NO"
+Here is an example that of a conversion routine for `%b`, to be used as a BOOL
+type (based on `int`) to output "YES" or "NO":
 
 
 ```
