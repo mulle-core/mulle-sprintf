@@ -44,7 +44,6 @@
 
 #define STACKABLE_N     16
 
-
 //
 // now here C++ & templates would come in handy...
 // this is code is all original, except for some of the
@@ -55,12 +54,12 @@ typedef enum
 {
    state_begin,
    state_opt_flags,
-   state_opt_separators, 
+   state_opt_separators,
    state_argument_index,
    state_width,
    state_precision,
-   state_modifier, 
-   state_conversion 
+   state_modifier,
+   state_conversion
 } parser_state;
 
 
@@ -87,7 +86,7 @@ struct mulle_sprintf_malloc_storage
 static struct mulle_sprintf_malloc_storage   *mulle_sprintf_malloc_storage_create( struct mulle_allocator                      *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
-   
+
    storage = mulle_allocator_calloc( allocator, 1, sizeof( struct mulle_sprintf_malloc_storage));
    storage->allocator = allocator;
    return( storage);
@@ -108,11 +107,11 @@ static void   mulle_sprintf_malloc_storage_free( struct mulle_sprintf_malloc_sto
    struct mulle_sprintf_config           *config;
 
    config = mulle_sprintf_get_config();
-   
+
    mulle_sprintf_malloc_storage_done( storage);
    mulle_allocator_free( storage->allocator, storage);
    mulle_thread_tss_free( config->key);
-   config->key = 0;
+   config->key = (mulle_thread_tss_t) -1;
 }
 
 
@@ -122,12 +121,14 @@ static void   *get_storage( struct mulle_allocator *allocator)
    struct mulle_sprintf_config           *config;
 
    config = mulle_sprintf_get_config();
-   if( ! config->key)
+   if( config->key == (mulle_thread_tss_t) -1)
+   {
       if( mulle_thread_tss_create( (void *) config->free_storage, &config->key))
       {
          perror( "mulle_thread_tss_create");
          abort();
       }
+   }
 
    storage = mulle_thread_tss_get( config->key);
    if( ! storage)
@@ -145,14 +146,13 @@ static void   free_storage( void)
    struct mulle_sprintf_config           *config;
 
    config = mulle_sprintf_get_config();
-   
-   if( ! config->key)
+   if( config->key == (mulle_thread_tss_t) -1)
       return;
-   
+
    storage = mulle_thread_tss_get( config->key);
    if( ! storage)
       return;
-   
+
    mulle_sprintf_malloc_storage_free( storage);
    mulle_thread_tss_set( config->key, NULL);
 }
@@ -160,7 +160,7 @@ static void   free_storage( void)
 
 struct mulle_sprintf_config    mulle_sprintf_config =
 {
-   0,
+   (mulle_thread_tss_t) -1,
    get_storage,
    free_storage,
    { { 0}, { 0 } }
@@ -192,7 +192,7 @@ static struct mulle_sprintf_argumentarray   *space_for_arguments( unsigned int n
    struct mulle_sprintf_malloc_storage   *storage;
    struct mulle_sprintf_config           *config;
    struct mulle_sprintf_argumentarray    *args;
-   
+
    config  = mulle_sprintf_get_config();
    storage = (*config->get_storage)( allocator);
 
@@ -214,7 +214,7 @@ static void   *space_for_infos( unsigned int n, struct mulle_allocator *allocato
    struct mulle_sprintf_malloc_storage   *storage;
    struct mulle_sprintf_config           *config;
    size_t                                size;
-   
+
    config  = mulle_sprintf_get_config();
    storage = (*config->get_storage)( allocator);
 
@@ -233,21 +233,21 @@ static void   *space_for_infos( unsigned int n, struct mulle_allocator *allocato
 #pragma mark conversion tables
 
 
-static inline struct mulle_sprintf_function   *functions_for_conversion( mulle_sprintf_vector_t jumptable, 
+static inline struct mulle_sprintf_function   *functions_for_conversion( mulle_sprintf_vector_t jumptable,
                                                                mulle_sprintf_conversioncharacter_t c)
 {
    return( jumptable[ mulle_sprintf_index_for_character( c)]);
 }
 
 
-static int   determine_is_valid_conversion_character( struct mulle_sprintf_conversion *table, 
+static int   determine_is_valid_conversion_character( struct mulle_sprintf_conversion *table,
                                                       mulle_sprintf_conversioncharacter_t c)
 {
    struct mulle_sprintf_function  *functions;
 
    if( mulle_sprintf_is_modifier_character( table->modifiers, c))
       return( 0);
-      
+
    switch( c)
    {
    case '%' : return( 1);
@@ -257,7 +257,7 @@ static int   determine_is_valid_conversion_character( struct mulle_sprintf_conve
 }
 
 
-static inline unsigned char   jump_determine_argument_type( mulle_sprintf_vector_t  jumptable, 
+static inline unsigned char   jump_determine_argument_type( mulle_sprintf_vector_t  jumptable,
                                                             struct mulle_sprintf_formatconversioninfo *info)
 {
    struct mulle_sprintf_function  *functions;
@@ -267,20 +267,20 @@ static inline unsigned char   jump_determine_argument_type( mulle_sprintf_vector
 }
 
 
-static inline int   jump_convert_argument( mulle_sprintf_vector_t  jumptable, 
-                                           struct mulle_buffer *buffer, 
+static inline int   jump_convert_argument( mulle_sprintf_vector_t  jumptable,
+                                           struct mulle_buffer *buffer,
                                            struct mulle_sprintf_formatconversioninfo *info,
                                            struct mulle_sprintf_argumentarray *arguments,
                                            int i)
 {
    struct mulle_sprintf_function  *functions;
-   
+
    functions = functions_for_conversion( jumptable, info->conversion);
    return( (*functions->convert_argument)( buffer, info, arguments, i));
 }
 
 
-static inline unsigned char   determine_argument_type( mulle_sprintf_vector_t  jumptable, 
+static inline unsigned char   determine_argument_type( mulle_sprintf_vector_t  jumptable,
                                                        struct mulle_sprintf_formatconversioninfo *info)
 {
    // need to code this (possibly :))
@@ -301,7 +301,7 @@ static inline void    update_width_and_precision( struct mulle_sprintf_formatcon
          *argc = info->argv_index[ 1];
       else
          ++*argc;
-         
+
       info->width = arguments->values[ *argc].i;
       if( info->width < 0)
       {
@@ -309,20 +309,20 @@ static inline void    update_width_and_precision( struct mulle_sprintf_formatcon
          info->width              = - info->width;
       }
    }
-   
+
    if( info->memory.minus_found)
    {
       info->memory.left_justify = 1;
       info->memory.zero_found   = 0;
    }
-   
+
    if( info->memory.precision_is_argument)
    {
       if( info->memory.precision_is_indexed_argument)
          *argc = info->argv_index[ 2];
       else
          ++*argc;
-         
+
       info->precision = arguments->values[ *argc].i;
       if( info->precision < 0)
          info->precision = - info->precision;
@@ -338,7 +338,7 @@ static inline int   convert_argument( mulle_sprintf_vector_t jumptable,
                                       int before)
 {
    if( info->modifier[ 0] == 'v' || info->modifier[ 1] == 'v' || info->modifier[ 2] == 'v')
-   {  
+   {
       mulle_buffer_add_string( buffer, "<vector unsupported>");
       return( -1);
    }
@@ -373,7 +373,7 @@ static int   number_of_conversions( char *format,
    int    n;
    char   c;
    char   *memo;
-   
+
    *remainder = NULL;
 
    n = 0;
@@ -391,7 +391,7 @@ static int   number_of_conversions( char *format,
             else
                *starts++ = format;
          }
-         
+
          memo = format;
          while( c = *++format)
          {
@@ -400,17 +400,17 @@ static int   number_of_conversions( char *format,
             case 0  : continue;        // no
             case 1  : ++n; goto next;  // yes
             case -1 : if( starts)
-                         --starts; 
+                         --starts;
                       format = memo;
                       goto next;       // malformed format
-            }            
+            }
          }
       }
 next:
-      ++format;         
+      ++format;
     ;
    }
-   
+
    return( n);
 }
 
@@ -423,7 +423,7 @@ typedef struct
    char    *sentinel;
 
    parser_state   state;
-   
+
    int     modifier_index;
 } format_conversion_parser;
 
@@ -432,7 +432,7 @@ typedef struct
 // expect parser->curr to point at '$'
 // expect parser->memo to point after '*' (first digit)
 //
-static inline int   positive_int_value_from_memo( format_conversion_parser *parser, 
+static inline int   positive_int_value_from_memo( format_conversion_parser *parser,
                                                   struct mulle_sprintf_formatconversioninfo *info)
 
 {
@@ -455,14 +455,14 @@ static inline int   positive_int_value_from_memo( format_conversion_parser *pars
 //
 // returns: number of arguments it needs
 //
-static inline int   parse_conversion_info( char *format, 
+static inline int   parse_conversion_info( char *format,
                                            struct mulle_sprintf_formatconversioninfo *info,
                                            int arg)
 {
    format_conversion_parser  parser;
    char           c;
    int            value;
-   
+
    memset( info, 0, sizeof( struct mulle_sprintf_formatconversioninfo));
    parser.memo     = NULL;
    parser.curr     = format;
@@ -472,16 +472,16 @@ static inline int   parse_conversion_info( char *format,
    parser.state = state_begin;
 
    parser.modifier_index = 0;
-   
+
    while( c = *++parser.curr)
    {
       // bail on obvious syntax error
       if( parser.curr == parser.sentinel)
          return( -1);
-         
+
       switch( parser.state)
       {
-      case state_begin : 
+      case state_begin :
          parser.memo = NULL;
          if( c >= '1' && c <= '9')
          {
@@ -490,7 +490,7 @@ static inline int   parse_conversion_info( char *format,
             continue;
          }
          parser.state = state_opt_flags;  // fall thru
-         
+
       case state_opt_flags :
          switch( c)
          {
@@ -503,7 +503,7 @@ static inline int   parse_conversion_info( char *format,
          }
          parser.state = state_opt_separators;  // fall thru
 
-      case state_opt_separators : 
+      case state_opt_separators :
          parser.state = state_width;  // next time
          if( c == ',' || c == ';' || c == ':' || c == '_')
          {
@@ -511,7 +511,7 @@ static inline int   parse_conversion_info( char *format,
             continue;
          }
          goto state_width_entry;
-         
+
       case state_argument_index :
          if( c >= '0' && c <= '9')
             continue;
@@ -520,7 +520,7 @@ static inline int   parse_conversion_info( char *format,
             value = positive_int_value_from_memo( &parser, info);
             if( value <= 0)
                return( -1);
-            
+
             info->argv_index[ 0]              = value;
             info->memory.argument_index_found = 1;
             parser.memo                       = NULL;
@@ -529,9 +529,9 @@ static inline int   parse_conversion_info( char *format,
             continue;
          }
          // asume it's width
-         
+
          parser.state = state_width; // fall thru
-         
+
       case state_width :
 state_width_entry:
          if( ! parser.memo)  // first time ?
@@ -540,15 +540,15 @@ state_width_entry:
             {
                info->memory.width_found       = 1;
                info->memory.width_is_argument = 1;
-               
+
                parser.memo = parser.curr + 1;
                continue;
             }
-            
+
             if( c >= '1' && c <= '9')
             {
                info->memory.width_found = 1;
-               
+
                parser.memo = parser.curr;
                continue;
             }
@@ -563,11 +563,11 @@ state_width_entry:
             {
                if( ! info->memory.width_is_argument)
                   return( -1);
-               
+
                value = positive_int_value_from_memo( &parser, info);
                if( value <= 0)
                   return( -1);
-               
+
                info->argv_index[ 1] = value;
                parser.memo          = NULL;
                parser.state         = state_precision;
@@ -590,13 +590,13 @@ state_width_entry:
          }
          parser.state = state_precision;
          parser.memo = NULL;
-         
+
          // after a precision, dot all digits belong to precision
       case state_precision :
          if( ! parser.memo)
          {
             if( c == '.')
-            {  
+            {
                info->memory.precision_found = 1;
                parser.memo = parser.curr + 1;
                continue;
@@ -607,7 +607,7 @@ state_width_entry:
             if( c == '*')
             {
                if( info->memory.precision_is_argument)
-                  return( -1); 
+                  return( -1);
 
                info->memory.precision_is_argument = 1;
                parser.memo  = parser.curr + 1;
@@ -615,16 +615,16 @@ state_width_entry:
             }
             if( c >= '0' && c <= '9')
                continue;
-               
+
             if( c == '$')
             {
                if( ! info->memory.precision_is_argument)
                   return( -1);
-               
+
                value = positive_int_value_from_memo( &parser, info);
                if( value == 0)
                   return( -1);
-               
+
                info->memory.precision_is_indexed_argument = 1;
                info->argv_index[ 2]                       = value;
                parser.state                               = state_modifier;
@@ -638,7 +638,7 @@ state_width_entry:
                value = positive_int_value_from_memo( &parser, info);
                if( value < 0)
                   return( -1);
-   
+
                info->precision = value;
             }
             else
@@ -650,8 +650,8 @@ state_width_entry:
                // parser.memo = NULL;
          }
          parser.state = state_modifier;  // fall thru
-         
-      case state_modifier : 
+
+      case state_modifier :
          switch( c)
          {
          case 'h' :
@@ -663,13 +663,13 @@ state_width_entry:
          case 'L' :
             if( parser.modifier_index >= 3)
                return( -1);
-   
+
             info->modifier[ parser.modifier_index++] = c;
             continue;
          }
          parser.state = state_conversion; // fall thru
 
-      case state_conversion : 
+      case state_conversion :
          info->conversion = c;
          info->length     = (int) ((parser.curr - format) + 1);
          return( arg + 1);
@@ -710,9 +710,9 @@ static void   determine_all_conversion_argument_types( struct mulle_sprintf_cont
    struct mulle_sprintf_formatconversioninfo   *info;
    int                                         i;
    int                                         arg;
-   
+
    arg = 0;
-   
+
    for( i = 0; i < ctxt->n; i++)
    {
       info = &ctxt->infos[ i];
@@ -729,9 +729,9 @@ static void   determine_all_conversion_argument_types( struct mulle_sprintf_cont
 
          ++arg;
       }
-      
+
       ctxt->arguments->types[ arg] = determine_argument_type( table->jumps, info);
-      
+
       // looks so wrong, but is sprintf compatible
       if( info->memory.width_is_argument && info->memory.width_is_indexed_argument)
          arg = info->argv_index[ 1];
@@ -754,7 +754,7 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    int                      i;
    int                      max_arg;
    struct mulle_allocator   *allocator;
-   
+
    ctxt->n = number_of_conversions( format,
                                     ctxt->startsBuf,
                                     &ctxt->startsBuf[ STACKABLE_N],
@@ -762,10 +762,10 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
                                     table);
    if( ! ctxt->n)
       return( 0);
-   
+
    allocator    = mulle_buffer_get_allocator( buffer);
    ctxt->before = (int) mulle_buffer_get_length( buffer);
-   
+
    ctxt->starts = ctxt->startsBuf;
    ctxt->infos  = ctxt->conversionBuf;
    if( ctxt->n >= STACKABLE_N)
@@ -781,22 +781,22 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
                              &remaining_format,
                              table);
    }
-   
+
    //
    // now parse the conversion specifiers into their "infos"
    // at the same time, we calculate the
    // max index of arguments consumed from stack
    // args are indexed from 1 to argc
-   
+
    arg     = 0;
    max_arg = 0;
-   
+
    for( i = 0; i < ctxt->n; i++)
    {
       arg = parse_conversion_info( ctxt->starts[ i], &ctxt->infos[ i], arg);
       if( arg <= 0)
          return( -4);
-      
+
       if( arg > max_arg)
          max_arg = arg;
    }
@@ -811,22 +811,22 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    }
    else
       ctxt->arguments = space_for_arguments( argc, allocator);
-   
+
    memset( ctxt->arguments->types,
            mulle_sprintf_int_argumenttype,
            sizeof( mulle_sprintf_argumenttype_t) * argc);
-   
+
    //
    // now determine all types for all arguments used. The width and precision
    // are integer with is easy and already set above
    // (this may not touch all stack arguments!)
    //
    determine_all_conversion_argument_types( ctxt, table);
-   
+
    return( argc);
 }
- 
-                          
+
+
 static int  print_context( struct mulle_sprintf_context *ctxt,
                            struct mulle_buffer *buffer,
                            char *format,
@@ -838,10 +838,10 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
    int                                         i;
    ptrdiff_t                                   length;
    struct mulle_sprintf_formatconversioninfo   *info;
-   
+
    // finally, finally oh so finally
    // print stuff
-   
+
    fail = 0;
    s    = format;
    arg  = 0;
@@ -854,19 +854,19 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
          mulle_buffer_add_bytes( buffer, s, length);
          s += length;
       }
-      
+
       info = &ctxt->infos[ i];
       if( convert_argument( table->jumps, buffer, info, ctxt->arguments, &arg, ctxt->before))
          fail = 1;
       s += info->length; // skip this part of the format
    }
-   
+
    if( fail)
    {
       errno = EDOM;
       return( -1);
    }
-   
+
    mulle_buffer_add_string( buffer, s);
    length = mulle_buffer_get_length( buffer) - ctxt->before;
 
@@ -877,8 +877,8 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
    }
    return( (int) length);
 }
-                          
-                           
+
+
 //
 // horrible, we have to do it all again JUST because, it's impossible
 // to extract argument #3 without having parsed the first two conversion
@@ -898,23 +898,23 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
    struct mulle_sprintf_context   ctxt;
    int                            argc;
    size_t                         len;
-   
+
    // now grab values from all arguments
    // there is no arg #0
    //
    argc = setup_context( &ctxt, buffer, format, table);
    if( argc < 0)
       return( argc);
-   
+
    if( ! argc)
    {
       len = strlen( format);
       mulle_buffer_make_inflexable( buffer, format, len + 1);
       return( (int) len);
    }
-   
+
    mulle_mvsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
-   
+
    return( print_context( &ctxt, buffer, format, table));
 }
 
@@ -944,7 +944,7 @@ int   _mulle_vsprintf( struct mulle_buffer *buffer,
    struct mulle_sprintf_context   ctxt;
    int                            argc;
    size_t                         len;
-   
+
    // now grab values from all arguments
    // there is no arg #0
    //
@@ -958,9 +958,9 @@ int   _mulle_vsprintf( struct mulle_buffer *buffer,
       mulle_buffer_make_inflexable( buffer, format, len + 1);
       return( (int) len);
    }
-   
+
    mulle_vsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
-   
+
    return( print_context( &ctxt, buffer, format, table));
 }
 
@@ -984,13 +984,13 @@ int   mulle_sprintf( struct mulle_buffer *buffer, char *format, ...)
 {
    va_list   args;
    int       rval;
-   
+
    if( ! buffer || ! format)
    {
       errno = EINVAL;
       return( -1);
    }
-   
+
    va_start( args, format );
    rval = _mulle_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
    va_end( args);
