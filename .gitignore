@@ -55,3 +55,5 @@ tests/integer/free.debug
 /bin/mulle-homebrew
 
 /mulle-configuration
+tests/example/example
+tests/example/example.debug
