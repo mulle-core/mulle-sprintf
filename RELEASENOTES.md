@@ -1,3 +1,7 @@
+### 0.7.11
+
+* fix dox, add example
+
 ### 0.7.9
 
 * don't troll stdlib in tests
