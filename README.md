@@ -7,7 +7,7 @@ character for object conversion.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments. Because floating point to string conversion is hard, floating point 
-conversions are handed down to `sprintf`. So it is not a replacement.
+conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
 
 Fork      |  Build Status | Release Version
