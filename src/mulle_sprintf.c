@@ -909,7 +909,7 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_make_inflexable( buffer, format, len + 1);
+      mulle_buffer_make_inflexible( buffer, format, len + 1);
       return( (int) len);
    }
 
@@ -955,7 +955,7 @@ int   _mulle_vsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_make_inflexable( buffer, format, len + 1);
+      mulle_buffer_make_inflexible( buffer, format, len + 1);
       return( (int) len);
    }
 
