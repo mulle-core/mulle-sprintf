@@ -1,13 +1,14 @@
 # mulle-sprintf
 
-an extensible variant of sprintf written in C (C11). Because floating point is
-hard, FP conversion is handed down to `sprintf`.
+an extensible variant of sprintf written in C (C11).
 
 The extensibility is used in **MulleObjCFoundation** to add the '@' conversion
 character for object conversion.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
-arguments.
+arguments. Because floating point to string conversion is hard, floating point 
+conversions are handed down to `sprintf`. So it is not a sprintf replacement.
+
 
 Fork      |  Build Status | Release Version
 ----------|---------------|-----------------------------------
