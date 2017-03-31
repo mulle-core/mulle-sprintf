@@ -48,7 +48,7 @@
 //                                int argc)
 //{
 //   union mulle_sprintf_argumentvalue  v;
-//   
+//
 //   v = arguments->values[ argc];
 //   if( ! info->memory.width_found && ! info->memory.precision_found)
 //      info = NULL;
@@ -61,9 +61,9 @@ static int  _mulle_sprintf_pointer_conversion( struct mulle_buffer *buffer,
                                                struct mulle_sprintf_argumentarray *arguments,
                                                int argc)
 {
-   info->memory.hash_found = 1;  
+   info->memory.hash_found = 1;
    return( _mulle_sprintf_long_hex_conversion( buffer, info, arguments, argc));
-}                   
+}
 
 
 
@@ -92,5 +92,5 @@ static void  mulle_sprintf_register_default_pointer_functions()
 {
   mulle_sprintf_register_pointer_functions( mulle_sprintf_get_defaultconversion());
 }
-   
+
 

@@ -66,11 +66,11 @@ static int   _mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
                                                   int argc)
 {
    union mulle_sprintf_argumentvalue  v;
-   
+
    assert( buffer);
    assert( info);
    assert( arguments);
-   
+
    v = arguments->values[ argc];
    return( _char_string_conversion( buffer, info, v.c));
 }
@@ -82,10 +82,10 @@ static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatcon
                                                   wint_t c)
 {
    wchar_t   s[ 2];
-   
+
    s[ 0] = c;
    s[ 1] = 0;
-   
+
    return( _mulle_sprintf_wcharstring_conversion( buffer, info, s));
 }
 
@@ -96,11 +96,11 @@ static int   _mulle_sprintf_wide_character_conversion( struct mulle_buffer *buff
                                                        int argc)
 {
    union mulle_sprintf_argumentvalue  v;
-   
+
    assert( buffer);
    assert( info);
    assert( arguments);
-   
+
    v = arguments->values[ argc];
    return( _wide_char_string_conversion( info, buffer, v.wc));
 }
@@ -120,14 +120,14 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_character_argumenttype( 
 }
 
 
-struct mulle_sprintf_function     mulle_sprintf_character_functions = 
+struct mulle_sprintf_function     mulle_sprintf_character_functions =
 {
    _mulle_sprintf_get_character_argumenttype,
    _mulle_sprintf_character_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_widecharacter_functions = 
+struct mulle_sprintf_function     mulle_sprintf_widecharacter_functions =
 {
    mulle_sprintf_get_widecharacter_argumenttype,
    _mulle_sprintf_wide_character_conversion
@@ -148,4 +148,4 @@ static void  mulle_sprintf_register_default_character_functions()
 {
    mulle_sprintf_register_character_functions( mulle_sprintf_get_defaultconversion());
 }
-   
+

@@ -53,10 +53,10 @@ static void  produce_format_string( char format[ 64],
                                     int is_long)
 {
    char   prefix[ 2];
-   
+
    prefix[ 0] = is_long ? 'L' : 0;
    prefix[ 1] = 0;
-   
+
    if( info->memory.width_found)
    {
       if( info->memory.precision_found)
@@ -83,7 +83,7 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
    mulle_sprintf_argumenttype_t        t;
    auto char                           format[ 64];
    auto char                           result[ 128];
-   
+
    assert( buffer);
    assert( info);
    assert( arguments);
@@ -144,4 +144,4 @@ static void  mulle_sprintf_register_default_fp_functions()
 {
    mulle_sprintf_register_fp_functions( mulle_sprintf_get_defaultconversion());
 }
- 
+

@@ -52,23 +52,23 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
    mulle_sprintf_argumenttype_t   t;
    size_t          len;
    int             before;
-   
+
    assert( buffer);
    assert( info);
    assert( arguments);
-   
+
    before = (int) (intptr_t) info->mystery;
 
    v = arguments->values[ argc];
    t = arguments->types[ argc];
-   
+
    //
    // this will give too many bytes if the initial flex buffer
    // was not empty. But that's not really a bug, it's a feature
    // (if we _really_ really need this, pass in "before" from caller
    //
    len = mulle_buffer_get_length( buffer) - before;
-   
+
    if( t == mulle_sprintf_unsigned_int_pointer_argumenttype)
    {
       *v.pI = (unsigned int) len;
@@ -115,7 +115,7 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
       return( 0);
    }
    return( -1);
-}                   
+}
 
 
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
@@ -126,21 +126,21 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( str
       if( info->modifier[ 1] == 'h')
          return( mulle_sprintf_unsigned_char_pointer_argumenttype);
       return( mulle_sprintf_unsigned_short_pointer_argumenttype);
-      
+
    case 'l' :
       if( info->modifier[ 1] == 'l')
          return( mulle_sprintf_unsigned_long_long_pointer_argumenttype);
       return( mulle_sprintf_unsigned_long_pointer_argumenttype);
-      
+
    case 'j' :
       return( mulle_sprintf_size_t_pointer_argumenttype);
-      
+
    case 't' :
       return( mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype);
-      
+
    case 'z' :
       return( mulle_sprintf_uintmax_t_pointer_argumenttype);
-      
+
    case 'q' :
       return( mulle_sprintf_uint64_t_pointer_argumenttype);
    }
@@ -167,4 +167,4 @@ static void  mulle_sprintf_register_default_return_functions()
 {
    mulle_sprintf_register_return_functions( mulle_sprintf_get_defaultconversion());
 }
-   
+
