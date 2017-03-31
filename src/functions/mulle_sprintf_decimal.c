@@ -3,7 +3,7 @@
  *
  *  mulle_sprintf_decimal_functions.c is a part of MulleFoundation
  *
- *  Copyright (C) 2011 Nat!, Mulle kybernetiK 
+ *  Copyright (C) 2011 Nat!, Mulle kybernetiK
  *  All rights reserved.
  *
  *  Coded by Nat!
@@ -25,17 +25,17 @@ static int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
    NSDecimal                           *v_decimal;
    _NSDecimalFormattingInfo            format_info;
    unsigned int                        len;
-   
+
    assert( buffer);
    assert( info);
    assert( arguments);
-   
+
    v = arguments->values[ argc];
-   
+
    v_decimal = v.pDecimal;
-   
+
    memset( &format_info, 0, sizeof( format_info));
-   
+
    format_info.negative_string = "-";
    if( info->memory.quote_found)
       format_info.thousands_string = ",";
@@ -44,14 +44,14 @@ static int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
    else
       if( info->memory.space_found)
          format_info.positive_string  = " ";
-      
+
    format_info.n_chars_after_dot = info->precision ? info->precision : USHRT_MAX;
-   
+
    len = _NSDecimalNumberFormattedPrintBufferSize( v_decimal, &format_info);
    tmp = alloca( len);
    if( ! tmp)
       return( -1);
-      
+
    p = _NSDecimalFormattedString( tmp, len, v_decimal, &format_info);
 
    mulle_sprintf_justified( buffer, info, p, len - (p - tmp), 0, 0, 0, 0);
@@ -68,7 +68,7 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_decimal_argumenttype( str
 static struct mulle_sprintf_function     mulle_sprintf_decimal_functions =
 {
    mulle_sprintf_get_decimal_argumenttype,
-   mulle_sprintf_convert_decimal   
+   mulle_sprintf_convert_decimal
 };
 
 
@@ -84,5 +84,5 @@ static void  mulle_sprintf_register_default_decimal_functions()
 {
    mulle_sprintf_register_decimal_functions( &mulle_sprintf_get_config()->defaultconversion);
 }
-   
+
 

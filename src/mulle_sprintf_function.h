@@ -41,7 +41,7 @@
 #include <mulle_buffer/mulle_buffer.h>
 #include <mulle_vararg/mulle_vararg.h>
 
-#include <wctype.h>  
+#include <wctype.h>
 #include <stdarg.h>
 
 
@@ -50,26 +50,26 @@ struct _NSDecimal;
 struct mulle_sprintf_formatconversionflags
 {
    unsigned int   argument_index_found:1;
-   
+
    unsigned int   zero_found:1;
    unsigned int   minus_found:1;
    unsigned int   space_found:1;
-   
+
    unsigned int   hash_found:1;
    unsigned int   plus_found:1;
    unsigned int   quote_found:1;
-   
+
    unsigned int   width_found:1;          // get rid of this with -1 as not found in width
    unsigned int   width_is_argument:1;
    unsigned int   width_is_indexed_argument:1;
-   
+
    unsigned int   precision_found:1;      // get rid of this with -1 as not found in precision
    unsigned int   precision_is_argument:1;
    unsigned int   precision_is_indexed_argument:1;
-   
+
    unsigned int   modifier_found:1;
    unsigned int   left_justify:1;         // not filled during parse
-   
+
    unsigned int   unused:1;
 };
 
@@ -78,14 +78,14 @@ struct mulle_sprintf_formatconversionflags
 struct mulle_sprintf_formatconversioninfo
 {
    void    *mystery;       // used for return type conversion...
-   
+
    int     width;          // %100d = 100
    int     precision;      // %.3d  = 3
    int     argv_index[ 3];
    int     length;         // width of conversion format: e.g.%%=2, %20d = 4
-   
+
    struct mulle_sprintf_formatconversionflags   memory;
-   
+
    char    separator;
    char    modifier[ 3];
    char    conversion;

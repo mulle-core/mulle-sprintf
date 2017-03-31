@@ -54,7 +54,7 @@ typedef struct
 #pragma mark decimal
 
 static int   set_decimal_prefix( char *s,
-                                 int value_is_zero, 
+                                 int value_is_zero,
                                  int length,
                                  int precision)
 {
@@ -62,7 +62,7 @@ static int   set_decimal_prefix( char *s,
 }
 
 
-static char  *convert_decimal_unsigned_int( unsigned int  value, 
+static char  *convert_decimal_unsigned_int( unsigned int  value,
                                             char *s)
 {
    while( value)
@@ -70,12 +70,12 @@ static char  *convert_decimal_unsigned_int( unsigned int  value,
       *--s  = '0' + value % 10;
       value /= 10;
    }
-   
+
    return( s);
 }
 
 
-static char  *convert_decimal_unsigned_long_long( unsigned long long value, 
+static char  *convert_decimal_unsigned_long_long( unsigned long long value,
                                                   char *s)
 {
    while( value)
@@ -83,12 +83,12 @@ static char  *convert_decimal_unsigned_long_long( unsigned long long value,
       *--s  = '0' + value % 10;
       value /= 10;
    }
-   
+
    return( s);
 }
 
 
-static integer_converters  decimal_converters = 
+static integer_converters  decimal_converters =
 {
    convert_decimal_unsigned_int,
    convert_decimal_unsigned_int,
@@ -118,7 +118,7 @@ static void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
    assert( info);
    assert( p);
    assert( q);
-   
+
    length         = p_length + q_length;
    precision_char = '0';
    width          = info->width;
@@ -177,9 +177,9 @@ static void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer
    assert( p);
    assert( set_prefix);
 
-   precision = info->memory.precision_found ? info->precision : 1; 
+   precision = info->memory.precision_found ? info->precision : 1;
    q_length  = 0;
-   
+
    if( info->memory.hash_found )
    {
       q_length = (*set_prefix)( tmp2, is_zero, p_length, precision);
@@ -189,7 +189,7 @@ static void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer
          q_length  = 0;
       }
    }
-   
+
    _mulle_sprintf_justified( buffer, info, p, p_length, tmp2, q_length, precision, prefix);
 }
 
@@ -210,16 +210,16 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    ptrdiff_t                           p_length;
    unsigned long long                  vLL;
    long long                           vll;
-   
+
    v = arguments->values[ argc];
    t = arguments->types[ argc];
    s = mulle_sprintf_argumentsize[ t];
-   
+
    vll = (s == sizeof( int)) ? v.i : (s == sizeof( long)) ? v.l : v.ll;
    vLL = vll;
-   
+
    prefix = 0;
-   
+
    if( is_signed)
    {
       if( vll < 0)
@@ -256,7 +256,7 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
 
    // p is a the front now
    _mulle_sprintf_justified_and_prefixed( buffer, info, p, (int) p_length, prefix, vLL == 0, converters->set_prefix);
-   
+
    return( 0);
 }
 
@@ -283,7 +283,7 @@ static int   _mulle_sprintf_unsigned_int_decimal_conversion( struct mulle_buffer
 #pragma mark octal
 
 
-static char  *convert_octal_unsigned_int( unsigned int value, 
+static char  *convert_octal_unsigned_int( unsigned int value,
                                           char *s)
 {
    while( value)
@@ -291,12 +291,12 @@ static char  *convert_octal_unsigned_int( unsigned int value,
       *--s  = '0' + (value & 0x7);
       value >>= 3;
    }
-   
+
    return( s);
 }
 
 
-static char  *convert_octal_unsigned_long_long( unsigned long long value, 
+static char  *convert_octal_unsigned_long_long( unsigned long long value,
                                                 char *s)
 {
    while( value)
@@ -304,7 +304,7 @@ static char  *convert_octal_unsigned_long_long( unsigned long long value,
       *--s  = '0' + (value & 0x7);
       value >>= 3;
    }
-   
+
    return( s);
 }
 
@@ -318,7 +318,7 @@ static int   set_octal_prefix( char *s, int value_is_zero, int length, int preci
 
 
 
-static integer_converters  octal_converters = 
+static integer_converters  octal_converters =
 {
    convert_octal_unsigned_int,
    convert_octal_unsigned_int,
@@ -334,41 +334,41 @@ static int   _mulle_sprintf_int_octal_conversion( struct mulle_buffer *buffer,
                                                  int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &octal_converters, 0));
-}                   
+}
 
 
 #pragma mark -
 #pragma mark hex
 
 
-static char   *convert_hex_unsigned_int( unsigned int value, 
+static char   *convert_hex_unsigned_int( unsigned int value,
                                          char *s)
 {
    char   v;
-   
+
    while( value)
    {
       v     = (value & 0xF);
       *--s  = (v >= 10) ? ('a' - 10 + v) : '0' + v;
       value >>= 4;
    }
-   
+
    return( s);
 }
 
 
-static char   *convert_hex_unsigned_long_long( unsigned long long value, 
+static char   *convert_hex_unsigned_long_long( unsigned long long value,
                                                char *s)
 {
    unsigned char   v;
-   
+
    while( value)
    {
       v     = (unsigned char) value & 0xF;
       *--s  = (v >= 10) ? ('a' - 10 + v) : '0' + v;
       value >>= 4;
    }
-   
+
    return( s);
 }
 
@@ -399,9 +399,9 @@ static int   _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
                                                struct mulle_sprintf_formatconversioninfo *info,
                                                struct mulle_sprintf_argumentarray *arguments,
                                                int argc)
-{                                      
+{
    return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
-}                   
+}
 
 
 #pragma mark -
@@ -414,7 +414,7 @@ static int   _mulle_sprintf_long_decimal_conversion( struct mulle_buffer *buffer
                                                     int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 1));
-}                   
+}
 
 
 
@@ -424,7 +424,7 @@ static int   _mulle_sprintf_unsigned_long_decimal_conversion( struct mulle_buffe
                                                              int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 1));
-}                   
+}
 
 
 int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
@@ -433,7 +433,7 @@ int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
                                           int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
-}                   
+}
 
 
 static int   _mulle_sprintf_long_octal_conversion( struct mulle_buffer *buffer,
@@ -442,7 +442,7 @@ static int   _mulle_sprintf_long_octal_conversion( struct mulle_buffer *buffer,
                                                   int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &octal_converters, 0));
-}                   
+}
 
 
 static mulle_sprintf_argumenttype_t   _mulle_sprintf_get_signed_int_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
@@ -453,12 +453,12 @@ static mulle_sprintf_argumenttype_t   _mulle_sprintf_get_signed_int_argumenttype
       if( info->modifier[ 1] == 'h')
          return( mulle_sprintf_char_argumenttype);
       return( mulle_sprintf_short_argumenttype);
-      
+
    case 'l' :
       if( info->modifier[ 1] == 'l')
          return( mulle_sprintf_long_long_argumenttype);
       return( mulle_sprintf_long_argumenttype);
-      
+
    case 'j' : return( mulle_sprintf_intmax_t_argumenttype);
    case 'q' : return( mulle_sprintf_int64_t_argumenttype);
    case 't' : return( mulle_sprintf_ptrdiff_t_argumenttype);
@@ -475,12 +475,12 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_unsigned_int_argumenttype
       if( info->modifier[ 1] == 'h')
          return( mulle_sprintf_unsigned_char_argumenttype);
       return( mulle_sprintf_unsigned_short_argumenttype);
-      
+
    case 'l' :
       if( info->modifier[ 1] == 'l')
          return( mulle_sprintf_unsigned_long_long_argumenttype);
       return( mulle_sprintf_unsigned_long_argumenttype);
-      
+
    case 'j' : return( mulle_sprintf_uintmax_t_argumenttype);
    case 'q' : return( mulle_sprintf_uint64_t_argumenttype);
    case 't' : return( mulle_sprintf_unsigned_ptrdiff_t_argumenttype);
@@ -559,7 +559,7 @@ void   mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion
    mulle_sprintf_register_functions( tables, &mulle_sprintf_unsigned_long_decimal_functions, 'U');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_long_octal_functions, 'O');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_long_hex_functions, 'X');
-   
+
    mulle_sprintf_register_modifiers( tables, "hljtzq");
 }
 
@@ -569,4 +569,4 @@ static void  mulle_sprintf_register_default_integer_functions()
 {
    mulle_sprintf_register_integer_functions( mulle_sprintf_get_defaultconversion());
 }
- 
+

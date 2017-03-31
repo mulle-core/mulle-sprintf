@@ -39,7 +39,7 @@
 #define mulle_sprintf_character_h__
 
 #include "mulle_sprintf_function.h"
- 
+
 void  mulle_sprintf_register_character_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

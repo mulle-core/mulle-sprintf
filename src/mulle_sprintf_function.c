@@ -49,7 +49,7 @@
 
 #define SIZEOF( type)  sizeof( type) < sizeof( int) ? sizeof( int) : sizeof( type)
 
-unsigned char   mulle_sprintf_argumentsize[] = 
+unsigned char   mulle_sprintf_argumentsize[] =
 {
    SIZEOF( int),              // mulle_sprintf_int_argumenttype
    SIZEOF( char),             // promotion(!)
@@ -80,17 +80,17 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( unsigned int),
    SIZEOF( unsigned int *),
    SIZEOF( unsigned long),
-   
+
    SIZEOF( unsigned long long), // mulle_sprintf_unsigned_long_long_argumenttype
    SIZEOF( unsigned long long *),
    SIZEOF( unsigned long *),
    SIZEOF( unsigned __PTRDIFF_TYPE__),
-   
+
    SIZEOF( unsigned __PTRDIFF_TYPE__ *), // mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype
    SIZEOF( unsigned short),
    SIZEOF( unsigned short *),
    0,    // vector
-   
+
    0,    // void                 // mulle_sprintf_void_argumenttype
    SIZEOF( void *),
    SIZEOF( wchar_t *),
@@ -103,25 +103,25 @@ unsigned char   mulle_sprintf_argumentsize[] =
 // needs to be done in  a loop here, because va_arg calls can't be separated
 // across function calls (interestingly)
 //
-void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,     
-                                 mulle_sprintf_argumenttype_t  *type, 
+void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
+                                 mulle_sprintf_argumenttype_t  *type,
                                  unsigned int   n,
                                  va_list va)
 {
    union mulle_sprintf_argumentvalue   *sentinel;
-   
+
    sentinel = &p[ n];
    p        = &p[ 1];
    type     = &type[ 1];
-   
+
    while( p < sentinel)
    {
       switch( *type)
       {
       default                                             : abort();
-         
+
       case mulle_sprintf_int_argumenttype                    : p->i    = va_arg( va, int); break;
-         
+
       case mulle_sprintf_char_argumenttype                   : p->c    = (char) va_arg( va, int); break;  // promotion(!)
       case mulle_sprintf_char_pointer_argumenttype           : p->pc   = va_arg( va, char *); break;
       case mulle_sprintf_double_argumenttype                 : p->d    = va_arg( va, double); break;
@@ -155,7 +155,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = va_arg( va, wchar_t *); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = va_arg( va, struct _NSDecimal *); break;
       case mulle_sprintf_wint_t_argumenttype                 : p->wc   = va_arg( va, wint_t); break;
-         
+
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = va_arg( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned __PTRDIFF_TYPE__ *); break;
       }
@@ -171,7 +171,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                   mulle_vararg_list va)
 {
    union mulle_sprintf_argumentvalue   *sentinel;
-   
+
    sentinel = &p[ n];
    p        = &p[ 1];
    type     = &type[ 1];
@@ -180,9 +180,9 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       switch( *type)
       {
       default                                                : abort();
-         
+
       case mulle_sprintf_int_argumenttype                    : p->i    = mulle_vararg_next_integer( va, int); break;
-         
+
       case mulle_sprintf_char_argumenttype                   : p->c    = (char) mulle_vararg_next_integer( va, int); break;  // promotion(!)
       case mulle_sprintf_char_pointer_argumenttype           : p->pc   = mulle_vararg_next_pointer( va, char *); break;
       case mulle_sprintf_double_argumenttype                 : p->d    = mulle_vararg_next_fp( va, double); break;
@@ -216,7 +216,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = mulle_vararg_next_pointer( va, wchar_t *); break;
       case mulle_sprintf_wint_t_argumenttype                 : p->wc   = mulle_vararg_next_integer( va, wint_t); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = mulle_vararg_next_pointer( va, struct _NSDecimal *); break;
-         
+
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = mulle_vararg_next_pointer( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = mulle_vararg_next_pointer( va, unsigned __PTRDIFF_TYPE__ *); break;
       }
@@ -236,14 +236,14 @@ static int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *
    i = mulle_sprintf_index_for_character( c);
    if( table->jumps[ i])
       return( EEXIST);
-   
+
    //
    // just mark as used, override is OK, since modifiers are
    // shared
    //
    table->modifiers[ i] = c;
    return( 0);
-}  
+}
 
 
 static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
@@ -258,22 +258,22 @@ static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion 
    i = mulle_sprintf_index_for_character( c);
    if( table->modifiers[ i])
       return( EEXIST);
-      
+
    p = &table->jumps[ i];
    assert( ! *p);
 
    *p = functions;
    return( 0);
-}  
+}
 
 
-                                                                       
+
 static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                                 mulle_sprintf_modifiercharacter *s)
 {
    int   rval;
    int   c;
-      
+
    rval = 0;
    while( c = *s++)
    {
@@ -296,7 +296,7 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
    // ' ' && c <= '~'
    char  c;
    int   i;
-   
+
    for( c = ' '; c <= '~'; c++)
    {
       i = mulle_sprintf_index_for_character( c);
@@ -322,7 +322,7 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_conversioncharacter_t c)
 {
    int   rval;
-   
+
    if( ! functions || c < '!' || c > '~')
    {
       errno = EINVAL;
@@ -331,7 +331,7 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
 
    if( ! table)
       table = mulle_sprintf_get_defaultconversion();
-   
+
    rval = _mulle_sprintf_register_functions( table, functions, c);
    if( rval)
    {
@@ -346,13 +346,13 @@ int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_modifiercharacter *s)
 {
    int   rval;
-   
+
    if( ! s)
    {
       errno = EINVAL;
       return( -1);
    }
-   
+
    if( ! table)
       table = mulle_sprintf_get_defaultconversion();
 
@@ -370,17 +370,17 @@ int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                        mulle_sprintf_modifiercharacter c)
 {
    int   rval;
-   
+
    if( c < '!' || c > '~')
    {
       errno = EINVAL;
       return( -1);
    }
-   
+
    if( ! table)
       table = mulle_sprintf_get_defaultconversion();
-   
-   
+
+
    rval = _mulle_sprintf_register_modifier( table, c);
    if( rval)
    {
@@ -396,15 +396,15 @@ int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *f
                                                         mulle_sprintf_conversioncharacter_t c)
 {
    return( mulle_sprintf_register_functions( mulle_sprintf_get_defaultconversion(),
-                                         functions, 
+                                         functions,
                                          c));
-}                                                                                 
+}
 
 
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c)
 {
    return( mulle_sprintf_register_modifier( mulle_sprintf_get_defaultconversion(), c));
-}                                                                                 
+}
 
 
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s)
