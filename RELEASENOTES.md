@@ -1,3 +1,7 @@
+### 0.8.3
+
+* modernize mulle-homebrew script
+
 ## 0.8.1
 
 ### 0.7.11
