@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 project (mulle-sprintf)
 
 
-set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/mulle-configuration)
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/mulle-configuration/cmake)
 message(STATUS "CMAKE_MODULE_PATH is ${CMAKE_MODULE_PATH}")
 message(STATUS "CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -85,6 +85,6 @@ ${END_ALL_LOAD}
 
 
 
-INSTALL(TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
-INSTALL(FILES ${HEADERS} DESTINATION "include/mulle_sprintf")
+INSTALL( TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
+INSTALL( FILES ${HEADERS} DESTINATION "include/mulle_sprintf")
 

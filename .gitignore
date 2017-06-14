@@ -7,6 +7,7 @@ xcuserdata/
 project.xcworkspace/
 mulle_mintomic
 *.old
+*.bak
 .bootstrap.auto/
 .bootstrap.local/
 dependencies/
@@ -56,4 +57,5 @@ tests/integer/free.debug
 
 /mulle-configuration
 tests/example/example
-tests/example/example.debug
+tests/example/example.debugbin/tap-info.sh
+tap-info.sh
