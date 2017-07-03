@@ -1,3 +1,7 @@
+### 0.8.5
+
+* make it a cmake "C" project
+
 ### 0.8.3
 
 * modernize mulle-homebrew script
