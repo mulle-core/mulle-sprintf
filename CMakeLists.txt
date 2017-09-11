@@ -17,53 +17,18 @@ endif()
 # changing this
 #
 
-include_directories(
-src
-src/functions
-)
+include( CMakeSourcesAndHeaders.txt)
 
-set(HEADERS
-src/mulle_sprintf.h
-src/mulle_sprintf_function.h
-src/functions/mulle_sprintf_character.h
-src/functions/mulle_sprintf_escape.h
-src/functions/mulle_sprintf_fp.h
-src/functions/mulle_sprintf_integer.h
-src/functions/mulle_sprintf_pointer.h
-src/functions/mulle_sprintf_return.h
-src/functions/mulle_sprintf_string.h
-)
-
-
-add_library(mulle_sprintf
-src/mulle_sprintf.c
-src/mulle_sprintf_function.c
-src/functions/mulle_sprintf_character.c
-src/functions/mulle_sprintf_escape.c
-src/functions/mulle_sprintf_fp.c
-src/functions/mulle_sprintf_integer.c
-src/functions/mulle_sprintf_pointer.c
-src/functions/mulle_sprintf_return.c
-src/functions/mulle_sprintf_string.c
-)
-
-
-add_library( mulle_sprintf_standalone SHARED
-src/mulle_sprintf_standalone.c
-)
-
-add_dependencies( mulle_sprintf_standalone mulle_sprintf)
 
 find_library( MULLE_ALLOCATOR_LIBRARY      NAMES mulle_allocator)
-find_library( MULLE_BUFFER_LIBRARY         NAMES mulle_buffer)
-find_library( MULLE_TEST_ALLOCATOR_LIBRARY NAMES mulle_test_allocator)
-find_library( MULLE_THREAD_LIBRARY         NAMES mulle_thread)
-find_library( MULLE_UTF_LIBRARY            NAMES mulle_utf)
-
 message(STATUS "MULLE_ALLOCATOR_LIBRARY is ${MULLE_ALLOCATOR_LIBRARY}")
+find_library( MULLE_BUFFER_LIBRARY         NAMES mulle_buffer)
 message(STATUS "MULLE_BUFFER_LIBRARY is ${MULLE_BUFFER_LIBRARY}")
+find_library( MULLE_TEST_ALLOCATOR_LIBRARY NAMES mulle_test_allocator)
 message(STATUS "MULLE_TEST_ALLOCATOR_LIBRARY is ${MULLE_TEST_ALLOCATOR_LIBRARY}")
+find_library( MULLE_THREAD_LIBRARY         NAMES mulle_thread)
 message(STATUS "MULLE_THREAD_LIBRARY is ${MULLE_THREAD_LIBRARY}")
+find_library( MULLE_UTF_LIBRARY            NAMES mulle_utf)
 message(STATUS "MULLE_UTF_LIBRARY is ${MULLE_UTF_LIBRARY}")
 
 
@@ -76,28 +41,20 @@ ${MULLE_UTF_LIBRARY}
 )
 
 
+add_library( mulle_sprintf
+${SOURCES}
+)
+
 set( TARGET_ALL_LOAD_LIBRARIES
 $<TARGET_FILE:mulle_sprintf>
 ${DEPENDENCY_LIBRARIES}
 )
 
-if( FORCE_LOAD)
-   set( TMP)
-   foreach( library ${TARGET_ALL_LOAD_LIBRARIES})
-      list( APPEND TMP "${FORCE_LOAD} ${library}")
-   endforeach( library)
-   set( TARGET_ALL_LOAD_LIBRARIES ${TMP})
-endif()
+set( STANDALONE_BASE_NAME "mulle_sprintf")
+set( STANDALONE_NAME "mulle_sprintf_standalone")
 
-
-TARGET_LINK_LIBRARIES( mulle_sprintf_standalone
-${BEGIN_ALL_LOAD}
-${TARGET_ALL_LOAD_LIBRARIES}
-${END_ALL_LOAD}
-)
-
+include( Standalone)
 
 
 INSTALL( TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
 INSTALL( FILES ${HEADERS} DESTINATION "include/mulle_sprintf")
-
