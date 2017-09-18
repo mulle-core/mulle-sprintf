@@ -17,19 +17,15 @@ endif()
 # changing this
 #
 
+set( MULLE_SPRINTF_LIBRARY ON)
 include( CMakeSourcesAndHeaders.txt)
+include( CMakeDependencies.txt)
 
 
-find_library( MULLE_ALLOCATOR_LIBRARY      NAMES mulle_allocator)
-message(STATUS "MULLE_ALLOCATOR_LIBRARY is ${MULLE_ALLOCATOR_LIBRARY}")
-find_library( MULLE_BUFFER_LIBRARY         NAMES mulle_buffer)
-message(STATUS "MULLE_BUFFER_LIBRARY is ${MULLE_BUFFER_LIBRARY}")
-find_library( MULLE_TEST_ALLOCATOR_LIBRARY NAMES mulle_test_allocator)
-message(STATUS "MULLE_TEST_ALLOCATOR_LIBRARY is ${MULLE_TEST_ALLOCATOR_LIBRARY}")
-find_library( MULLE_THREAD_LIBRARY         NAMES mulle_thread)
-message(STATUS "MULLE_THREAD_LIBRARY is ${MULLE_THREAD_LIBRARY}")
-find_library( MULLE_UTF_LIBRARY            NAMES mulle_utf)
-message(STATUS "MULLE_UTF_LIBRARY is ${MULLE_UTF_LIBRARY}")
+set( PUBLIC_HEADERS
+${HEADERS}
+CMakeDependencies.txt
+)
 
 
 set( DEPENDENCY_LIBRARIES
@@ -45,16 +41,17 @@ add_library( mulle_sprintf
 ${SOURCES}
 )
 
-set( TARGET_ALL_LOAD_LIBRARIES
-$<TARGET_FILE:mulle_sprintf>
-${DEPENDENCY_LIBRARIES}
-)
 
 set( STANDALONE_BASE_NAME "mulle_sprintf")
 set( STANDALONE_NAME "mulle_sprintf_standalone")
+set( STANDALONE_DEFINITIONS ${MULLE_SPRINTF_DEFINITIONS})
+set( STANDALONE_ALL_LOAD_LIBRARIES
+$<TARGET_FILE:mulle_sprintf>
+${DEPENDENCY_LIBRARIES}
+)
 
 include( Standalone)
 
 
 INSTALL( TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
-INSTALL( FILES ${HEADERS} DESTINATION "include/mulle_sprintf")
+INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION "include/mulle_sprintf")
