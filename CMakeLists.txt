@@ -52,6 +52,7 @@ ${DEPENDENCY_LIBRARIES}
 
 include( Standalone)
 
-
 INSTALL( TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
 INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION "include/mulle_sprintf")
+
+include( MulleTest)
