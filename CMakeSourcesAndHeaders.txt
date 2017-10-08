@@ -1,4 +1,4 @@
-include_directories(
+set( INCLUDE_DIRS
 src
 src/functions
 )
@@ -28,3 +28,6 @@ src/functions/mulle_sprintf_return.c
 src/functions/mulle_sprintf_string.c
 )
 
+set( STANDALONE_SOURCES
+src/mulle_sprintf_standalone.c
+)
