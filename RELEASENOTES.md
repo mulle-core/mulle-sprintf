@@ -1,3 +1,7 @@
+### 0.9.11
+
+* Various small improvements
+
 ### 0.9.9
 
 * support new mulle-tests
