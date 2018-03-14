@@ -13,12 +13,37 @@ conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
 Fork      |  Build Status | Release Version
 ----------|---------------|-----------------------------------
-[Mulle kybernetiK](//github.com/mulle-nat/mulle-sprintf) | [![Build Status](https://travis-ci.org/mulle-nat/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-nat/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-nat/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-nat/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-nat/mulle-sprintf)
+[Mulle kybernetiK](//github.com/mulle-c/mulle-sprintf) | [![Build Status](https://travis-ci.org/mulle-c/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-c/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-c/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-c/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-c/mulle-sprintf)
+
+
+## Install
+
+Install the prerequisites first:
+
+| Prerequisites                                           |
+|---------------------------------------------------------|
+| [mulle-buffer](//github.com/mulle-c/mulle-buffer)       |
+| [mulle-utf](//github.com/mulle-c/mulle-utf)             |
+| [mulle-vararg](//github.com/mulle-c/mulle-vararg)       |
+
+Then build and install
+
+```
+mkdir build 2> /dev/null
+(
+   cd build ;
+   cmake .. ;
+   make install
+)
+```
+
+Or let [mulle-sde](//github.com/mulle-sde) do it all for you.
+
 
 ## Example
 
 
-Here is an example of using `mulle_sprintf` together with [`mulle-buffer`](//github.com/mulle-nat/mulle-buffer) to print an integer into a char array safely:
+Here is an example of using `mulle_sprintf` together with [`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print an integer into a char array safely:
 
 ```
 #include <mulle_sprintf/mulle_sprintf.h>
@@ -49,31 +74,12 @@ File                                  | Description
 [`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
 
 
-## Install
-
-On OS X and Linux you can use [homebrew](//brew.sh), respectively
-[linuxbrew](//linuxbrew.sh) to install the library:
-
-```
-brew tap mulle-kybernetik/software/mulle-sprintf
-```
-
-On other platforms you can use **mulle-install** from
-[mulle-build](//github.com/mulle-nat/mulle-build) to install the library:
-
-```
-mulle-install --prefix /usr/local --branch release https://github.com/mulle-nat/mulle-sprintf
-```
-
-Otherwise read:
-
-* [How to Build](dox/BUILD.md)
-
-
 ### Platforms and Compilers
 
 All platforms and compilers supported by
-[mulle-c11](//www.mulle-kybernetik.com/software/git/mulle-c11/)
+[mulle-c11](//github.com/mulle-c/mulle-c11) and
+[mulle-thread](//github.com/mulle-c/mulle-thread).
+
 
 ## Author
 

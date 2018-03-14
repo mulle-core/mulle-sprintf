@@ -1,60 +1,67 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required( VERSION 3.0)
 
 project( mulle-sprintf C)
 
 
-set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/mulle-configuration/cmake)
-message(STATUS "CMAKE_MODULE_PATH is ${CMAKE_MODULE_PATH}")
-message(STATUS "CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
-if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  include( Debug)
-else()
-  include( Release)
-endif()
+### mulle-sde environment
 
-#
-# dont forget to wipe all cmake produced files before
-# changing this
-#
+# add cmake module paths to search path
+list( INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake/share")
+list( INSERT CMAKE_MODULE_PATH 0 "${PROJECT_SOURCE_DIR}/cmake")
+
+include( Environment)
+
+
+### Files
+
+include( PreFiles OPTIONAL)
 
 set( MULLE_SPRINTF_LIBRARY ON)
-include( CMakeSourcesAndHeaders.txt)
-include( CMakeDependencies.txt)
+
+#
+# Include all non underscored .cmake files in ./cmake
+#
+file( GLOB LOCAL_CMAKE_INCLUDES
+   "cmake/[A-Za-z0-9]*.cmake"
+)
+
+foreach( FILE ${LOCAL_CMAKE_INCLUDES} )
+   include( "${FILE}")
+endforeach()
+
 
 include_directories( ${INCLUDE_DIRS})
 
+include( PostFiles OPTIONAL)
 
-set( PUBLIC_HEADERS
-${HEADERS}
-CMakeDependencies.txt
-)
+### Library
 
+include( PreLibrary OPTIONAL)
 
-set( DEPENDENCY_LIBRARIES
-${MULLE_ALLOCATOR_LIBRARY}
-${MULLE_BUFFER_LIBRARY}
-${MULLE_TEST_ALLOCATOR_LIBRARY}
-${MULLE_THREAD_LIBRARY}
-${MULLE_UTF_LIBRARY}
-)
-
-
-add_library( mulle_sprintf
+add_library( "mulle-sprintf"
 ${SOURCES}
+${PUBLIC_HEADERS}
+${PRIVATE_HEADERS}
+${CMAKE_EDITABLE_FILES}
 )
 
-
-set( STANDALONE_BASE_NAME "mulle_sprintf")
-set( STANDALONE_NAME "mulle_sprintf_standalone")
-set( STANDALONE_DEFINITIONS ${MULLE_SPRINTF_DEFINITIONS})
-set( STANDALONE_ALL_LOAD_LIBRARIES
-$<TARGET_FILE:mulle_sprintf>
-${DEPENDENCY_LIBRARIES}
+if( BUILD_SHARED_LIBS)
+   target_link_libraries( mulle-sprintf
+${DEPENDENCIES_LIBRARIES}
+${OS_SPECIFIC_LIBRARIES}
 )
+endif()
 
-include( Standalone)
+include( PostLibrary OPTIONAL)
 
-INSTALL( TARGETS mulle_sprintf_standalone mulle_sprintf DESTINATION "lib")
-INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION "include/mulle_sprintf")
+### Install
 
-include( MulleTest)
+include( PreInstall OPTIONAL)
+
+install( TARGETS "mulle-sprintf" DESTINATION "lib")
+install( FILES ${PUBLIC_HEADERS}  DESTINATION "include/mulle-sprintf")
+install( FILES ${PRIVATE_HEADERS} DESTINATION "include/mulle-sprintf/private")
+
+install( FILES ${CMAKE_INCLUDES}  DESTINATION "include/mulle-sprintf/cmake")
+
+include( PostInstall OPTIONAL)

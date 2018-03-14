@@ -1,5 +1,5 @@
 #include <mulle_sprintf/mulle_sprintf.h>
-#include <mulle_buffer/mulle_buffer.h>
+#include "dependencies.h"
 #include <stdio.h>
 
 
