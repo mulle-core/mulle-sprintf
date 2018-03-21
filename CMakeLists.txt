@@ -54,11 +54,27 @@ endif()
 
 include( PostLibrary OPTIONAL)
 
+
+set( STANDALONE_BASE_NAME "mulle-sprintf")
+set( STANDALONE_NAME "mulle-sprintf-standalone")
+set( STANDALONE_DEFINITIONS ${MULLE_SPRINTF_DEFINITIONS})
+set( STANDALONE_DEPENDENCIES
+mulle-sprintf
+)
+
+set( STANDALONE_ALL_LOAD_LIBRARIES
+$<TARGET_FILE:mulle-sprintf>
+${C_DEPENDENCY_LIBRARIES}
+${OS_SPECIFIC_LIBRARIES}
+)
+
+include( Standalone)
+
 ### Install
 
 include( PreInstall OPTIONAL)
 
-install( TARGETS "mulle-sprintf" DESTINATION "lib")
+install( TARGETS "mulle-sprintf" "mulle-sprintf-standalone" DESTINATION "lib")
 install( FILES ${PUBLIC_HEADERS}  DESTINATION "include/mulle-sprintf")
 install( FILES ${PRIVATE_HEADERS} DESTINATION "include/mulle-sprintf/private")
 
