@@ -1,6 +1,5 @@
-#include <mulle_sprintf/mulle_sprintf.h>
-#include <mulle_test_allocator/mulle_test_allocator.h>
-#include "dependencies.h"
+#include <mulle-sprintf/mulle-sprintf.h>
+#include <mulle-test-allocator/mulle-test-allocator.h>
 
 #include <stdio.h>
 
