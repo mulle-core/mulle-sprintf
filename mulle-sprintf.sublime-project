@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+         "folder_exclude_patterns": [
+         "build",
+         ".mulle-*",
+         ".git",
+         "addiction",
+         "dependency",
+         "stash",
+         ".unison*"
+         ]
+		}
+	]
+}
