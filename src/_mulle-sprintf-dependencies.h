@@ -6,10 +6,10 @@
 #ifndef _mulle_sprintf__dependencies_h__
 #define _mulle_sprintf__dependencies_h__
 
-# include <mulle-buffer/mulle-buffer.h>
+# include <mulle-buffer/mulle-buffer.h>   // mulle-buffer
 
-# include <mulle-utf/mulle-utf.h>
+# include <mulle-utf/mulle-utf.h>   // mulle-utf
 
-# include <mulle-vararg/mulle-vararg.h>
+# include <mulle-vararg/mulle-vararg.h>   // mulle-vararg
 
 #endif
