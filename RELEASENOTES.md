@@ -1,3 +1,8 @@
+### 1.0.5
+
+* Various small improvements
+
+<<<<<<< HEAD
 ### 1.0.4
 
 * Various small improvements
@@ -6,6 +11,8 @@
 
 * Various small improvements
 
+=======
+>>>>>>> c38b527c24e029fbe6f2e9eed47034e154392b0d
 ### 1.0.2
 
 * Various small improvements
