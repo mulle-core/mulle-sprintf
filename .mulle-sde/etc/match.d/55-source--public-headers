@@ -1,5 +1,0 @@
-# this is the fallback if patterns file with smaller numbers fail
-
-src/**/*.h
-src/**/*.inc
-!src/functions/mulle-sprintf-decimal.h

@@ -43,11 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-<<<<<<< HEAD
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 5)
-=======
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 5)
->>>>>>> c38b527c24e029fbe6f2e9eed47034e154392b0d
+#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 6)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
