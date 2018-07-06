@@ -38,7 +38,7 @@
 #include "mulle-sprintf.h"
 #include "mulle-sprintf-function.h"
 
-#include "dependencies.h"
+#include "include-private.h"
 
 
 #define STACKABLE_N     16

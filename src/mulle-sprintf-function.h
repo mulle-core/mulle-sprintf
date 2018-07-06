@@ -38,7 +38,7 @@
 #ifndef mulle_sprintf_function_h__
 #define mulle_sprintf_function_h__
 
-#include "dependencies.h"
+#include "include.h"
 
 
 #include <wctype.h>

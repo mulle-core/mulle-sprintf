@@ -38,7 +38,7 @@
 #include "mulle-sprintf-fp.h"
 
 #include "mulle-sprintf.h"
-#include "dependencies.h"
+#include "include-private.h"
 #include <float.h>
 #include <stdio.h>
 

@@ -41,13 +41,13 @@
 #include "mulle-sprintf.h"
 
 // std-c and dependencies
-#include "dependencies.h"
+#include "include-private.h"
 #include <string.h>
 
 
 // if no widechar support
 #ifndef DONT_HAVE_MULLE_UTF
-#include "dependencies.h"
+#include "include-private.h"
 
 #if MULLE_UTF_VERSION < ((1 << 20) | (0 << 8) | 7)
 # error "mulle_utf is too old"

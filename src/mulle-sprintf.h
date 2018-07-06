@@ -38,12 +38,12 @@
 #ifndef mulle_sprintf_h__
 #define mulle_sprintf_h__
 
-#include "dependencies.h"
+#include "include.h"
 
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 6)
+#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 7)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
