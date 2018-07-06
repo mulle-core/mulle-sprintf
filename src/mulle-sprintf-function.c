@@ -43,7 +43,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <wctype.h>
-#include "dependencies.h"
+#include "include-private.h"
 #include "mulle-sprintf.h"
 
 

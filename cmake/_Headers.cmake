@@ -9,15 +9,20 @@ src
 src/functions
 ) 
 
+set( PRIVATE_HEADERS
+src/include-private.h
+)
+
 set( PUBLIC_HEADERS
-src/dependencies.h
 src/functions/mulle-sprintf-character.h
+src/functions/mulle-sprintf-decimal.h
 src/functions/mulle-sprintf-escape.h
 src/functions/mulle-sprintf-fp.h
 src/functions/mulle-sprintf-integer.h
 src/functions/mulle-sprintf-pointer.h
 src/functions/mulle-sprintf-return.h
 src/functions/mulle-sprintf-string.h
+src/include.h
 src/mulle-sprintf-function.h
 src/mulle-sprintf.h
 ) 

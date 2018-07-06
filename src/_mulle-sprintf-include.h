@@ -3,8 +3,8 @@
    Edits will be lost.
 */
 
-#ifndef _mulle_sprintf__dependencies_h__
-#define _mulle_sprintf__dependencies_h__
+#ifndef _mulle_sprintf_include_h__
+#define _mulle_sprintf_include_h__
 
 # include <mulle-buffer/mulle-buffer.h>   // mulle-buffer
 

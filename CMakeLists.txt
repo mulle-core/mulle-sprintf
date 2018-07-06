@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.0)
+cmake_minimum_required( VERSION 3.1)
 
 project( mulle-sprintf C)
 
@@ -34,59 +34,85 @@ include_directories( ${INCLUDE_DIRS})
 
 include( PostFiles OPTIONAL)
 
+set( PROJECT_FILES
+   ${PROJECT_FILES}
+   ${SOURCES}
+   ${PUBLIC_HEADERS}
+   ${PRIVATE_HEADERS}
+   ${CMAKE_EDITABLE_FILES}
+)
+
 ### Library
 
 include( PreLibrary OPTIONAL)
 
-add_library( "mulle-sprintf"
-# definitions from cmake/HeadersAndSources.cmake
-${SOURCES}
-${PUBLIC_HEADERS}
-${PRIVATE_HEADERS}
-# definitions from cmake/share/Environment.cmake
-${CMAKE_EDITABLE_FILES}
+# ##################################
+# Mainly of interest for Objective-C
+# ##################################
+# Libraries are built in two stages:
+#
+# In the first step the PROJECT_FILES are compiled.
+# In the second step STAGE2_SOURCES are added.
+# This allows PostLibrary to run an analysis step over PROJECT_FILES and
+# generate files to be included by STAGE2_SOURCES. If there are no
+# STAGE2_SOURCES then this is just a more verbose way of doing it.
+# OBJC_LOADER_INC is the generated analysis step.
+#
+#
+add_library( "_1_mulle-sprintf" OBJECT
+   ${PROJECT_FILES}
 )
 
-
-
-if( BUILD_SHARED_LIBS)
-   target_link_libraries( mulle-sprintf
-# definitions from cmake/share/DependenciesAndLibraries.cmake
-${DEPENDENCY_LIBRARIES}
-${OS_SPECIFIC_LIBRARIES}
+set( ALL_OBJECT_FILES
+   $<TARGET_OBJECTS:_1_mulle-sprintf>
 )
+
+set_property( TARGET "_1_mulle-sprintf" PROPERTY CXX_STANDARD 11)
+
+if( STAGE2_SOURCES)
+   add_library( "_2_mulle-sprintf" OBJECT
+      ${STAGE2_SOURCES}
+      ${STAGE2_HEADERS}
+   )
+   set( ALL_OBJECT_FILES
+      ${ALL_OBJECT_FILES}
+      $<TARGET_OBJECTS:_2_mulle-sprintf>
+   )
+   set_property( TARGET "_2_mulle-sprintf" PROPERTY CXX_STANDARD 11)
+else()
+   if( STAGE2_HEADERS)
+      message( FATAL_ERROR "No STAGE2_SOURCES found but STAGE2_HEADERS exist")
+   endif()
 endif()
+
+
+add_library( "mulle-sprintf"
+   ${ALL_OBJECT_FILES}
+)
+
+
+set( INSTALL_LIBRARY_TARGETS "mulle-sprintf")
 
 include( PostLibrary OPTIONAL)
 
-option( STANDALONE "Create standalone library for debugging" OFF)
 
-set( INSTALL_LIBRARY_TARGETS
-"mulle-sprintf"
-)
-
-if( STANDALONE)
-   set( STANDALONE_BASE_NAME "mulle-sprintf")
-   set( STANDALONE_NAME "mulle-sprintf-standalone")
-   set( STANDALONE_DEFINITIONS ${MULLE_SPRINTF_DEFINITIONS})
-   set( STANDALONE_DEPENDENCIES
-   mulle-sprintf
+#
+# defined by cmake -DBUILD_SHARED_LIBS=ON
+#
+if( BUILD_SHARED_LIBS)
+   set( SHARED_LIBRARY_LIST
+      ${DEPENDENCY_LIBRARIES}
+      ${OPTIONAL_DEPENDENCY_LIBRARIES}
+      ${OS_SPECIFIC_LIBRARIES}
    )
 
-   set( STANDALONE_ALL_LOAD_LIBRARIES
-   $<TARGET_FILE:mulle-sprintf>
-   ${DEPENDENCY_LIBRARIES}
-   ${OPTIONAL_DEPENDENCY_LIBRARIES}
-   ${OS_SPECIFIC_LIBRARIES}
-   )
+   include( PostSharedLibrary OPTIONAL) # additional hook
 
-   include( Standalone)
-
-   set( INSTALL_LIBRARY_TARGETS
-   ${INSTALL_LIBRARY_TARGETS}
-   "mulle-sprintf-standalone"
+   target_link_libraries( mulle-sprintf
+      ${SHARED_LIBRARY_LIST}
    )
 endif()
+
 
 ### Install
 
@@ -96,10 +122,6 @@ install( TARGETS ${INSTALL_LIBRARY_TARGETS} DESTINATION "lib")
 install( FILES ${PUBLIC_HEADERS}  DESTINATION "include/mulle-sprintf")
 install( FILES ${PRIVATE_HEADERS} DESTINATION "include/mulle-sprintf/private")
 
-# definitions from cmake/share/Environment.cmake
 install( FILES ${CMAKE_INCLUDES}  DESTINATION "include/mulle-sprintf/cmake")
-
-# definitions from cmake/share/LinkManifest.cmake
-install( FILES ${LINK_MANIFEST_FILES}  DESTINATION "include/mulle-sprintf/link")
 
 include( PostInstall OPTIONAL)
