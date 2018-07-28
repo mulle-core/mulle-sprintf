@@ -1,3 +1,7 @@
+### 1.0.8
+
+* fix mingw, update sde
+
 ### 1.0.7
 
 * modernized mulle-sde
