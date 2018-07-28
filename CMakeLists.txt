@@ -91,7 +91,12 @@ add_library( "mulle-sprintf"
 )
 
 
-set( INSTALL_LIBRARY_TARGETS "mulle-sprintf")
+include( Library OPTIONAL)
+
+set( INSTALL_LIBRARY_TARGETS
+   "mulle-sprintf"
+   "${INSTALL_LIBRARY_TARGETS}"
+)
 
 include( PostLibrary OPTIONAL)
 
