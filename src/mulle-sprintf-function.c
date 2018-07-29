@@ -84,9 +84,9 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( unsigned long long), // mulle_sprintf_unsigned_long_long_argumenttype
    SIZEOF( unsigned long long *),
    SIZEOF( unsigned long *),
-   SIZEOF( unsigned __PTRDIFF_TYPE__),
+   SIZEOF( unsigned MULLE_SPRINTF_PTRDIFF_TYPE),
 
-   SIZEOF( unsigned __PTRDIFF_TYPE__ *), // mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype
+   SIZEOF( unsigned MULLE_SPRINTF_PTRDIFF_TYPE *), // mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype
    SIZEOF( unsigned short),
    SIZEOF( unsigned short *),
    0,    // vector
@@ -148,7 +148,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_long_argumenttype          : p->L    = va_arg( va, unsigned long); break;
       case mulle_sprintf_unsigned_long_long_argumenttype     : p->LL   = va_arg( va, unsigned long long); break;
       case mulle_sprintf_unsigned_long_pointer_argumenttype  : p->pL   = va_arg( va, unsigned long *); break;
-      case mulle_sprintf_unsigned_ptrdiff_t_argumenttype     : p->Dif  = va_arg( va, unsigned __PTRDIFF_TYPE__); break;
+      case mulle_sprintf_unsigned_ptrdiff_t_argumenttype     : p->Dif  = va_arg( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE); break;
       case mulle_sprintf_unsigned_short_argumenttype         : p->S    = (unsigned short) va_arg( va, unsigned int); break;  // promotion(!)
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = va_arg( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = va_arg( va, void *); break;
@@ -157,7 +157,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_wint_t_argumenttype                 : p->wc   = va_arg( va, wint_t); break;
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = va_arg( va, unsigned long long *); break;
-      case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned __PTRDIFF_TYPE__ *); break;
+      case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE *); break;
       }
       ++type;
       ++p;
@@ -209,7 +209,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_long_argumenttype          : p->L    = mulle_vararg_next_integer( va, unsigned long); break;
       case mulle_sprintf_unsigned_long_long_argumenttype     : p->LL   = mulle_vararg_next_integer( va, unsigned long long); break;
       case mulle_sprintf_unsigned_long_pointer_argumenttype  : p->pL   = mulle_vararg_next_pointer( va, unsigned long *); break;
-      case mulle_sprintf_unsigned_ptrdiff_t_argumenttype     : p->Dif  = mulle_vararg_next_integer( va, unsigned __PTRDIFF_TYPE__); break;
+      case mulle_sprintf_unsigned_ptrdiff_t_argumenttype     : p->Dif  = mulle_vararg_next_integer( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE); break;
       case mulle_sprintf_unsigned_short_argumenttype         : p->S    = (unsigned short) mulle_vararg_next_integer( va, unsigned int); break;  // promotion(!)
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = mulle_vararg_next_pointer( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = mulle_vararg_next_pointer( va, void *); break;
@@ -218,7 +218,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = mulle_vararg_next_pointer( va, struct _NSDecimal *); break;
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = mulle_vararg_next_pointer( va, unsigned long long *); break;
-      case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = mulle_vararg_next_pointer( va, unsigned __PTRDIFF_TYPE__ *); break;
+      case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = mulle_vararg_next_pointer( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE *); break;
       }
       ++type;
       ++p;
@@ -413,7 +413,7 @@ int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter 
 }
 
 
-__attribute__((constructor))
+MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_modifiers_on_load)
 void  mulle_sprintf_register_default_modifiers_on_load()
 {
    mulle_sprintf_register_standardmodifiers( mulle_sprintf_get_defaultconversion());

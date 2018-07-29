@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 8)
+#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 9)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -110,6 +110,9 @@ static inline void    mulle_sprintf_free_storage( void)
 }
 
 
+#if MULLE_C11_VERSION < ((3 << 20) | (0 << 8) | 0)
+# error "mulle_c11 is too old"
+#endif
 #if MULLE_ALLOCATOR_VERSION < ((1 << 20) | (5 << 8) | 0)
 # error "mulle_allocator is too old"
 #endif

@@ -1,3 +1,7 @@
+### 1.0.9
+
+* adapt to mulle-c11 3.0.0 and fix `PTR_DIFF` problem on windows
+
 ### 1.0.8
 
 * fix mingw, update sde
