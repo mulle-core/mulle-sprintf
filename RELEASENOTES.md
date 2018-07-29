@@ -1,3 +1,8 @@
+### 1.0.10
+
+* adapt to mulle-c11 3.0.0 and fix `PTR_DIFF` problem on windows
+* adapt to mulle-c11 3.0.0 and fix `PTR_DIFF` problem on windows
+
 ### 1.0.9
 
 * adapt to mulle-c11 3.0.0 and fix `PTR_DIFF` problem on windows
