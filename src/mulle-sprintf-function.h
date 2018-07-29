@@ -146,6 +146,22 @@ enum
 typedef unsigned char   mulle_sprintf_argumenttype_t;
 typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 
+
+#ifdef __PTRDIFF_TYPE__ 
+# define MULLE_SPRINTF_PTRDIFF_TYPE  __PTRDIFF_TYPE__
+#else
+# if _WIN64
+#  define MULLE_SPRINTF_PTRDIFF_TYPE  long long
+# else
+#  if _WIN32
+#   define MULLE_SPRINTF_PTRDIFF_TYPE long
+#  else
+#   error "need __PTRDIFF_TYPE__"
+#  endif
+# endif
+#endif
+
+
 union mulle_sprintf_argumentvalue
 {
    int                 i;
@@ -174,8 +190,8 @@ union mulle_sprintf_argumentvalue
    unsigned long long  LL;
    unsigned long       *pL;
    unsigned long long  *pLL;
-   unsigned __PTRDIFF_TYPE__  Dif;
-   unsigned __PTRDIFF_TYPE__  *pDif;
+   unsigned MULLE_SPRINTF_PTRDIFF_TYPE  Dif;
+   unsigned MULLE_SPRINTF_PTRDIFF_TYPE  *pDif;
    unsigned short      S;
    unsigned short      *pS;
    void                *pv;
