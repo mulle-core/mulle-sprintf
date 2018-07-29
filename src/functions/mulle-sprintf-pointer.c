@@ -87,7 +87,7 @@ void  mulle_sprintf_register_pointer_functions( struct mulle_sprintf_conversion 
 }
 
 
-__attribute__((constructor))
+MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_pointer_functions)
 static void  mulle_sprintf_register_default_pointer_functions()
 {
   mulle_sprintf_register_pointer_functions( mulle_sprintf_get_defaultconversion());

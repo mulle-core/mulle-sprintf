@@ -1,1 +1,4 @@
-../../share/match.d/80-source--private-headers
+*[_-]private.h
+*[_-]private.inc
+private.h
+private.inc
