@@ -101,7 +101,7 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
    }
    if( t == mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype)
    {
-      *v.pDif = (unsigned __PTRDIFF_TYPE__) len;
+      *v.pDif = (unsigned MULLE_SPRINTF_PTRDIFF_TYPE) len;
       return( 0);
    }
    if( t == mulle_sprintf_size_t_pointer_argumenttype)
@@ -162,7 +162,7 @@ void  mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *
 }
 
 
-__attribute__((constructor))
+MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_return_functions)
 static void  mulle_sprintf_register_default_return_functions()
 {
    mulle_sprintf_register_return_functions( mulle_sprintf_get_defaultconversion());

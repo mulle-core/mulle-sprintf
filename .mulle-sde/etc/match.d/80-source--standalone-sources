@@ -1,1 +1,2 @@
-../../share/match.d/80-source--standalone-sources
+*[_-]standalone.c
+standalone.c
