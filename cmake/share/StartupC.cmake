@@ -24,6 +24,8 @@ if( STARTUP_SOURCES)
       ${STARTUP_NAME}
    )
 
+   message( STATUS "STARTUP_NAME=\"${STARTUP_NAME}\"")
+
    set( STARTUP_LIBRARY
       $<TARGET_FILE:${STARTUP_NAME}>
    )
