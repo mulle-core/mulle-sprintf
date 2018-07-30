@@ -1,3 +1,7 @@
+### 1.0.10
+
+* fix outdated and buggy sde
+
 ### 1.0.9
 
 * adapt to mulle-c11 3.0.0 and fix `PTR_DIFF` problem on windows
