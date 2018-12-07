@@ -43,6 +43,7 @@
 
 #include <wctype.h>
 #include <stdarg.h>
+#include <assert.h>
 
 
 struct _NSDecimal;
@@ -147,7 +148,7 @@ typedef unsigned char   mulle_sprintf_argumenttype_t;
 typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 
 
-#ifdef __PTRDIFF_TYPE__ 
+#ifdef __PTRDIFF_TYPE__
 # define MULLE_SPRINTF_PTRDIFF_TYPE  __PTRDIFF_TYPE__
 #else
 # if _WIN64
@@ -255,7 +256,8 @@ static inline unsigned int   mulle_sprintf_index_for_character( int c)
 }
 
 
-static inline int   mulle_sprintf_is_modifier_character( mulle_sprintf_modifier_t table, int c)
+static inline int
+   mulle_sprintf_is_modifier_character( mulle_sprintf_modifier_t table, int c)
 {
    unsigned int    i;
 

@@ -1,5 +1,5 @@
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-test-allocator/mulle-test-allocator.h>
+#include <mulle-testallocator/mulle-testallocator.h>
 #include <stdio.h>
 
 
@@ -36,14 +36,14 @@ static void   complex_width_tests()
 
 int  main()
 {
-   mulle_test_allocator_set_tracelevel( 1);
-   mulle_test_allocator_initialize();
-   mulle_default_allocator = mulle_test_allocator;
+   mulle_testallocator_set_tracelevel( 1);
+   mulle_testallocator_initialize();
+   mulle_default_allocator = mulle_testallocator;
 
    complex_width_tests();
    printf_complex_width_tests();
 
    mulle_sprintf_free_storage();
-   mulle_test_allocator_reset();
+   mulle_testallocator_reset();
 }
 

@@ -98,14 +98,15 @@ static integer_converters  decimal_converters =
 };
 
 
-static void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
-                                        struct mulle_sprintf_formatconversioninfo *info,
-                                        char *p,
-                                        int p_length,
-                                        char *q,
-                                        int q_length,
-                                        int  precision,
-                                        char prefix)
+static void
+   _mulle_sprintf_justified( struct mulle_buffer *buffer,
+                             struct mulle_sprintf_formatconversioninfo *info,
+                             char *p,
+                             int p_length,
+                             char *q,
+                             int q_length,
+                             int  precision,
+                             char prefix)
 {
    int       length;
    size_t    total;
@@ -160,13 +161,14 @@ static void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
 }
 
 
-static void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
-                                                     struct mulle_sprintf_formatconversioninfo *info,
-                                                     char *p,
-                                                     int p_length,
-                                                     char prefix,
-                                                     int is_zero,
-                                                     int (*set_prefix)( char *, int, int, int))
+static void
+   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          char *p,
+                                          int p_length,
+                                          char prefix,
+                                          int is_zero,
+                                          int (*set_prefix)( char *, int, int, int))
 {
    int     precision;
    int     q_length;
@@ -190,7 +192,14 @@ static void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer
       }
    }
 
-   _mulle_sprintf_justified( buffer, info, p, p_length, tmp2, q_length, precision, prefix);
+   _mulle_sprintf_justified( buffer,
+                             info,
+                             p,
+                             p_length,
+                             tmp2,
+                             q_length,
+                             precision,
+                             prefix);
 }
 
 
@@ -255,25 +264,32 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    p_length = &tmp[ sizeof( tmp)] - p;
 
    // p is a the front now
-   _mulle_sprintf_justified_and_prefixed( buffer, info, p, (int) p_length, prefix, vLL == 0, converters->set_prefix);
+   _mulle_sprintf_justified_and_prefixed( buffer, info,
+                                                  p,
+                                                  (int) p_length,
+                                                  prefix,
+                                                  vLL == 0,
+                                                  converters->set_prefix);
 
    return( 0);
 }
 
 
-static int   _mulle_sprintf_int_decimal_conversion( struct mulle_buffer *buffer,
-                                                   struct mulle_sprintf_formatconversioninfo *info,
-                                                   struct mulle_sprintf_argumentarray *arguments,
-                                                   int argc)
+static int
+   _mulle_sprintf_int_decimal_conversion( struct mulle_buffer *buffer,
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          struct mulle_sprintf_argumentarray *arguments,
+                                          int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 1));
 }
 
 
-static int   _mulle_sprintf_unsigned_int_decimal_conversion( struct mulle_buffer *buffer,
-                                                            struct mulle_sprintf_formatconversioninfo *info,
-                                                            struct mulle_sprintf_argumentarray *arguments,
-                                                            int argc)
+static int
+   _mulle_sprintf_unsigned_int_decimal_conversion( struct mulle_buffer *buffer,
+                                                   struct mulle_sprintf_formatconversioninfo *info,
+                                                   struct mulle_sprintf_argumentarray *arguments,
+                                                   int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 0));
 }
@@ -328,10 +344,11 @@ static integer_converters  octal_converters =
 };
 
 
-static int   _mulle_sprintf_int_octal_conversion( struct mulle_buffer *buffer,
-                                                 struct mulle_sprintf_formatconversioninfo *info,
-                                                 struct mulle_sprintf_argumentarray *arguments,
-                                                 int argc)
+static int
+   _mulle_sprintf_int_octal_conversion( struct mulle_buffer *buffer,
+                                        struct mulle_sprintf_formatconversioninfo *info,
+                                        struct mulle_sprintf_argumentarray *arguments,
+                                        int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &octal_converters, 0));
 }
@@ -395,10 +412,11 @@ static integer_converters  hex_converters =
 };
 
 
-static int   _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
-                                               struct mulle_sprintf_formatconversioninfo *info,
-                                               struct mulle_sprintf_argumentarray *arguments,
-                                               int argc)
+static int
+   _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
+                                      struct mulle_sprintf_formatconversioninfo *info,
+                                      struct mulle_sprintf_argumentarray *arguments,
+                                      int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
 }
@@ -408,7 +426,19 @@ static int   _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
 #pragma mark long conversions
 
 
-static int   _mulle_sprintf_long_decimal_conversion( struct mulle_buffer *buffer,
+static int
+   _mulle_sprintf_long_decimal_conversion( struct mulle_buffer *buffer,
+                                           struct mulle_sprintf_formatconversioninfo *info,
+                                           struct mulle_sprintf_argumentarray *arguments,
+                                           int argc)
+{
+   return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 1));
+}
+
+
+
+static int
+   _mulle_sprintf_unsigned_long_decimal_conversion( struct mulle_buffer *buffer,
                                                     struct mulle_sprintf_formatconversioninfo *info,
                                                     struct mulle_sprintf_argumentarray *arguments,
                                                     int argc)
@@ -417,35 +447,28 @@ static int   _mulle_sprintf_long_decimal_conversion( struct mulle_buffer *buffer
 }
 
 
-
-static int   _mulle_sprintf_unsigned_long_decimal_conversion( struct mulle_buffer *buffer,
-                                                             struct mulle_sprintf_formatconversioninfo *info,
-                                                             struct mulle_sprintf_argumentarray *arguments,
-                                                             int argc)
-{
-   return( integer_conversion( info, buffer, arguments, argc, &decimal_converters, 1));
-}
-
-
-int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
-                                          struct mulle_sprintf_formatconversioninfo *info,
-                                          struct mulle_sprintf_argumentarray *arguments,
-                                          int argc)
+int
+   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
+                                       struct mulle_sprintf_formatconversioninfo *info,
+                                       struct mulle_sprintf_argumentarray *arguments,
+                                       int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
 }
 
 
-static int   _mulle_sprintf_long_octal_conversion( struct mulle_buffer *buffer,
-                                                  struct mulle_sprintf_formatconversioninfo *info,
-                                                  struct mulle_sprintf_argumentarray *arguments,
-                                                  int argc)
+static int
+   _mulle_sprintf_long_octal_conversion( struct mulle_buffer *buffer,
+                                         struct mulle_sprintf_formatconversioninfo *info,
+                                         struct mulle_sprintf_argumentarray *arguments,
+                                         int argc)
 {
    return( integer_conversion( info, buffer, arguments, argc, &octal_converters, 0));
 }
 
 
-static mulle_sprintf_argumenttype_t   _mulle_sprintf_get_signed_int_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t
+  _mulle_sprintf_get_signed_int_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    switch( info->modifier[ 0])
    {
@@ -467,7 +490,8 @@ static mulle_sprintf_argumenttype_t   _mulle_sprintf_get_signed_int_argumenttype
 }
 
 
-static mulle_sprintf_argumenttype_t  mulle_sprintf_get_unsigned_int_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t
+  mulle_sprintf_get_unsigned_int_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    switch( info->modifier[ 0])
    {
@@ -490,7 +514,7 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_unsigned_int_argumenttype
 }
 
 
-static struct mulle_sprintf_function     mulle_sprintf_int_decimal_functions =
+static struct mulle_sprintf_function   mulle_sprintf_int_decimal_functions =
 {
    _mulle_sprintf_get_signed_int_argumenttype,
    _mulle_sprintf_int_decimal_conversion
@@ -504,35 +528,35 @@ static struct mulle_sprintf_function     mulle_sprintf_unsigned_int_decimal_func
 };
 
 
-static struct mulle_sprintf_function     mulle_sprintf_int_octal_functions =
+static struct mulle_sprintf_function   mulle_sprintf_int_octal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    _mulle_sprintf_int_octal_conversion
 };
 
 
-static struct mulle_sprintf_function     mulle_sprintf_int_hex_functions =
+static struct mulle_sprintf_function   mulle_sprintf_int_hex_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    _mulle_sprintf_int_hex_conversion
 };
 
 
-static struct mulle_sprintf_function     mulle_sprintf_long_decimal_functions =
+static struct mulle_sprintf_function   mulle_sprintf_long_decimal_functions =
 {
    _mulle_sprintf_get_signed_int_argumenttype,
    _mulle_sprintf_long_decimal_conversion
 };
 
 
-static struct mulle_sprintf_function     mulle_sprintf_unsigned_long_decimal_functions =
+static struct mulle_sprintf_function   mulle_sprintf_unsigned_long_decimal_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    _mulle_sprintf_unsigned_long_decimal_conversion
 };
 
 
-static struct mulle_sprintf_function     mulle_sprintf_long_hex_functions =
+static struct mulle_sprintf_function   mulle_sprintf_long_hex_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
    _mulle_sprintf_long_hex_conversion

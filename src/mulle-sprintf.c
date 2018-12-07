@@ -34,6 +34,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
+#pragma clang diagnostic ignored "-Wparentheses"
 
 #include "mulle-sprintf.h"
 #include "mulle-sprintf-function.h"
@@ -185,8 +186,9 @@ static void   *space_for_starts( unsigned int n, struct mulle_allocator *allocat
 }
 
 
-static struct mulle_sprintf_argumentarray   *space_for_arguments( unsigned int n,
-                                                                  struct mulle_allocator *allocator)
+static struct mulle_sprintf_argumentarray   *
+   space_for_arguments( unsigned int n,
+                        struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
    struct mulle_sprintf_config           *config;
@@ -200,8 +202,12 @@ static struct mulle_sprintf_argumentarray   *space_for_arguments( unsigned int n
    args = &storage->arguments;
    if( n > args->size)
    {
-      args->values = mulle_allocator_realloc( allocator, args->values, n * sizeof( union mulle_sprintf_argumentvalue));
-      args->types  = mulle_allocator_realloc( allocator, args->types, n * sizeof( unsigned char));
+      args->values = mulle_allocator_realloc( allocator,
+                                              args->values,
+                                              n * sizeof( union mulle_sprintf_argumentvalue));
+      args->types  = mulle_allocator_realloc( allocator,
+                                              args->types,
+                                              n * sizeof( unsigned char));
       args->size   = n;
    }
    return( args);
@@ -232,15 +238,18 @@ static void   *space_for_infos( unsigned int n, struct mulle_allocator *allocato
 #pragma mark conversion tables
 
 
-static inline struct mulle_sprintf_function   *functions_for_conversion( mulle_sprintf_vector_t jumptable,
-                                                               mulle_sprintf_conversioncharacter_t c)
+static inline struct mulle_sprintf_function   *
+   functions_for_conversion( mulle_sprintf_vector_t jumptable,
+                             mulle_sprintf_conversioncharacter_t c)
 {
    return( jumptable[ mulle_sprintf_index_for_character( c)]);
 }
 
 
-static int   determine_is_valid_conversion_character( struct mulle_sprintf_conversion *table,
-                                                      mulle_sprintf_conversioncharacter_t c)
+/* c is the character past '%' */
+static int
+   determine_is_valid_conversion_character( struct mulle_sprintf_conversion *table,
+                                            mulle_sprintf_conversioncharacter_t c)
 {
    struct mulle_sprintf_function  *functions;
 
@@ -256,8 +265,9 @@ static int   determine_is_valid_conversion_character( struct mulle_sprintf_conve
 }
 
 
-static inline unsigned char   jump_determine_argument_type( mulle_sprintf_vector_t  jumptable,
-                                                            struct mulle_sprintf_formatconversioninfo *info)
+static inline unsigned char
+   jump_determine_argument_type( mulle_sprintf_vector_t  jumptable,
+                                 struct mulle_sprintf_formatconversioninfo *info)
 {
    struct mulle_sprintf_function  *functions;
 
@@ -266,11 +276,12 @@ static inline unsigned char   jump_determine_argument_type( mulle_sprintf_vector
 }
 
 
-static inline int   jump_convert_argument( mulle_sprintf_vector_t  jumptable,
-                                           struct mulle_buffer *buffer,
-                                           struct mulle_sprintf_formatconversioninfo *info,
-                                           struct mulle_sprintf_argumentarray *arguments,
-                                           int i)
+static inline int
+   jump_convert_argument( mulle_sprintf_vector_t  jumptable,
+                          struct mulle_buffer *buffer,
+                          struct mulle_sprintf_formatconversioninfo *info,
+                          struct mulle_sprintf_argumentarray *arguments,
+                          int i)
 {
    struct mulle_sprintf_function  *functions;
 
@@ -279,20 +290,24 @@ static inline int   jump_convert_argument( mulle_sprintf_vector_t  jumptable,
 }
 
 
-static inline unsigned char   determine_argument_type( mulle_sprintf_vector_t  jumptable,
-                                                       struct mulle_sprintf_formatconversioninfo *info)
+static inline unsigned char
+   determine_argument_type( mulle_sprintf_vector_t  jumptable,
+                            struct mulle_sprintf_formatconversioninfo *info)
 {
    // need to code this (possibly :))
-   if( info->modifier[ 0] == 'v' || info->modifier[ 1] == 'v' || info->modifier[ 2] == 'v')
+   if( info->modifier[ 0] == 'v' ||
+       info->modifier[ 1] == 'v' ||
+       info->modifier[ 2] == 'v')
       return( mulle_sprintf_vector_argumenttype);
 
    return( jump_determine_argument_type( jumptable, info));
 }
 
 
-static inline void    update_width_and_precision( struct mulle_sprintf_formatconversioninfo *info,
-                                                  struct mulle_sprintf_argumentarray *arguments,
-                                                  int *argc)
+static inline void
+   update_width_and_precision( struct mulle_sprintf_formatconversioninfo *info,
+                               struct mulle_sprintf_argumentarray *arguments,
+                               int *argc)
 {
    if( info->memory.width_is_argument)
    {
@@ -329,14 +344,17 @@ static inline void    update_width_and_precision( struct mulle_sprintf_formatcon
 }
 
 
-static inline int   convert_argument( mulle_sprintf_vector_t jumptable,
-                                      struct mulle_buffer *buffer,
-                                      struct mulle_sprintf_formatconversioninfo *info,
-                                      struct mulle_sprintf_argumentarray *arguments,
-                                      int *arg,
-                                      int before)
+static inline int
+   convert_argument( mulle_sprintf_vector_t jumptable,
+                     struct mulle_buffer *buffer,
+                     struct mulle_sprintf_formatconversioninfo *info,
+                     struct mulle_sprintf_argumentarray *arguments,
+                     int *arg,
+                     int before)
 {
-   if( info->modifier[ 0] == 'v' || info->modifier[ 1] == 'v' || info->modifier[ 2] == 'v')
+   if( info->modifier[ 0] == 'v' ||
+       info->modifier[ 1] == 'v' ||
+       info->modifier[ 2] == 'v')
    {
       mulle_buffer_add_string( buffer, "<vector unsupported>");
       return( -1);
@@ -396,7 +414,7 @@ static int   number_of_conversions( char *format,
          {
             switch( determine_is_valid_conversion_character( table, c))
             {
-            case 0  : continue;        // no
+            case 0  : continue;        // not yet, probably a modifier
             case 1  : ++n; goto next;  // yes
             case -1 : if( starts)
                          --starts;
@@ -407,7 +425,6 @@ static int   number_of_conversions( char *format,
       }
 next:
       ++format;
-    ;
    }
 
    return( n);
@@ -431,8 +448,9 @@ typedef struct
 // expect parser->curr to point at '$'
 // expect parser->memo to point after '*' (first digit)
 //
-static inline int   positive_int_value_from_memo( format_conversion_parser *parser,
-                                                  struct mulle_sprintf_formatconversioninfo *info)
+static inline int
+   positive_int_value_from_memo( format_conversion_parser *parser,
+                                 struct mulle_sprintf_formatconversioninfo *info)
 
 {
    char     buf[ 63 + 1];
@@ -454,9 +472,10 @@ static inline int   positive_int_value_from_memo( format_conversion_parser *pars
 //
 // returns: number of arguments it needs
 //
-static inline int   parse_conversion_info( char *format,
-                                           struct mulle_sprintf_formatconversioninfo *info,
-                                           int arg)
+static inline int
+   parse_conversion_info( char *format,
+                          struct mulle_sprintf_formatconversioninfo *info,
+                          int arg)
 {
    format_conversion_parser  parser;
    char           c;
@@ -703,8 +722,9 @@ struct mulle_sprintf_context
 };
 
 
-static void   determine_all_conversion_argument_types( struct mulle_sprintf_context *ctxt,
-                                                       struct mulle_sprintf_conversion *table)
+static void
+   determine_all_conversion_argument_types( struct mulle_sprintf_context *ctxt,
+                                            struct mulle_sprintf_conversion *table)
 {
    struct mulle_sprintf_formatconversioninfo   *info;
    int                                         i;
@@ -919,7 +939,9 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
 
 
 
-int   mulle_mvsprintf( struct mulle_buffer *buffer, char *format, mulle_vararg_list arguments)
+int   mulle_mvsprintf( struct mulle_buffer *buffer,
+                       char *format,
+                       mulle_vararg_list arguments)
 {
    if( ! buffer || ! format)
    {

@@ -1,3 +1,7 @@
+### 1.0.11
+
+* migrated to mulle-test version 4.0.0
+
 ### 1.0.10
 
 * fix outdated and buggy sde

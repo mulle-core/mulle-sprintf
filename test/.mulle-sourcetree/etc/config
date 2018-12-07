@@ -1,0 +1,2 @@
+mulle-sprintf;tar;no-all-load,no-import,only-standalone;2e84d5c6-8cb6-4b51-b829-78727a2dfffd;${MULLE_SPRINTF_URL:-https://github.com/nat/mulle-sprintf/archive/${MULLE_SPRINTF_BRANCH:-latest}.tar.gz};;;;
+mulle-testallocator;tar;no-all-load,no-import;e8358a75-0345-4394-b257-2535091acc26;${MULLE_TESTALLOCATOR_URL:-https://github.com/mulle-core/mulle-testallocator/archive/${MULLE_TESTALLOCATOR_BRANCH:-latest}.tar.gz};;;;

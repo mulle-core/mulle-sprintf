@@ -54,9 +54,10 @@
 #endif
 
 
-static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
-                                             struct mulle_sprintf_formatconversioninfo *info,
-                                             mulle_utf16_t *s)
+static int
+   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
+                                   struct mulle_sprintf_formatconversioninfo *info,
+                                   mulle_utf16_t *s)
 {
    int                    length;
    int                    o_length;
@@ -91,9 +92,10 @@ static int   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
-                                             struct mulle_sprintf_formatconversioninfo *info,
-                                             mulle_utf32_t *s)
+static int
+   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
+                                   struct mulle_sprintf_formatconversioninfo *info,
+                                   mulle_utf32_t *s)
 {
    int                    length;
    int                    o_length;
@@ -135,10 +137,11 @@ int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
-                                                   struct mulle_sprintf_formatconversioninfo *info,
-                                                   struct mulle_sprintf_argumentarray *arguments,
-                                                   int argc)
+static int
+   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
+                                         struct mulle_sprintf_formatconversioninfo *info,
+                                         struct mulle_sprintf_argumentarray *arguments,
+                                         int argc)
 {
    union mulle_sprintf_argumentvalue  v;
 
@@ -147,7 +150,8 @@ static int   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
 }
 
 
-static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t
+   mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    return( mulle_sprintf_wchar_pointer_argumenttype);
 }
