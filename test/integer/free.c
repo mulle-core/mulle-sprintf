@@ -1,5 +1,5 @@
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-test-allocator/mulle-test-allocator.h>
+#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 
@@ -39,9 +39,9 @@ static void   simple_sprintf_free_test()
 
 int  main()
 {
-   mulle_test_allocator_set_tracelevel( 1);
-   mulle_test_allocator_initialize();
-   mulle_default_allocator = mulle_test_allocator;
+   mulle_testallocator_set_tracelevel( 1);
+   mulle_testallocator_initialize();
+   mulle_default_allocator = mulle_testallocator;
 
    simple_sprintf_free_test();
 
@@ -49,7 +49,7 @@ int  main()
    mulle_sprintf_free_storage();
 
    fprintf( stderr, " -- allocator reset\n");
-   mulle_test_allocator_reset();
+   mulle_testallocator_reset();
    return( 0);
 }
 

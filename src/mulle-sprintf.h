@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 10)
+#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 11)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -97,7 +97,8 @@ static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
 }
 
 
-static inline struct mulle_sprintf_conversion   *mulle_sprintf_get_defaultconversion( void)
+static inline struct mulle_sprintf_conversion   *
+  mulle_sprintf_get_defaultconversion( void)
 {
    return( &mulle_sprintf_get_config()->defaultconversion);
 }
