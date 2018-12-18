@@ -1,3 +1,7 @@
+### 1.0.12
+
+* fix travis
+
 ### 1.0.11
 
 * migrated to mulle-test version 4.0.0
