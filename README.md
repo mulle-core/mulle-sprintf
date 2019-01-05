@@ -1,9 +1,9 @@
 # mulle-sprintf
 
-an extensible variant of sprintf written in C (C11).
+🔢 An extensible sprintf function supporting stdarg and mulle-vararg
 
-The extensibility is used in **MulleObjCFoundation** to add the '@' conversion
-character for object conversion.
+The extensibility is used in **MulleObjCStandardFoundation** to add the
+'@' conversion character for object conversion.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments. Because floating point to string conversion is hard, floating point
@@ -16,24 +16,25 @@ conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 > if you link mulle-sprintf as a static library without using --all_load or
 > some such.
 >
-> [Ref](//www.chrisgummer.com/llvm-load_all-and-force_load)
+> [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
 >
 
 
-Fork      |  Build Status | Release Version
-----------|---------------|-----------------------------------
-[Mulle kybernetiK](//github.com/mulle-c/mulle-sprintf) | [![Build Status](https://travis-ci.org/mulle-c/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-c/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-c/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-c/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-c/mulle-sprintf)
+Build Status | Release Version
+-------------|-----------------------------------
+[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf)
 
 
 ## Install
 
 Install the prerequisites first:
 
-| Prerequisites                                           |
-|---------------------------------------------------------|
-| [mulle-buffer](//github.com/mulle-c/mulle-buffer)       |
-| [mulle-utf](//github.com/mulle-c/mulle-utf)             |
-| [mulle-vararg](//github.com/mulle-c/mulle-vararg)       |
+| Prerequisites                                              |
+|------------------------------------------------------------|
+| [mulle-thread](//github.com/mulle-concurrent/mulle-thread) |
+| [mulle-buffer](//github.com/mulle-c/mulle-buffer)          |
+| [mulle-utf](//github.com/mulle-c/mulle-utf)                |
+| [mulle-vararg](//github.com/mulle-c/mulle-vararg)          |
 
 Then build and install
 
@@ -87,7 +88,7 @@ File                                  | Description
 
 All platforms and compilers supported by
 [mulle-c11](//github.com/mulle-c/mulle-c11) and
-[mulle-thread](//github.com/mulle-c/mulle-thread).
+[mulle-thread](//github.com/mulle-concurrent/mulle-thread).
 
 
 ## Author
