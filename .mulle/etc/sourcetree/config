@@ -1,4 +1,4 @@
-mulle-buffer;tar;no-all-load,no-singlephase,no-singlephase-link;f5c22e59-55ac-40b7-abde-7e45fe1e76fb;${MULLE_BUFFER_URL:-https://github.com/mulle-c/mulle-buffer/archive/${MULLE_BUFFER_BRANCH:-latest}.tar.gz};;;;
-mulle-utf;tar;no-all-load,no-singlephase,no-singlephase-link;0344f209-42ce-4368-82e1-3dfda2685325;${MULLE_UTF_URL:-https://github.com/mulle-c/mulle-utf/archive/${MULLE_UTF_BRANCH:-latest}.tar.gz};;;;
-mulle-vararg;tar;no-all-load,no-singlephase,no-singlephase-link;9362bc39-a6c9-46f8-aea4-9cece46a303c;${MULLE_VARARG_URL:-https://github.com/mulle-c/mulle-vararg/archive/${MULLE_VARARG_BRANCH:-latest}.tar.gz};;;;
-mulle-thread;tar;no-all-load,no-import,no-singlephase,no-singlephase-link;b8335fee-90ea-4611-9b7d-79175452cd32;${MULLE_THREAD_URL:-https://github.com/mulle-concurrent/mulle-thread/archive/${MULLE_THREAD_BRANCH:-latest}.tar.gz};;;;
+mulle-buffer;tar;no-all-load,no-import,no-singlephase;f5c22e59-55ac-40b7-abde-7e45fe1e76fb;${MULLE_BUFFER_URL:-https://github.com/mulle-c/mulle-buffer/archive/${MULLE_BUFFER_BRANCH:-latest}.tar.gz};;;;
+mulle-utf;tar;no-all-load,no-import,no-singlephase;0344f209-42ce-4368-82e1-3dfda2685325;${MULLE_UTF_URL:-https://github.com/mulle-c/mulle-utf/archive/${MULLE_UTF_BRANCH:-latest}.tar.gz};;;;
+mulle-vararg;tar;no-all-load,no-import,no-singlephase;9362bc39-a6c9-46f8-aea4-9cece46a303c;${MULLE_VARARG_URL:-https://github.com/mulle-c/mulle-vararg/archive/${MULLE_VARARG_BRANCH:-latest}.tar.gz};;;;
+mulle-thread;tar;no-all-load,no-import,no-singlephase;b8335fee-90ea-4611-9b7d-79175452cd32;${MULLE_THREAD_URL:-https://github.com/mulle-concurrent/mulle-thread/archive/${MULLE_THREAD_BRANCH:-latest}.tar.gz};;;;

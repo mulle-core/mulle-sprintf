@@ -8,7 +8,7 @@ endif()
 set( INCLUDE_DIRS
 src
 src/functions
-) 
+)
 
 set( PRIVATE_HEADERS
 src/include-private.h
@@ -26,5 +26,5 @@ src/functions/mulle-sprintf-string.h
 src/include.h
 src/mulle-sprintf-function.h
 src/mulle-sprintf.h
-) 
+)
 
