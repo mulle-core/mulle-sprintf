@@ -16,7 +16,9 @@ df
 dirname
 dmesg
 echo
+ed;optional
 egrep
+emacs;optional
 env
 expr
 false
@@ -36,6 +38,7 @@ more
 mount
 mudo
 mv
+nano;optional
 ps
 pwd
 readlink
@@ -57,13 +60,8 @@ tr
 true
 umount
 uname
+uuidgen
+vi;optional
 wc
 which
-column
-git
-gzip
-tar
-mulle-sourcetree-to-c
-mulle-match-to-cmake
-mulle-sourcetree-to-cmake
-cmake
+xargs;optional
