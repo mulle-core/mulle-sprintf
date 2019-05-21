@@ -44,9 +44,14 @@
 #include "include-private.h"
 #include <string.h>
 
+// make this easier to read
+#define HAVE_MULLE_UTF
+#ifdef DONT_HAVE_MULLE_UTF
+# undef HAVE_MULLE_UTF
+#endif
 
 // if no widechar support
-#ifndef DONT_HAVE_MULLE_UTF
+#ifdef HAVE_MULLE_UTF
 #include "include-private.h"
 
 #if MULLE_UTF_VERSION < ((1 << 20) | (0 << 8) | 7)
@@ -210,7 +215,7 @@ static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
    union mulle_sprintf_argumentvalue  v;
    mulle_sprintf_argumenttype_t       t;
 
-#ifndef DONT_HAVE_MULLE_UTF
+#ifdef HAVE_MULLE_UTF
    t = arguments->types[ argc];
    if( t == mulle_sprintf_wchar_pointer_argumenttype)
       return( _mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
@@ -223,7 +228,7 @@ static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
 
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
-#ifndef DONT_HAVE_MULLE_UTF
+#ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
       return( mulle_sprintf_wchar_pointer_argumenttype);
 #endif
@@ -241,13 +246,11 @@ static struct mulle_sprintf_function     mulle_string_functions =
 void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables)
 {
    mulle_sprintf_register_functions( tables, &mulle_string_functions, 's');
-#ifndef DONT_HAVE_MULLE_UTF
+#ifdef HAVE_MULLE_UTF
    mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
    mulle_sprintf_register_modifier( tables, 'l');
 #endif
 }
-
-
 
 
 MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_string_functions)
