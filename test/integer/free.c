@@ -30,7 +30,7 @@ static void   simple_sprintf_free_test()
          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24);
-   printf( "%.*s (%d)\n", len, mulle_buffer_get_bytes( &buffer), len);
+   printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( &buffer), len);
 
    fprintf( stderr, " -- buffer done\n");
    mulle_buffer_done( &buffer);

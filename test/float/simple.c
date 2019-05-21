@@ -11,15 +11,15 @@ static void   simple_float_test()
    buffer = mulle_buffer_create( NULL);
 
    mulle_sprintf( buffer, "%f", 18.48);
-   printf( "%.*s\n", mulle_buffer_get_length( buffer), mulle_buffer_get_bytes( buffer));
+   printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
    mulle_sprintf( buffer, "%.1f", 18.48);
-   printf( "%.*s\n", mulle_buffer_get_length( buffer), mulle_buffer_get_bytes( buffer));
+   printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
    mulle_sprintf( buffer, "%3.1f", 18.48);
-   printf( "%.*s\n", mulle_buffer_get_length( buffer), mulle_buffer_get_bytes( buffer));
+   printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
    mulle_buffer_destroy( buffer);
