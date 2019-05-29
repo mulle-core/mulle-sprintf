@@ -1,3 +1,7 @@
+### 1.0.15
+
+* improved `find_library` code
+
 ### 1.0.14
 
 * fix some test compile warnings

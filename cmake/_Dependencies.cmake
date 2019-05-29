@@ -7,7 +7,7 @@ endif()
 
 # sourcetree: MULLE_BUFFER;no-all-load,no-import,no-singlephase;
 if( NOT MULLE_BUFFER_LIBRARY)
-   find_library( MULLE_BUFFER_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-buffer)
+   find_library( MULLE_BUFFER_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-buffer NO_CMAKE_SYSTEM_PATH)
    message( STATUS "MULLE_BUFFER_LIBRARY is ${MULLE_BUFFER_LIBRARY}")
    #
    # the order looks ascending, but due to the way this file is read
@@ -71,7 +71,7 @@ endif()
 
 # sourcetree: MULLE_UTF;no-all-load,no-import,no-singlephase;
 if( NOT MULLE_UTF_LIBRARY)
-   find_library( MULLE_UTF_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-utf)
+   find_library( MULLE_UTF_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-utf NO_CMAKE_SYSTEM_PATH)
    message( STATUS "MULLE_UTF_LIBRARY is ${MULLE_UTF_LIBRARY}")
    #
    # the order looks ascending, but due to the way this file is read
@@ -135,7 +135,7 @@ endif()
 
 # sourcetree: MULLE_VARARG;no-all-load,no-import,no-singlephase;
 if( NOT MULLE_VARARG_LIBRARY)
-   find_library( MULLE_VARARG_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-vararg)
+   find_library( MULLE_VARARG_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-vararg NO_CMAKE_SYSTEM_PATH)
    message( STATUS "MULLE_VARARG_LIBRARY is ${MULLE_VARARG_LIBRARY}")
    #
    # the order looks ascending, but due to the way this file is read
@@ -199,7 +199,7 @@ endif()
 
 # sourcetree: MULLE_THREAD;no-all-load,no-import,no-singlephase;
 if( NOT MULLE_THREAD_LIBRARY)
-   find_library( MULLE_THREAD_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-thread)
+   find_library( MULLE_THREAD_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-thread NO_CMAKE_SYSTEM_PATH)
    message( STATUS "MULLE_THREAD_LIBRARY is ${MULLE_THREAD_LIBRARY}")
    #
    # the order looks ascending, but due to the way this file is read
