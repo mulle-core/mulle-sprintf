@@ -1,3 +1,7 @@
+### 1.0.16
+
+* updated mulle-sde and travis
+
 ### 1.0.15
 
 * improved `find_library` code
