@@ -19,7 +19,7 @@ if( NOT MULLE_BUFFER_LIBRARY)
    #
    if( MULLE_BUFFER_LIBRARY)
       #
-      # Add to MULLE_BUFFER_LIBRARY list.
+      # Add MULLE_BUFFER_LIBRARY to DEPENDENCY_LIBRARIES list.
       # Disable with: `mulle-sourcetree mark mulle-buffer no-cmakeadd`
       #
       set( DEPENDENCY_LIBRARIES
@@ -87,7 +87,7 @@ if( NOT MULLE_UTF_LIBRARY)
    #
    if( MULLE_UTF_LIBRARY)
       #
-      # Add to MULLE_UTF_LIBRARY list.
+      # Add MULLE_UTF_LIBRARY to DEPENDENCY_LIBRARIES list.
       # Disable with: `mulle-sourcetree mark mulle-utf no-cmakeadd`
       #
       set( DEPENDENCY_LIBRARIES
@@ -155,7 +155,7 @@ if( NOT MULLE_VARARG_LIBRARY)
    #
    if( MULLE_VARARG_LIBRARY)
       #
-      # Add to MULLE_VARARG_LIBRARY list.
+      # Add MULLE_VARARG_LIBRARY to DEPENDENCY_LIBRARIES list.
       # Disable with: `mulle-sourcetree mark mulle-vararg no-cmakeadd`
       #
       set( DEPENDENCY_LIBRARIES
@@ -223,7 +223,7 @@ if( NOT MULLE_THREAD_LIBRARY)
    #
    if( MULLE_THREAD_LIBRARY)
       #
-      # Add to MULLE_THREAD_LIBRARY list.
+      # Add MULLE_THREAD_LIBRARY to DEPENDENCY_LIBRARIES list.
       # Disable with: `mulle-sourcetree mark mulle-thread no-cmakeadd`
       #
       set( DEPENDENCY_LIBRARIES

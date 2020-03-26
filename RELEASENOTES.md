@@ -1,3 +1,7 @@
+### 1.0.17
+
+* fix missing function
+
 ### 1.0.16
 
 * updated mulle-sde and travis
