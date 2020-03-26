@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 16)
+#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 17)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -56,27 +56,57 @@ struct mulle_buffer;
 struct mulle_sprintf_conversion;
 
 // will not append '\0' !
-int   mulle_sprintf( struct mulle_buffer *buffer,
-                     char *format,
-                     ...);
+int   mulle_buffer_sprintf( struct mulle_buffer *buffer,
+                            char *format,
+                            ...);
 
-int   mulle_vsprintf( struct mulle_buffer *buffer,
-                      char *format,
-                      va_list va);
+int   mulle_buffer_vsprintf( struct mulle_buffer *buffer,
+                             char *format,
+                             va_list va);
 
-int   _mulle_vsprintf( struct mulle_buffer *buffer,
-                       char *format,
-                       va_list va,
-                       struct mulle_sprintf_conversion *table);
+int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
+                              char *format,
+                              va_list va,
+                              struct mulle_sprintf_conversion *table);
 
-int   mulle_mvsprintf( struct mulle_buffer *buffer,
-                       char *format,
-                       mulle_vararg_list va);
+int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
+                              char *format,
+                              mulle_vararg_list va);
 
-int   _mulle_mvsprintf( struct mulle_buffer *buffer,
-                        char *format,
-                        mulle_vararg_list arguments,
-                        struct mulle_sprintf_conversion *table);
+int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
+                               char *format,
+                               mulle_vararg_list arguments,
+                               struct mulle_sprintf_conversion *table);
+
+
+static inline int   mulle_sprintf( struct mulle_buffer *buffer,
+                                   char *format,
+                                   ...)
+{
+   va_list  args;
+   int      rval;
+
+   va_start( args, format);
+   rval = mulle_buffer_vsprintf( buffer, format, args);
+   va_end( args);
+   return( rval);
+}
+
+static inline int   mulle_vsprintf( struct mulle_buffer *buffer,
+                                    char *format,
+                                    va_list va)
+{
+   return( mulle_buffer_vsprintf( buffer, format, va));
+}
+
+
+static inline int   mulle_mvsprintf( struct mulle_buffer *buffer,
+                                     char *format,
+                                     mulle_vararg_list va)
+{
+   return( mulle_buffer_mvsprintf( buffer, format, va));
+}
+
 
 #pragma mark - manage "sprintf"
 

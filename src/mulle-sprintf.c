@@ -846,7 +846,7 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
 }
 
 
-static int  print_context( struct mulle_sprintf_context *ctxt,
+static int  context_print( struct mulle_sprintf_context *ctxt,
                            struct mulle_buffer *buffer,
                            char *format,
                            struct mulle_sprintf_conversion *table)
@@ -909,10 +909,10 @@ static int  print_context( struct mulle_sprintf_context *ctxt,
 //
 // may raise an exception if memory is full
 //
-int   _mulle_mvsprintf( struct mulle_buffer *buffer,
-                        char *format,
-                        mulle_vararg_list va,
-                        struct mulle_sprintf_conversion *table)
+int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
+                               char *format,
+                               mulle_vararg_list va,
+                               struct mulle_sprintf_conversion *table)
 {
    struct mulle_sprintf_context   ctxt;
    int                            argc;
@@ -934,14 +934,14 @@ int   _mulle_mvsprintf( struct mulle_buffer *buffer,
 
    mulle_mvsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
 
-   return( print_context( &ctxt, buffer, format, table));
+   return( context_print( &ctxt, buffer, format, table));
 }
 
 
 
-int   mulle_mvsprintf( struct mulle_buffer *buffer,
-                       char *format,
-                       mulle_vararg_list arguments)
+int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
+                              char *format,
+                              mulle_vararg_list arguments)
 {
    if( ! buffer || ! format)
    {
@@ -949,7 +949,7 @@ int   mulle_mvsprintf( struct mulle_buffer *buffer,
       return( -1);
    }
 
-   return( _mulle_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion()));
+   return( _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion()));
 }
 
 
@@ -957,10 +957,10 @@ int   mulle_mvsprintf( struct mulle_buffer *buffer,
 #pragma mark va_list
 
 
-int   _mulle_vsprintf( struct mulle_buffer *buffer,
-                       char *format,
-                       va_list va,
-                       struct mulle_sprintf_conversion *table)
+int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
+                              char *format,
+                              va_list va,
+                              struct mulle_sprintf_conversion *table)
 {
    struct mulle_sprintf_context   ctxt;
    int                            argc;
@@ -982,26 +982,26 @@ int   _mulle_vsprintf( struct mulle_buffer *buffer,
 
    mulle_vsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
 
-   return( print_context( &ctxt, buffer, format, table));
+   return( context_print( &ctxt, buffer, format, table));
 }
 
 
 
-int   mulle_vsprintf( struct mulle_buffer *buffer, char *format, va_list args)
+int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, char *format, va_list args)
 {
    if( ! buffer || ! format)
    {
       errno = EINVAL;
       return( -1);
    }
-   return( _mulle_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion()));
+   return( _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion()));
 }
 
 
 #pragma mark -
 #pragma mark stream print
 
-int   mulle_sprintf( struct mulle_buffer *buffer, char *format, ...)
+int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
 {
    va_list   args;
    int       rval;
@@ -1013,7 +1013,7 @@ int   mulle_sprintf( struct mulle_buffer *buffer, char *format, ...)
    }
 
    va_start( args, format );
-   rval = _mulle_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
+   rval = _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
    va_end( args);
    return( rval);
 }
