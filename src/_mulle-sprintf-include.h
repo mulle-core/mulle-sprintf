@@ -15,6 +15,7 @@
 // How to tweak the following mulle-buffer #include
 //    remove:          `mulle-sourcetree mark mulle-buffer no-header`
 //    rename:          `mulle-sourcetree mark mulle-buffer set include whatever.h`
+//    toggle #import:  `mulle-sourcetree mark mulle-buffer [no-]import`
 //    toggle public:   `mulle-sourcetree mark mulle-buffer [no-]public`
 //    toggle optional: `mulle-sourcetree mark mulle-buffer [no-]require`
 //    remove for os:   `mulle-sourcetree mark mulle-buffer no-os-<osname>`
@@ -23,6 +24,7 @@
 // How to tweak the following mulle-utf #include
 //    remove:          `mulle-sourcetree mark mulle-utf no-header`
 //    rename:          `mulle-sourcetree mark mulle-utf set include whatever.h`
+//    toggle #import:  `mulle-sourcetree mark mulle-utf [no-]import`
 //    toggle public:   `mulle-sourcetree mark mulle-utf [no-]public`
 //    toggle optional: `mulle-sourcetree mark mulle-utf [no-]require`
 //    remove for os:   `mulle-sourcetree mark mulle-utf no-os-<osname>`
@@ -31,6 +33,7 @@
 // How to tweak the following mulle-vararg #include
 //    remove:          `mulle-sourcetree mark mulle-vararg no-header`
 //    rename:          `mulle-sourcetree mark mulle-vararg set include whatever.h`
+//    toggle #import:  `mulle-sourcetree mark mulle-vararg [no-]import`
 //    toggle public:   `mulle-sourcetree mark mulle-vararg [no-]public`
 //    toggle optional: `mulle-sourcetree mark mulle-vararg [no-]require`
 //    remove for os:   `mulle-sourcetree mark mulle-vararg no-os-<osname>`
@@ -39,6 +42,7 @@
 // How to tweak the following mulle-thread #include
 //    remove:          `mulle-sourcetree mark mulle-thread no-header`
 //    rename:          `mulle-sourcetree mark mulle-thread set include whatever.h`
+//    toggle #import:  `mulle-sourcetree mark mulle-thread [no-]import`
 //    toggle public:   `mulle-sourcetree mark mulle-thread [no-]public`
 //    toggle optional: `mulle-sourcetree mark mulle-thread [no-]require`
 //    remove for os:   `mulle-sourcetree mark mulle-thread no-os-<osname>`
