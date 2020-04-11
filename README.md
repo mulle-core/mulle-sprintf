@@ -25,31 +25,6 @@ Build Status | Release Version
 [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf)
 
 
-## Install
-
-Install the prerequisites first:
-
-| Prerequisites                                              |
-|------------------------------------------------------------|
-| [mulle-thread](//github.com/mulle-concurrent/mulle-thread) |
-| [mulle-buffer](//github.com/mulle-c/mulle-buffer)          |
-| [mulle-utf](//github.com/mulle-c/mulle-utf)                |
-| [mulle-vararg](//github.com/mulle-c/mulle-vararg)          |
-
-Then build and install
-
-```
-mkdir build 2> /dev/null
-(
-   cd build ;
-   cmake .. ;
-   make install
-)
-```
-
-Or let [mulle-sde](//github.com/mulle-sde) do it all for you.
-
-
 ## Example
 
 
@@ -83,6 +58,53 @@ File                                  | Description
 ------------------------------------- | -------------------------------------
 [`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
 
+
+
+
+## Add 
+
+Use [mulle-sde](//github.com/mulle-sde) to add mulle-sprintf to your project:
+
+```
+mulle-sde dependency add --c --github mulle-core mulle-sprintf
+```
+
+
+## Install
+
+### mulle-sde
+
+Use [mulle-sde](//github.com/mulle-sde) to build and install mulle-sprintf and all dependencies:
+
+```
+mulle-sde install --prefix /usr/local \
+   https://github.com/mulle-core/mulle-sprintf/archive/latest.tar.gz
+```
+
+### Manual Installation
+
+
+Install the requirements:
+
+Requirements                                               | Description
+-----------------------------------------------------------|-----------------------
+[mulle-thread](//github.com/mulle-concurrent/mulle-thread) | Threads and atomics
+[mulle-buffer](//github.com/mulle-c/mulle-buffer)          | Growing character array
+[mulle-utf](//github.com/mulle-c/mulle-utf)                | UTF functions
+[mulle-vararg](//github.com/mulle-c/mulle-vararg)          | Variable arguments
+
+Install into `/usr/local`:
+
+```
+mkdir build 2> /dev/null
+(
+   cd build ;
+   cmake -DCMAKE_INSTALL_PREFIX=/usr/local \
+         -DCMAKE_PREFIX_PATH=/usr/local \
+         -DCMAKE_BUILD_TYPE=Release .. ;
+   make install
+)
+```
 
 ### Platforms and Compilers
 
