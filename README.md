@@ -83,7 +83,6 @@ mulle-sde install --prefix /usr/local \
 
 ### Manual Installation
 
-
 Install the requirements:
 
 Requirements                                               | Description
