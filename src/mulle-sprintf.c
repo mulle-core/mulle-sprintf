@@ -63,8 +63,7 @@ typedef enum
 } parser_state;
 
 
-#pragma mark -
-#pragma mark thread local storage
+#pragma mark - thread local storage
 
 
 //
@@ -234,8 +233,7 @@ static void   *space_for_infos( unsigned int n, struct mulle_allocator *allocato
 }
 
 
-#pragma mark -
-#pragma mark conversion tables
+#pragma mark - conversion tables
 
 
 static inline struct mulle_sprintf_function   *
@@ -698,8 +696,7 @@ state_width_entry:
 
 
 
-#pragma mark -
-#pragma mark mulle_vararg_list
+#pragma mark - mulle_vararg_list
 
 //
 // stuff we try to store on the stack, if possible
@@ -953,8 +950,7 @@ int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 }
 
 
-#pragma mark -
-#pragma mark va_list
+#pragma mark - va_list
 
 
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
@@ -998,8 +994,7 @@ int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, char *format, va_list 
 }
 
 
-#pragma mark -
-#pragma mark stream print
+#pragma mark - stream print
 
 int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
 {
