@@ -50,8 +50,7 @@ typedef struct
 } integer_converters;
 
 
-#pragma mark -
-#pragma mark decimal
+#pragma mark - decimal
 
 static int   set_decimal_prefix( char *s,
                                  int value_is_zero,
@@ -295,8 +294,7 @@ static int
 }
 
 
-#pragma mark -
-#pragma mark octal
+#pragma mark - octal
 
 
 static char  *convert_octal_unsigned_int( unsigned int value,
@@ -354,8 +352,7 @@ static int
 }
 
 
-#pragma mark -
-#pragma mark hex
+#pragma mark - hex
 
 
 static char   *convert_hex_unsigned_int( unsigned int value,
@@ -422,8 +419,7 @@ static int
 }
 
 
-#pragma mark -
-#pragma mark long conversions
+#pragma mark - long conversions
 
 
 static int
