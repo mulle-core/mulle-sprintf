@@ -1,3 +1,7 @@
+### 1.0.19
+
+* move from travis to github actions, upgrade mulle-sde
+
 ### 1.0.18
 
 * new mulle-sde project structure
