@@ -107,3 +107,21 @@ export MULLE_THREAD_URL="https://github.com/mulle-concurrent/mulle-thread.git"
 export MULLE_THREAD_BRANCH="prerelease"
 
 
+#
+# mulle-thread nodetype: ${MULLE_DATA_NODETYPE:-tar}
+#
+export MULLE_DATA_NODETYPE="git"
+
+
+#
+# mulle-thread url: ${MULLE_DATA_URL:-https://github.com/mulle-c/mulle-data/archive/${MULLE_TAG}.tar.gz}
+#
+export MULLE_DATA_URL="https://github.com/mulle-c/mulle-data.git"
+
+
+#
+# mulle-thread branch: ${MULLE_DATA_BRANCH}
+#
+export MULLE_DATA_BRANCH="prerelease"
+
+
