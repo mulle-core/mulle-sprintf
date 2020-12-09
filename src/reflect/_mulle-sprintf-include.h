@@ -13,39 +13,59 @@
 #define _mulle_sprintf_include_h__
 
 // How to tweak the following mulle-buffer #include
-//    remove:          `mulle-sourcetree mark mulle-buffer no-header`
-//    rename:          `mulle-sourcetree mark mulle-buffer set include whatever.h`
-//    toggle #import:  `mulle-sourcetree mark mulle-buffer [no-]import`
-//    toggle public:   `mulle-sourcetree mark mulle-buffer [no-]public`
-//    toggle optional: `mulle-sourcetree mark mulle-buffer [no-]require`
-//    remove for os:   `mulle-sourcetree mark mulle-buffer no-os-<osname>`
-# include <mulle-buffer/mulle-buffer.h>   // mulle-buffer
+//    remove:             `mulle-sourcetree mark mulle-buffer no-header`
+//    rename:             `mulle-sde dependency|library set mulle-buffer include whatever.h`
+//    toggle #import:     `mulle-sourcetree mark mulle-buffer [no-]import`
+//    toggle localheader: `mulle-sourcetree mark mulle-buffer [no-]localheader`
+//    toggle public:      `mulle-sourcetree mark mulle-buffer [no-]public`
+//    toggle optional:    `mulle-sourcetree mark mulle-buffer [no-]require`
+//    remove for os:      `mulle-sourcetree mark mulle-buffer no-os-<osname>`
+# if defined( __has_include) && __has_include("mulle-buffer.h")
+#   include "mulle-buffer.h"   // mulle-buffer
+# else
+#   include <mulle-buffer/mulle-buffer.h>   // mulle-buffer
+#endif
 
 // How to tweak the following mulle-utf #include
-//    remove:          `mulle-sourcetree mark mulle-utf no-header`
-//    rename:          `mulle-sourcetree mark mulle-utf set include whatever.h`
-//    toggle #import:  `mulle-sourcetree mark mulle-utf [no-]import`
-//    toggle public:   `mulle-sourcetree mark mulle-utf [no-]public`
-//    toggle optional: `mulle-sourcetree mark mulle-utf [no-]require`
-//    remove for os:   `mulle-sourcetree mark mulle-utf no-os-<osname>`
-# include <mulle-utf/mulle-utf.h>   // mulle-utf
+//    remove:             `mulle-sourcetree mark mulle-utf no-header`
+//    rename:             `mulle-sde dependency|library set mulle-utf include whatever.h`
+//    toggle #import:     `mulle-sourcetree mark mulle-utf [no-]import`
+//    toggle localheader: `mulle-sourcetree mark mulle-utf [no-]localheader`
+//    toggle public:      `mulle-sourcetree mark mulle-utf [no-]public`
+//    toggle optional:    `mulle-sourcetree mark mulle-utf [no-]require`
+//    remove for os:      `mulle-sourcetree mark mulle-utf no-os-<osname>`
+# if defined( __has_include) && __has_include("mulle-utf.h")
+#   include "mulle-utf.h"   // mulle-utf
+# else
+#   include <mulle-utf/mulle-utf.h>   // mulle-utf
+#endif
 
 // How to tweak the following mulle-vararg #include
-//    remove:          `mulle-sourcetree mark mulle-vararg no-header`
-//    rename:          `mulle-sourcetree mark mulle-vararg set include whatever.h`
-//    toggle #import:  `mulle-sourcetree mark mulle-vararg [no-]import`
-//    toggle public:   `mulle-sourcetree mark mulle-vararg [no-]public`
-//    toggle optional: `mulle-sourcetree mark mulle-vararg [no-]require`
-//    remove for os:   `mulle-sourcetree mark mulle-vararg no-os-<osname>`
-# include <mulle-vararg/mulle-vararg.h>   // mulle-vararg
+//    remove:             `mulle-sourcetree mark mulle-vararg no-header`
+//    rename:             `mulle-sde dependency|library set mulle-vararg include whatever.h`
+//    toggle #import:     `mulle-sourcetree mark mulle-vararg [no-]import`
+//    toggle localheader: `mulle-sourcetree mark mulle-vararg [no-]localheader`
+//    toggle public:      `mulle-sourcetree mark mulle-vararg [no-]public`
+//    toggle optional:    `mulle-sourcetree mark mulle-vararg [no-]require`
+//    remove for os:      `mulle-sourcetree mark mulle-vararg no-os-<osname>`
+# if defined( __has_include) && __has_include("mulle-vararg.h")
+#   include "mulle-vararg.h"   // mulle-vararg
+# else
+#   include <mulle-vararg/mulle-vararg.h>   // mulle-vararg
+#endif
 
 // How to tweak the following mulle-thread #include
-//    remove:          `mulle-sourcetree mark mulle-thread no-header`
-//    rename:          `mulle-sourcetree mark mulle-thread set include whatever.h`
-//    toggle #import:  `mulle-sourcetree mark mulle-thread [no-]import`
-//    toggle public:   `mulle-sourcetree mark mulle-thread [no-]public`
-//    toggle optional: `mulle-sourcetree mark mulle-thread [no-]require`
-//    remove for os:   `mulle-sourcetree mark mulle-thread no-os-<osname>`
-# include <mulle-thread/mulle-thread.h>   // mulle-thread
+//    remove:             `mulle-sourcetree mark mulle-thread no-header`
+//    rename:             `mulle-sde dependency|library set mulle-thread include whatever.h`
+//    toggle #import:     `mulle-sourcetree mark mulle-thread [no-]import`
+//    toggle localheader: `mulle-sourcetree mark mulle-thread [no-]localheader`
+//    toggle public:      `mulle-sourcetree mark mulle-thread [no-]public`
+//    toggle optional:    `mulle-sourcetree mark mulle-thread [no-]require`
+//    remove for os:      `mulle-sourcetree mark mulle-thread no-os-<osname>`
+# if defined( __has_include) && __has_include("mulle-thread.h")
+#   include "mulle-thread.h"   // mulle-thread
+# else
+#   include <mulle-thread/mulle-thread.h>   // mulle-thread
+#endif
 
 #endif
