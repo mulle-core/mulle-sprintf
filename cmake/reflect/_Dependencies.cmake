@@ -8,7 +8,7 @@ endif()
 
 #
 # Generated from sourcetree: mulle-buffer;no-all-load,no-import,no-singlephase;
-# Disable with: `mulle-sourcetree mark mulle-buffer no-link`
+# Disable with: `mulle-sourcetree mark mulle-buffer no-header`
 #
 if( NOT MULLE_BUFFER_LIBRARY)
    find_library( MULLE_BUFFER_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-buffer NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
@@ -76,7 +76,7 @@ endif()
 
 #
 # Generated from sourcetree: mulle-utf;no-all-load,no-import,no-singlephase;
-# Disable with: `mulle-sourcetree mark mulle-utf no-link`
+# Disable with: `mulle-sourcetree mark mulle-utf no-header`
 #
 if( NOT MULLE_UTF_LIBRARY)
    find_library( MULLE_UTF_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-utf NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
@@ -144,7 +144,7 @@ endif()
 
 #
 # Generated from sourcetree: mulle-vararg;no-all-load,no-import,no-singlephase;
-# Disable with: `mulle-sourcetree mark mulle-vararg no-link`
+# Disable with: `mulle-sourcetree mark mulle-vararg no-header`
 #
 if( NOT MULLE_VARARG_LIBRARY)
    find_library( MULLE_VARARG_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-vararg NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
@@ -212,7 +212,7 @@ endif()
 
 #
 # Generated from sourcetree: mulle-thread;no-all-load,no-import,no-singlephase;
-# Disable with: `mulle-sourcetree mark mulle-thread no-link`
+# Disable with: `mulle-sourcetree mark mulle-thread no-header`
 #
 if( NOT MULLE_THREAD_LIBRARY)
    find_library( MULLE_THREAD_LIBRARY NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_STATIC_LIBRARY_SUFFIX} mulle-thread NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)

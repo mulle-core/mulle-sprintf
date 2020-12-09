@@ -1,6 +1,6 @@
 # mulle-sprintf
 
-🔢 An extensible sprintf function supporting stdarg and mulle-vararg
+#### 🔢 An extensible sprintf function supporting stdarg and mulle-vararg
 
 The extensibility is used in **MulleObjCStandardFoundation** to add the
 '@' conversion character for object conversion.
@@ -20,9 +20,9 @@ conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 >
 
 
-Build Status | Release Version
--------------|-----------------------------------
-[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf)
+| Release Version
+|-----------------------------------
+[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf)
 
 
 ## Example
@@ -61,7 +61,7 @@ File                                  | Description
 
 
 
-## Add 
+## Add
 
 Use [mulle-sde](//github.com/mulle-sde) to add mulle-sprintf to your project:
 
