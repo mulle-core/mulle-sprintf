@@ -1,0 +1,19 @@
+{
+   "name" : "mulle-sprintf",
+   "version" : "1.0.19",
+   "description" : "🔢 An extensible sprintf function supporting stdarg and mulle-vararg",
+   "homepage" : "https://github.com/mulle-c/mulle-sprintf",
+   "bugs" : "https://github.com/mulle-c/mulle-sprintf/issues",
+   "keywords" : [],
+   "license" : "BSD-3-Clause",
+   "repository" : {
+      "type" : "git",
+      "url" : "mulle-c/mulle-sprintf"
+   },
+   "dependencies" : {
+      "mulle-buffer" : "mulle-c/mulle-buffer",
+      "mulle-utf" : "mulle-c/mulle-utf",
+      "mulle-vararg" : "mulle-c/mulle-vararg",
+      "mulle-thread" : "mulle-concurrent/mulle-thread"
+   }
+}
