@@ -42,7 +42,11 @@ static void   test()
    struct mulle_flushablebuffer   buffer;
    auto char                      storage[ 256];
 
-   mulle_flushablebuffer_init( &buffer, storage, sizeof( storage), fwrite, stdout);
+   mulle_flushablebuffer_init( &buffer,
+                               storage,
+                               sizeof( storage),
+                               (mulle_flushablebuffer_flusher *) fwrite,
+                               stdout);
 
    mulle_sprintf( (struct mulle_buffer *) &buffer, "%b %b %b\n", 1, 0, -1);
 
