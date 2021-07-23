@@ -1,3 +1,7 @@
+### 1.0.20
+
+* Various small improvements
+
 ### 1.0.19
 
 * move from travis to github actions, upgrade mulle-sde
