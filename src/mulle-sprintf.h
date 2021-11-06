@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((1 << 20) | (0 << 8) | 20)
+#define MULLE_SPRINTF_VERSION  ((2 << 20) | (0 << 8) | 0)
 
 
 #ifndef MULLE_SPRINTF_EXTERN_GLOBAL
@@ -79,33 +79,46 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                                struct mulle_sprintf_conversion *table);
 
 
-static inline int   mulle_sprintf( struct mulle_buffer *buffer,
-                                   char *format,
-                                   ...)
-{
-   va_list  args;
-   int      rval;
+//
+// These functions provide a nice mapping from C stdio to
+// mulle sprintf. They use a mulle_buffer internally
+// but they return -1 on error, not the size that needs to be printed.
+// These functions append a '0'.
+//
+int   mulle_snprintf( char *buf, size_t size, char *format, ...);
+int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va);
+int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
 
-   va_start( args, format);
-   rval = mulle_buffer_vsprintf( buffer, format, args);
-   va_end( args);
-   return( rval);
+//
+// Or use these unsafer sprintf versions,
+// Use the buffer versions if you need flexibility.
+//
+// You shouldn't use them though. Use the buffer versions
+int   mulle_sprintf( char *buf, char *format, ...);
+
+
+static inline int   mulle_vsprintf( char *buf, char *format, va_list va)
+{
+   return( mulle_vsnprintf( buf, INT_MAX, format, va));
 }
 
-static inline int   mulle_vsprintf( struct mulle_buffer *buffer,
-                                    char *format,
-                                    va_list va)
+
+static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list arguments)
 {
-   return( mulle_buffer_vsprintf( buffer, format, va));
+   return( mulle_mvsnprintf( buf, INT_MAX, format, arguments));
 }
 
 
-static inline int   mulle_mvsprintf( struct mulle_buffer *buffer,
-                                     char *format,
-                                     mulle_vararg_list va)
-{
-   return( mulle_buffer_mvsprintf( buffer, format, va));
-}
+//
+// here are also the asprintf variety, theses return a mulle_default_allocator
+// allocated string in *strp. So you need to free it with mulle_free(!) not
+// free. It used to mulle_stdlib_allocator, but using "free" to free it is then
+// too strange for me. If you are replacing existing code, chances are high
+// you want to use mulle_malloc also, and then free is odd.
+//
+int   mulle_asprintf(char **strp, char *format, ...);
+int   mulle_vasprintf(char **strp, char *format, va_list ap);
+int   mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
 
 
 #pragma mark - manage "sprintf"
