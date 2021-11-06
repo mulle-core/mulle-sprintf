@@ -47,7 +47,7 @@ static int   mulle_sprintf_convert_decimal( struct mulle_buffer *buffer,
 
    format_info.n_chars_after_dot = info->precision ? info->precision : USHRT_MAX;
 
-   len = _NSDecimalNumberFormattedPrintBufferSize( v_decimal, &format_info);
+   len = _NSDecimalFormattedPrintBufferSize( v_decimal, &format_info);
    tmp = alloca( len);
    if( ! tmp)
       return( -1);

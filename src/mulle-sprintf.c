@@ -414,10 +414,9 @@ static int   number_of_conversions( char *format,
             {
             case 0  : continue;        // not yet, probably a modifier
             case 1  : ++n; goto next;  // yes
-            case -1 : if( starts)
-                         --starts;
-                      format = memo;
-                      goto next;       // malformed format
+            case -1 : errno = EINVAL; return( -1); // if we don't support now
+                                                   // we might in the future
+                                                   // printing would be IMO bad
             }
          }
       }
@@ -776,8 +775,9 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
                                     &ctxt->startsBuf[ STACKABLE_N],
                                     &remaining_format,
                                     table);
-   if( ! ctxt->n)
-      return( 0);
+   if( ctxt->n <= 0)
+      return( ctxt->n);  // if we have a malformed % we bail usual printf
+                         // just prints, but I don't like it
 
    allocator    = mulle_buffer_get_allocator( buffer);
    ctxt->before = (int) mulle_buffer_get_length( buffer);
@@ -872,8 +872,15 @@ static int  context_print( struct mulle_sprintf_context *ctxt,
       }
 
       info = &ctxt->infos[ i];
-      if( convert_argument( table->jumps, buffer, info, ctxt->arguments, &arg, ctxt->before))
+      if( convert_argument( table->jumps,
+                            buffer,
+                            info,
+                            ctxt->arguments,
+                            &arg,
+                            ctxt->before))
+      {
          fail = 1;
+      }
       s += info->length; // skip this part of the format
    }
 
@@ -925,7 +932,7 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_make_inflexible( buffer, format, len + 1);
+      mulle_buffer_add_bytes( buffer, format, len + 1);
       return( (int) len);
    }
 
@@ -972,7 +979,7 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_make_inflexible( buffer, format, len + 1);
+      mulle_buffer_add_bytes( buffer, format, len + 1);
       return( (int) len);
    }
 
@@ -1010,6 +1017,142 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
    va_start( args, format );
    rval = _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
    va_end( args);
+   return( rval);
+}
+
+
+#pragma mark - "C" <stdio> like interface
+
+// these guarantee zero termination of the string
+
+int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
+{
+   int                   rval;
+   struct mulle_buffer   buffer;
+
+   if( ! buf || ! size)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+   mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
+
+   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
+
+   mulle_buffer_make_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments)
+{
+   int                   rval;
+   struct mulle_buffer   buffer;
+
+   if( ! buf || ! size)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
+
+   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+
+   mulle_buffer_make_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_snprintf( char *buf, size_t size, char *format, ...)
+{
+   va_list               args;
+   int                   rval;
+
+   if( ! buf || ! size)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   va_start( args, format );
+   rval = mulle_vsnprintf( buf, size, format, args);
+   va_end( args);
+
+   return( rval);
+}
+
+
+int   mulle_sprintf( char *buf, char *format, ...)
+{
+   va_list   args;
+   int       rval;
+
+   va_start( args, format );
+   rval = mulle_vsnprintf( buf, INT_MAX, format, args);
+   va_end( args);
+
+   return( rval);
+}
+
+
+int   mulle_vasprintf( char **strp, char *format, va_list va)
+{
+   struct mulle_buffer   buffer;
+   int                   rval;
+
+   if( ! strp)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   mulle_buffer_init_with_capacity( &buffer, 256, NULL);
+
+   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
+
+   *strp = mulle_buffer_extract_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
+{
+   struct mulle_buffer   buffer;
+   int                   rval;
+
+   if( ! strp)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   mulle_buffer_init_with_capacity( &buffer, 256, NULL);
+
+   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+
+   *strp = mulle_buffer_extract_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_asprintf(char **strp, char *format, ...)
+{
+   va_list   args;
+   int       rval;
+
+   va_start( args, format );
+   rval = mulle_vasprintf( strp, format, args);
+   va_end( args);
+
    return( rval);
 }
 
