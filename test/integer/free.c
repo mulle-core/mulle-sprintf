@@ -13,7 +13,7 @@ static void   simple_sprintf_free_test()
 
    fprintf( stderr, " -- before sprintf\n");
 
-   len = mulle_sprintf( &buffer, "%o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o\n"
+   len = mulle_buffer_sprintf( &buffer, "%o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o\n"
                                  "%o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o\n"
                                  "%o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o\n"
                                  "%o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o %o\n"
