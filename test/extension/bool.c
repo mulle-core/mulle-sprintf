@@ -48,7 +48,7 @@ static void   test()
                                (mulle_flushablebuffer_flusher *) fwrite,
                                stdout);
 
-   mulle_sprintf( (struct mulle_buffer *) &buffer, "%b %b %b\n", 1, 0, -1);
+   mulle_buffer_sprintf( (struct mulle_buffer *) &buffer, "%b %b %b\n", 1, 0, -1);
 
    mulle_flushablebuffer_done( &buffer);
 }

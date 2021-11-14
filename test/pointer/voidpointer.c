@@ -12,7 +12,7 @@ static void   simple_pointer_test()
 
    buffer = mulle_buffer_create( NULL);
 
-   mulle_sprintf( buffer, "%p", (void *) 0x12345678); // some pointer
+   mulle_buffer_sprintf( buffer, "%p", (void *) 0x12345678); // some pointer
    mulle_buffer_add_byte( buffer, 0);
    sscanf( mulle_buffer_get_bytes( buffer), "%p", &pointer);
    mulle_buffer_reset( buffer);

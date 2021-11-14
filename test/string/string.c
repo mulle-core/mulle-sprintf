@@ -25,47 +25,47 @@ static void   simple_string_test()
 
    buffer = mulle_buffer_create( NULL);
 
-   mulle_sprintf( buffer, "m: |%s|\n", "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |%s|\n", "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |%.3s|\n", "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |%.3s|\n", "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%.100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%.100s\"|\n", "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%100s\"|\n", "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%100.100s\"|\n", "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%100.100s\"|\n", "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%.*s\"|\n", 100, "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%.*s\"|\n", 100, "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%*s\"|\n", 100, "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%*s\"|\n", 100, "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |\"%*.*s\"|\n", 100, 100, "VfL Bochum 1848");
+   mulle_buffer_sprintf( buffer, "m: |\"%*.*s\"|\n", 100, 100, "VfL Bochum 1848");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);
 
-   mulle_sprintf( buffer, "m: |%s|\n", "");
+   mulle_buffer_sprintf( buffer, "m: |%s|\n", "");
    mulle_buffer_add_byte( buffer, 0);
    printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    mulle_buffer_reset( buffer);

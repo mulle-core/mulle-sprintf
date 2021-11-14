@@ -13,16 +13,16 @@ static void   simple_none_test()
 
    buffer = mulle_buffer_create( NULL);
 
-   len = mulle_sprintf( buffer, "none");
+   len = mulle_buffer_sprintf( buffer, "none");
 
    printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
    mulle_buffer_reset( buffer);
 
-   len = mulle_vsprintf( buffer, "none", va);
+   len = mulle_buffer_vsprintf( buffer, "none", va);
    printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
    mulle_buffer_reset( buffer);
 
-   len = mulle_mvsprintf( buffer, "none", args);
+   len = mulle_buffer_mvsprintf( buffer, "none", args);
    printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
 
    mulle_buffer_destroy( buffer);
