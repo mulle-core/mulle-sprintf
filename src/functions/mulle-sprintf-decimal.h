@@ -16,7 +16,7 @@
 
 #include "mulle-sprintf-function.h"
 
-
+MULLE_SPRINTF_EXTERN_GLOBAL
 void  mulle_sprintf_register_decimal_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

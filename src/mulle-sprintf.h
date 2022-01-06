@@ -56,23 +56,28 @@ struct mulle_buffer;
 struct mulle_sprintf_conversion;
 
 // will not append '\0' !
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_buffer_sprintf( struct mulle_buffer *buffer,
                             char *format,
                             ...);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                              char *format,
                              va_list va);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                               char *format,
                               va_list va,
                               struct mulle_sprintf_conversion *table);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                               char *format,
                               mulle_vararg_list va);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                                char *format,
                                mulle_vararg_list arguments,
@@ -85,8 +90,13 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 // but they return -1 on error, not the size that needs to be printed.
 // These functions append a '0'.
 //
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_snprintf( char *buf, size_t size, char *format, ...);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
 
 //
@@ -94,6 +104,7 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
 // Use the buffer versions if you need flexibility.
 //
 // You shouldn't use them though. Use the buffer versions
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf( char *buf, char *format, ...);
 
 
@@ -116,8 +127,13 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 // too strange for me. If you are replacing existing code, chances are high
 // you want to use mulle_malloc also, and then free is odd.
 //
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_asprintf(char **strp, char *format, ...);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_vasprintf(char **strp, char *format, va_list ap);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
 
 
@@ -147,22 +163,10 @@ static inline struct mulle_sprintf_conversion   *
 }
 
 
-
 static inline void    mulle_sprintf_free_storage( void)
 {
    (*mulle_sprintf_get_config()->free_storage)();
 }
-
-
-#if MULLE_C11_VERSION < ((3 << 20) | (0 << 8) | 0)
-# error "mulle_c11 is too old"
-#endif
-#if MULLE_ALLOCATOR_VERSION < ((1 << 20) | (5 << 8) | 0)
-# error "mulle_allocator is too old"
-#endif
-#if MULLE_BUFFER_VERSION < ((0 << 20) | (4 << 8) | 0)
-# error "mulle_buffer is too old"
-#endif
 
 #include "mulle-sprintf-character.h"
 #include "mulle-sprintf-escape.h"
@@ -171,5 +175,11 @@ static inline void    mulle_sprintf_free_storage( void)
 #include "mulle-sprintf-pointer.h"
 #include "mulle-sprintf-return.h"
 #include "mulle-sprintf-string.h"
+
+#ifdef __has_include
+# if __has_include( "_mulle-sprintf-versioncheck.h")
+#  include "_mulle-sprintf-versioncheck.h"
+# endif
+#endif
 
 #endif
