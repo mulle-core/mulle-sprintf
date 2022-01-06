@@ -48,12 +48,12 @@
 #include "mulle-sprintf.h"
 
 
-#define SIZEOF( type)  sizeof( type) < sizeof( int) ? sizeof( int) : sizeof( type)
+#define SIZEOF( type)  sizeof( type) // < sizeof( int) ? sizeof( int) : sizeof( type)
 
 unsigned char   mulle_sprintf_argumentsize[] =
 {
    SIZEOF( int),              // mulle_sprintf_int_argumenttype
-   SIZEOF( char),             // promotion(!)
+   SIZEOF( char),
    SIZEOF( char *),
    SIZEOF( double),
 
@@ -184,7 +184,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
 
       case mulle_sprintf_int_argumenttype                    : p->i    = mulle_vararg_next_integer( va, int); break;
 
-      case mulle_sprintf_char_argumenttype                   : p->c    = (char) mulle_vararg_next_integer( va, int); break;  // promotion(!)
+      case mulle_sprintf_char_argumenttype                   : p->c    = (char) mulle_vararg_next_integer( va, char); break;  // promotion(!)
       case mulle_sprintf_char_pointer_argumenttype           : p->pc   = mulle_vararg_next_pointer( va, char *); break;
       case mulle_sprintf_double_argumenttype                 : p->d    = mulle_vararg_next_fp( va, double); break;
       case mulle_sprintf_intmax_t_argumenttype               : p->imt  = mulle_vararg_next_integer( va, intmax_t); break;
@@ -195,7 +195,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_ptrdiff_t_argumenttype              : p->dif  = mulle_vararg_next_integer( va, ptrdiff_t); break;
       case mulle_sprintf_object_argumenttype                 : p->obj  = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = mulle_vararg_next_integer( va, int64_t); break;
-      case mulle_sprintf_short_argumenttype                  : p->s    = (short) mulle_vararg_next_integer( va, int); break;  // promotion(!)
+      case mulle_sprintf_short_argumenttype                  : p->s    = (short) mulle_vararg_next_integer( va, short); break;  // promotion(!)
       case mulle_sprintf_size_t_argumenttype                 : p->St   = mulle_vararg_next_integer( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = mulle_vararg_next_pointer( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
@@ -203,7 +203,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_uint64_t_pointer_argumenttype       : p->pQt  = mulle_vararg_next_pointer( va, uint64_t *); break;
       case mulle_sprintf_uintmax_t_argumenttype              : p->Imt  = mulle_vararg_next_integer( va, uintmax_t); break;
       case mulle_sprintf_uintmax_t_pointer_argumenttype      : p->pImt = mulle_vararg_next_pointer( va, uintmax_t *); break;
-      case mulle_sprintf_unsigned_char_argumenttype          : p->C    = (unsigned char) mulle_vararg_next_integer( va, int); break; // promotion(!)
+      case mulle_sprintf_unsigned_char_argumenttype          : p->C    = (unsigned char) mulle_vararg_next_integer( va, unsigned char); break; // promotion(!)
       case mulle_sprintf_unsigned_char_pointer_argumenttype  : p->pC   = mulle_vararg_next_pointer( va, unsigned char *); break;
       case mulle_sprintf_unsigned_int_argumenttype           : p->I    = mulle_vararg_next_integer( va, unsigned int); break;
       case mulle_sprintf_unsigned_int_pointer_argumenttype   : p->pI   = mulle_vararg_next_pointer( va, unsigned int *); break;
@@ -211,7 +211,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_long_long_argumenttype     : p->LL   = mulle_vararg_next_integer( va, unsigned long long); break;
       case mulle_sprintf_unsigned_long_pointer_argumenttype  : p->pL   = mulle_vararg_next_pointer( va, unsigned long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_argumenttype     : p->Dif  = mulle_vararg_next_integer( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE); break;
-      case mulle_sprintf_unsigned_short_argumenttype         : p->S    = (unsigned short) mulle_vararg_next_integer( va, unsigned int); break;  // promotion(!)
+      case mulle_sprintf_unsigned_short_argumenttype         : p->S    = (unsigned short) mulle_vararg_next_integer( va, unsigned short); break;  // promotion(!)
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = mulle_vararg_next_pointer( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = mulle_vararg_next_pointer( va, wchar_t *); break;

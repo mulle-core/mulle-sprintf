@@ -202,7 +202,8 @@ union mulle_sprintf_argumentvalue
 };
 
 
-extern unsigned char   mulle_sprintf_argumentsize[];
+MULLE_SPRINTF_EXTERN_GLOBAL
+unsigned char   mulle_sprintf_argumentsize[];
 
 struct mulle_sprintf_argumentarray
 {
@@ -212,11 +213,13 @@ struct mulle_sprintf_argumentarray
 };
 
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                   mulle_sprintf_argumenttype_t  *type,
                                   unsigned int n,
                                   mulle_vararg_list va);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                  mulle_sprintf_argumenttype_t  *type,
                                  unsigned int n,
@@ -266,20 +269,32 @@ static inline int
 }
 
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         struct mulle_sprintf_function *functions,
                                         mulle_sprintf_conversioncharacter_t c);
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                        mulle_sprintf_modifiercharacter c);
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_modifiercharacter *s);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
                                                 mulle_sprintf_conversioncharacter_t c);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s);
 
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 void  mulle_sprintf_register_default_modifiers_on_load( void);
+
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 #endif

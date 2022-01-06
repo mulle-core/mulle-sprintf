@@ -223,9 +223,25 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    t = arguments->types[ argc];
    s = mulle_sprintf_argumentsize[ t];
 
-   vll = (s == sizeof( int)) ? v.i : (s == sizeof( long)) ? v.l : v.ll;
-   vLL = vll;
+   if( s >= sizeof( long))
+   {
+      if( s == sizeof( long))
+         vll = v.l;
+      else
+         vll = v.ll;
+   }
+   else
+   {
+      if( s == sizeof( int))
+         vll = v.i;
+      else
+         if( s == sizeof( short))
+            vll = v.s;
+         else
+            vll = v.c;
+   }
 
+   vLL    = (unsigned long long) vll;
    prefix = 0;
 
    if( is_signed)

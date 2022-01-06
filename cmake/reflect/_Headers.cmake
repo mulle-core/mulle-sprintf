@@ -35,6 +35,7 @@ src/include-private.h
 #
 set( PUBLIC_GENERATED_HEADERS
 src/reflect/_mulle-sprintf-include.h
+src/reflect/_mulle-sprintf-versioncheck.h
 )
 
 #

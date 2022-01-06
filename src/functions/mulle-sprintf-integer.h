@@ -40,11 +40,13 @@
 
 #include "mulle-sprintf-function.h"
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc);
 
+MULLE_SPRINTF_EXTERN_GLOBAL
 void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables);
 
 #endif
