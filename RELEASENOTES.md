@@ -1,6 +1,6 @@
 # 2.0.0
 
-* provides the full list of sprintf like functions without `<stdio.h>` now (stdio is in ``mulle_fprintf`)`
+* provides the full list of sprintf like functions without `<stdio.h>` now (stdio is in `mulle_fprintf`)
 * unknown conversion characters are now an error and not silently ignored
 
 
