@@ -42,6 +42,10 @@
 #include "include-private.h"
 
 
+#ifndef HAVE_SPRINTF_BOOL
+# define HAVE_SPRINTF_BOOL  1
+#endif
+
 #define STACKABLE_N     16
 
 //
@@ -240,7 +244,10 @@ static inline struct mulle_sprintf_function   *
    functions_for_conversion( mulle_sprintf_vector_t jumptable,
                              mulle_sprintf_conversioncharacter_t c)
 {
-   return( jumptable[ mulle_sprintf_index_for_character( c)]);
+   int    i;
+
+   i = mulle_sprintf_index_for_character( c);
+   return( i < 0 ? NULL : jumptable[ i]);
 }
 
 
@@ -515,6 +522,9 @@ static inline int
          case '-'  : info->memory.minus_found = 1; continue;
          case '+'  : info->memory.plus_found  = 1; continue;
          case '\'' : info->memory.quote_found = 1; continue;
+#if HAVE_SPRINTF_BOOL
+         case 'b'  : info->memory.bool_found  = 1; continue;
+#endif
          }
          parser.state = state_opt_separators;  // fall thru
 
@@ -1149,7 +1159,7 @@ int   mulle_asprintf(char **strp, char *format, ...)
    va_list   args;
    int       rval;
 
-   va_start( args, format );
+   va_start( args, format);
    rval = mulle_vasprintf( strp, format, args);
    va_end( args);
 

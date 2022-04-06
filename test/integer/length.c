@@ -62,5 +62,7 @@ int  main()
 
    mulle_sprintf_free_storage();
    mulle_testallocator_reset();
+
+   return( 0);
 }
 

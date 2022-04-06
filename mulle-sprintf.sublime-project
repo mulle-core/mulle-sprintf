@@ -11,7 +11,13 @@
          "dependency",
          "stash",
          ".unison*"
-         ]
-		}
-	]
+         ],
+		},
+              {
+			"path": "/home/src/srcO/mulle-core/mulle-fprintf",
+		},
+      {
+			"path": "/home/src/srcO/mulle-objc/MulleObjC"
+		},
+   ],
 }

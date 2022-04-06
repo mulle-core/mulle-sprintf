@@ -3,12 +3,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-// https://github.com/vlm/asn1c/issues/159
-#if defined(_MSC_VER)
-# include <windows.h>
-typedef SSIZE_T ssize_t;
-#endif
-
 
 
 int  main( void)
@@ -18,12 +12,16 @@ int  main( void)
 
    buffer = mulle_buffer_create( NULL);
 
-   len = mulle_buffer_sprintf( buffer, "%hd", (short) 1848);
+   len = mulle_buffer_sprintf( buffer, "%bhd", (short) 1848);
    if( len)
       printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
 
-   mulle_buffer_destroy( buffer);
+   mulle_buffer_reset( buffer);
 
+   len = mulle_buffer_sprintf( buffer, "%bllu", (unsigned long long) 0);
+   if( len)
+      printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
+   mulle_buffer_destroy( buffer);
    return( 0);
 }
 

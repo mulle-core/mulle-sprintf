@@ -59,6 +59,7 @@ struct mulle_sprintf_formatconversionflags
    unsigned int   hash_found:1;
    unsigned int   plus_found:1;
    unsigned int   quote_found:1;
+   unsigned int   bool_found:1;
 
    unsigned int   width_found:1;          // get rid of this with -1 as not found in width
    unsigned int   width_is_argument:1;
@@ -71,7 +72,7 @@ struct mulle_sprintf_formatconversionflags
    unsigned int   modifier_found:1;
    unsigned int   left_justify:1;         // not filled during parse
 
-   unsigned int   unused:1;
+//   unsigned int   unused:1;
 };
 
 
@@ -202,7 +203,7 @@ union mulle_sprintf_argumentvalue
 };
 
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 unsigned char   mulle_sprintf_argumentsize[];
 
 struct mulle_sprintf_argumentarray
@@ -213,13 +214,13 @@ struct mulle_sprintf_argumentarray
 };
 
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                   mulle_sprintf_argumenttype_t  *type,
                                   unsigned int n,
                                   mulle_vararg_list va);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                  mulle_sprintf_argumenttype_t  *type,
                                  unsigned int n,
@@ -252,49 +253,50 @@ struct mulle_sprintf_conversion
 };
 
 
-static inline unsigned int   mulle_sprintf_index_for_character( int c)
+static inline int   mulle_sprintf_index_for_character( int c)
 {
-   assert( c >= ' ' && c <= '~');
-   return( c - ' ');
+   if( c >= ' ' && c <= '~')
+      return( c - ' ');
+   return( -1);
 }
 
 
 static inline int
    mulle_sprintf_is_modifier_character( mulle_sprintf_modifier_t table, int c)
 {
-   unsigned int    i;
+   int    i;
 
    i = mulle_sprintf_index_for_character( c);
-   return( table[ i]);
+   return( i < 0 ? 0 : table[ i]);
 }
 
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         struct mulle_sprintf_function *functions,
                                         mulle_sprintf_conversioncharacter_t c);
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                        mulle_sprintf_modifiercharacter c);
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_modifiercharacter *s);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
                                                 mulle_sprintf_conversioncharacter_t c);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s);
 
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 void  mulle_sprintf_register_default_modifiers_on_load( void);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 #endif

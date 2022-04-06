@@ -9,30 +9,82 @@ mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments. Because floating point to string conversion is hard, floating point
 conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
-> #### Note
->
-> Because mulle-sprintf uses a dynamic loading scheme, it is important
-> that the linker doesn't strip presumably "dead" code. This will happen
-> if you link mulle-sprintf as a static library without using --all_load or
-> some such.
->
-> [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
->
 
 
-| Release Version
-|-----------------------------------
-[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf)
+| Release Version                   |
+|-----------------------------------|
+[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) |
 
 
-## Example
+## Use
+
+### Convenient
+
+mulle-sprintf uses a dynamic loading scheme to add conversion routines. It is
+important that the linker doesn't strip presumably "dead" code. This will happen
+if you link mulle-sprintf as a static library without using --all_load or
+some such. [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
 
 
-Here is an example of using `mulle_sprintf` together with [`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print an integer into a char array safely:
+### Inconvenient
+
+If you have or don't want to do it the convenient way, you need to add the
+character conversion routines yourself. Add them before you call a
+mulle-sprintf printing function:
+
+``` c
+struct mulle_sprintf_conversion   *conversion;
+
+conversion = mulle_sprintf_get_defaultconversion();
+mulle_sprintf_register_character_functions( conversion);
+mulle_sprintf_register_decimal_functions( conversion);
+mulle_sprintf_register_escape_functions( conversion);
+mulle_sprintf_register_integer_functions( conversion);
+mulle_sprintf_register_fp_functions( conversion);
+mulle_sprintf_register_pointer_functions( conversion);
+mulle_sprintf_register_return_functions( conversion);
+mulle_sprintf_register_string_functions( conversion);
+
+mulle_sprintf_register_standardmodifiers( conversion);
+```
+
+
+## Examples
+
+
+## Just like sprintf
+
+
+Here is an example that uses `mulle_sprintf` to print an integer into a
+char array unsafely:
+
 
 ```
-#include <mulle_sprintf/mulle_sprintf.h>
-#include <mulle_buffer/mulle_buffer.h>
+#include <mulle-sprintf/mulle-sprintf.h>
+#include <stdio.h>
+
+
+int   main( void)
+{
+   auto char   storage[ 32];
+
+   mulle_sprintf( storage, "%d", 1848);
+   printf( "%s\n", storage);
+
+   return( 0);
+}
+```
+
+
+## Using an explicit mulle-buffer
+
+Here is an example that uses `mulle_buffer_sprintf` together with
+[`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print an integer into a
+char array safely:
+
+```
+#include <mulle-sprintf/mulle-sprintf.h>
+#include <mulle-buffer/mulle-buffer.h>
 #include <stdio.h>
 
 
@@ -43,7 +95,7 @@ int   main( void)
 
    mulle_buffer_init_inflexible_with_static_bytes( &buffer, storage, sizeof( storage));
 
-   mulle_sprintf( &buffer, "%d", 1848);
+   mulle_buffer_sprintf( &buffer, "%d", 1848);
    printf( "%.*s\n", (int) mulle_buffer_get_length( &buffer), mulle_buffer_get_bytes( &buffer));
    mulle_buffer_done( &buffer);
 
