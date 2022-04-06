@@ -46,38 +46,33 @@
 #define MULLE_SPRINTF_VERSION  ((2 << 20) | (0 << 8) | 0)
 
 
-#ifndef MULLE_SPRINTF_EXTERN_GLOBAL
-# define MULLE_SPRINTF_EXTERN_GLOBAL    MULLE_C_EXTERN_GLOBAL
-#endif
-
-
-
 struct mulle_buffer;
 struct mulle_sprintf_conversion;
 
+
 // will not append '\0' !
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_buffer_sprintf( struct mulle_buffer *buffer,
                             char *format,
                             ...);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                              char *format,
                              va_list va);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                               char *format,
                               va_list va,
                               struct mulle_sprintf_conversion *table);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                               char *format,
                               mulle_vararg_list va);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                                char *format,
                                mulle_vararg_list arguments,
@@ -90,13 +85,13 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 // but they return -1 on error, not the size that needs to be printed.
 // These functions append a '0'.
 //
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_snprintf( char *buf, size_t size, char *format, ...);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
 
 //
@@ -104,7 +99,7 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
 // Use the buffer versions if you need flexibility.
 //
 // You shouldn't use them though. Use the buffer versions
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf( char *buf, char *format, ...);
 
 
@@ -127,13 +122,13 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 // too strange for me. If you are replacing existing code, chances are high
 // you want to use mulle_malloc also, and then free is odd.
 //
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_asprintf(char **strp, char *format, ...);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_vasprintf(char **strp, char *format, va_list ap);
 
-MULLE_SPRINTF_EXTERN_GLOBAL
+MULLE_SPRINTF_GLOBAL
 int   mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
 
 
@@ -150,7 +145,7 @@ struct mulle_sprintf_config
 
 static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
 {
-   MULLE_SPRINTF_EXTERN_GLOBAL struct mulle_sprintf_config   mulle_sprintf_config;
+   MULLE_SPRINTF_GLOBAL struct mulle_sprintf_config   mulle_sprintf_config;
 
    return( &mulle_sprintf_config);
 }

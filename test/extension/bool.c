@@ -33,7 +33,7 @@ static struct mulle_sprintf_function   bool_functions =
 
 static void  register_bool_sprintf_functions( void)
 {
-   mulle_sprintf_register_functions( NULL, &bool_functions, 'b');
+   mulle_sprintf_register_functions( NULL, &bool_functions, 'B');
 }
 
 
@@ -48,7 +48,7 @@ static void   test()
                                (mulle_flushablebuffer_flusher *) fwrite,
                                stdout);
 
-   mulle_buffer_sprintf( (struct mulle_buffer *) &buffer, "%b %b %b\n", 1, 0, -1);
+   mulle_buffer_sprintf( (struct mulle_buffer *) &buffer, "%B %B %B\n", 1, 0, -1);
 
    mulle_flushablebuffer_done( &buffer);
 }
@@ -67,5 +67,7 @@ int  main()
 
    mulle_sprintf_free_storage();
    mulle_testallocator_reset();
+
+   return( 0);
 }
 

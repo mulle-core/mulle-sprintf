@@ -97,15 +97,14 @@ static integer_converters  decimal_converters =
 };
 
 
-static void
-   _mulle_sprintf_justified( struct mulle_buffer *buffer,
-                             struct mulle_sprintf_formatconversioninfo *info,
-                             char *p,
-                             int p_length,
-                             char *q,
-                             int q_length,
-                             int  precision,
-                             char prefix)
+void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
+                                 struct mulle_sprintf_formatconversioninfo *info,
+                                 char *p,
+                                 int p_length,
+                                 char *q,
+                                 int q_length,
+                                 int  precision,
+                                 char prefix)
 {
    int       length;
    size_t    total;
@@ -117,7 +116,7 @@ static void
    assert( buffer);
    assert( info);
    assert( p);
-   assert( q);
+   assert( ! q_length || q);
 
    length         = p_length + q_length;
    precision_char = '0';
@@ -160,14 +159,13 @@ static void
 }
 
 
-static void
-   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
-                                          struct mulle_sprintf_formatconversioninfo *info,
-                                          char *p,
-                                          int p_length,
-                                          char prefix,
-                                          int is_zero,
-                                          int (*set_prefix)( char *, int, int, int))
+void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
+                                              struct mulle_sprintf_formatconversioninfo *info,
+                                              char *p,
+                                              int p_length,
+                                              char prefix,
+                                              int is_zero,
+                                              int (*set_prefix)( char *, int, int, int))
 {
    int     precision;
    int     q_length;
@@ -241,7 +239,19 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
             vll = v.c;
    }
 
-   vLL    = (unsigned long long) vll;
+   vLL = (unsigned long long) vll;
+
+   // bool output shortcut
+   if( info->memory.bool_found)
+   {
+      if( vLL)
+         mulle_buffer_add_bytes( buffer, "YES", 3);
+      else
+         mulle_buffer_add_bytes( buffer, "NO", 2);
+      return( 0);
+
+   }
+
    prefix = 0;
 
    if( is_signed)

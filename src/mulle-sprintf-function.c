@@ -226,15 +226,20 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
    }
 }
 
+// static inline int   mulle_sprintf_is_flag_character( int c)
+// {
+//    return( strchr( "#0- +b'", c) != NULL);
+// }
+// 
 
 static int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                                mulle_sprintf_modifiercharacter c)
 {
-   unsigned int   i;
-
-   assert( c >= ' ' && c <= '~');
+   int   i;
 
    i = mulle_sprintf_index_for_character( c);
+   if( i < 0) 
+      return( EINVAL);
    if( table->jumps[ i])
       return( EEXIST);
 
@@ -252,11 +257,11 @@ static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion 
                                                 mulle_sprintf_conversioncharacter_t c)
 {
    struct mulle_sprintf_function   **p;
-   unsigned int                    i;
-
-   assert( c >= '!' && c <= '~');
+   int                             i;
 
    i = mulle_sprintf_index_for_character( c);
+   if( i < 0) 
+      return( EINVAL);
    if( table->modifiers[ i])
       return( EEXIST);
 
@@ -286,9 +291,12 @@ static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion 
 }
 
 
+//
+// this not only contains length modifiers but also flag characters
+//
 int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
 {
-   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'*$"));
+   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'b*$"));
 }
 
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
@@ -301,7 +309,7 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
    for( c = ' '; c <= '~'; c++)
    {
       i = mulle_sprintf_index_for_character( c);
-      if( ! table->modifiers[ i] && ! table->jumps[ i])
+      if( i >= 0 && ! table->modifiers[ i] && ! table->jumps[ i])
          putchar( c);
    }
    putchar( '\n');

@@ -23,5 +23,7 @@ int  main( void)
       printf( "%.*s (%d)\n", len, (char *) mulle_buffer_get_bytes( buffer), len);
 
    mulle_buffer_destroy( buffer);
+
+   return( 0);
 }
 
