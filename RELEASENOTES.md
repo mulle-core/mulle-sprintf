@@ -1,3 +1,10 @@
+## 2.1.0
+
+* do not add trailing \0 byte in vsprintf functions
+* prevent crash for unknown modifiers
+* add b flag to integer conversions to output BOOL strings YES/NO (e.g. printf( "%bd", YES));
+
+
 # 2.0.0
 
 * provides the full list of sprintf like functions without `<stdio.h>` now (stdio is in `mulle_fprintf`)
