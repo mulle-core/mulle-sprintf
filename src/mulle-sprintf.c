@@ -270,13 +270,16 @@ static int
 }
 
 
-static inline unsigned char
+static inline mulle_sprintf_argumenttype_t
    jump_determine_argument_type( mulle_sprintf_vector_t  jumptable,
                                  struct mulle_sprintf_formatconversioninfo *info)
 {
    struct mulle_sprintf_function  *functions;
 
    functions = functions_for_conversion( jumptable, info->conversion);
+   if( ! functions)
+      return( (mulle_sprintf_argumenttype_t) -1);
+
    return( (*functions->determine_argument_type)( info));
 }
 
@@ -291,11 +294,14 @@ static inline int
    struct mulle_sprintf_function  *functions;
 
    functions = functions_for_conversion( jumptable, info->conversion);
+   if( ! functions)
+      return( -1);
+
    return( (*functions->convert_argument)( buffer, info, arguments, i));
 }
 
 
-static inline unsigned char
+static inline mulle_sprintf_argumenttype_t
    determine_argument_type( mulle_sprintf_vector_t  jumptable,
                             struct mulle_sprintf_formatconversioninfo *info)
 {
@@ -417,6 +423,10 @@ static int   number_of_conversions( char *format,
          memo = format;
          while( c = *++format)
          {
+            //
+            // TODO: this does not catch mixups of %tbd vs (correct) %btd
+            //       therefore the error checking is superflous and needs
+            //       to be done later
             switch( determine_is_valid_conversion_character( table, c))
             {
             case 0  : continue;        // not yet, probably a modifier
@@ -728,7 +738,7 @@ struct mulle_sprintf_context
 };
 
 
-static void
+static int
    determine_all_conversion_argument_types( struct mulle_sprintf_context *ctxt,
                                             struct mulle_sprintf_conversion *table)
 {
@@ -756,6 +766,8 @@ static void
       }
 
       ctxt->arguments->types[ arg] = determine_argument_type( table->jumps, info);
+      if( ctxt->arguments->types[ arg] == (mulle_sprintf_argumenttype_t) - 1)
+         return( -4);
 
       // looks so wrong, but is sprintf compatible
       if( info->memory.width_is_argument && info->memory.width_is_indexed_argument)
@@ -764,6 +776,8 @@ static void
       if( info->memory.precision_is_argument && info->memory.precision_is_indexed_argument)
          arg = info->argv_index[ 2];
    }
+
+   return( 0);
 }
 
 
@@ -847,7 +861,8 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    // are integer with is easy and already set above
    // (this may not touch all stack arguments!)
    //
-   determine_all_conversion_argument_types( ctxt, table);
+   if( determine_all_conversion_argument_types( ctxt, table))
+      return( -4);
 
    return( argc);
 }
@@ -942,7 +957,7 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_add_bytes( buffer, format, len + 1);
+      mulle_buffer_add_bytes( buffer, format, len);  // we don't add a 0 byte
       return( (int) len);
    }
 
@@ -989,7 +1004,7 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_add_bytes( buffer, format, len + 1);
+      mulle_buffer_add_bytes( buffer, format, len); // we don't add a null byte (because this makes multiple vsprintfs painful)
       return( (int) len);
    }
 
