@@ -13,7 +13,7 @@ conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
 | Release Version                   |
 |-----------------------------------|
-[![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://travis-ci.org/mulle-core/mulle-sprintf.svg?branch=release)](https://travis-ci.org/mulle-core/mulle-sprintf) |
+[![Build Status](//github.com/mulle-core/mulle-sprintf/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](//img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](//github.com/mulle-core/mulle-sprintf/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf) |
 
 
 ## Use
@@ -135,7 +135,7 @@ Use [mulle-sde](//github.com/mulle-sde) to build and install mulle-sprintf and a
 
 ```
 mulle-sde install --prefix /usr/local \
-   https://github.com/mulle-core/mulle-sprintf/archive/latest.tar.gz
+   //github.com/mulle-core/mulle-sprintf/archive/latest.tar.gz
 ```
 
 ### Manual Installation
