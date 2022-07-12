@@ -13,8 +13,7 @@ conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
 | Release Version                   |
 |-----------------------------------|
-[![Build Status](https://github.com/mulle-core/mulle-sprintf/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf) | ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://github.com/mulle-core/mulle-sprintf/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf) |
-
+| [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions)  ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release) |
 
 ## Use
 
@@ -59,7 +58,7 @@ Here is an example that uses `mulle_sprintf` to print an integer into a
 char array unsafely:
 
 
-```
+``` c
 #include <mulle-sprintf/mulle-sprintf.h>
 #include <stdio.h>
 
@@ -82,7 +81,7 @@ Here is an example that uses `mulle_buffer_sprintf` together with
 [`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print an integer into a
 char array safely:
 
-```
+``` c
 #include <mulle-sprintf/mulle-sprintf.h>
 #include <mulle-buffer/mulle-buffer.h>
 #include <stdio.h>
@@ -122,7 +121,7 @@ File                                  | Description
 
 Use [mulle-sde](//github.com/mulle-sde) to add mulle-sprintf to your project:
 
-```
+``` sh
 mulle-sde dependency add --c --github mulle-core mulle-sprintf
 ```
 
@@ -133,7 +132,7 @@ mulle-sde dependency add --c --github mulle-core mulle-sprintf
 
 Use [mulle-sde](//github.com/mulle-sde) to build and install mulle-sprintf and all dependencies:
 
-```
+``` sh
 mulle-sde install --prefix /usr/local \
    //github.com/mulle-core/mulle-sprintf/archive/latest.tar.gz
 ```
@@ -151,7 +150,7 @@ Requirements                                               | Description
 
 Install into `/usr/local`:
 
-```
+``` sh
 mkdir build 2> /dev/null
 (
    cd build ;
