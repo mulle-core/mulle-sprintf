@@ -400,7 +400,6 @@ static int   number_of_conversions( char *format,
 {
    int    n;
    char   c;
-   char   *memo;
 
    *remainder = NULL;
 
@@ -420,7 +419,6 @@ static int   number_of_conversions( char *format,
                *starts++ = format;
          }
 
-         memo = format;
          while( c = *++format)
          {
             //
@@ -687,6 +685,7 @@ state_width_entry:
          parser.state = state_modifier;  // fall thru
 
       case state_modifier :
+         // TODO: no _real_ need to hardcode this or ?
          switch( c)
          {
          case 'h' :
@@ -1181,3 +1180,65 @@ int   mulle_asprintf(char **strp, char *format, ...)
    return( rval);
 }
 
+
+int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
+                                 char **strp,
+                                 char *format,
+                                 va_list va)
+{
+   struct mulle_buffer   buffer;
+   int                   rval;
+
+   if( ! strp)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   mulle_buffer_init_with_capacity( &buffer, 256, allocator);
+
+   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
+
+   *strp = mulle_buffer_extract_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
+                                  char **strp,
+                                  char *format,
+                                  mulle_vararg_list arguments)
+{
+   struct mulle_buffer   buffer;
+   int                   rval;
+
+   if( ! strp)
+   {
+      errno = EINVAL;
+      return( -1);
+   }
+
+   mulle_buffer_init_with_capacity( &buffer, 256, allocator);
+
+   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+
+   *strp = mulle_buffer_extract_string( &buffer);
+   mulle_buffer_done( &buffer);
+
+   return( rval);
+}
+
+
+int   mulle_allocator_asprintf( struct mulle_allocator *allocator, char **strp, char *format, ...)
+{
+   va_list   args;
+   int       rval;
+
+   va_start( args, format);
+   rval = mulle_allocator_vasprintf( allocator, strp, format, args);
+   va_end( args);
+
+   return( rval);
+}
