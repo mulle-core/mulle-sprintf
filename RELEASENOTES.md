@@ -1,3 +1,8 @@
+## 2.2.0
+
+* added `mulle_allocator_asprintf` and variants
+
+
 ## 2.1.0
 
 * do not add trailing \0 byte in vsprintf functions

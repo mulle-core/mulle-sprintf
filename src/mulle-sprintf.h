@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((2 << 20) | (1 << 8) | 0)
+#define MULLE_SPRINTF_VERSION  ((2 << 20) | (2 << 8) | 0)
 
 
 struct mulle_buffer;
@@ -123,13 +123,32 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 // you want to use mulle_malloc also, and then free is odd.
 //
 MULLE_SPRINTF_GLOBAL
-int   mulle_asprintf(char **strp, char *format, ...);
+int   mulle_asprintf( char **strp, char *format, ...);
 
 MULLE_SPRINTF_GLOBAL
-int   mulle_vasprintf(char **strp, char *format, va_list ap);
+int   mulle_vasprintf( char **strp, char *format, va_list ap);
 
 MULLE_SPRINTF_GLOBAL
-int   mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
+int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments);
+
+// you can specify the allocator with these asprintf functions
+MULLE_SPRINTF_GLOBAL
+int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
+                                char **strp,
+                                char *format, ...);
+
+MULLE_SPRINTF_GLOBAL
+int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
+                                 char **strp,
+                                 char *format,
+                                 va_list ap);
+
+MULLE_SPRINTF_GLOBAL
+int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
+                                  char **strp,
+                                  char *format,
+                                  mulle_vararg_list arguments);
+
 
 
 #pragma mark - manage "sprintf"
