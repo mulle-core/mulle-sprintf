@@ -164,6 +164,11 @@ typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 #endif
 
 
+// cosmopolitan weirdness
+#ifdef I
+# undef I
+#endif
+
 union mulle_sprintf_argumentvalue
 {
    int                 i;
