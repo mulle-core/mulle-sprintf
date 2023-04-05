@@ -1,0 +1,68 @@
+## Examples
+
+### Just like sprintf
+
+
+Here is an example that uses `mulle_sprintf` to print an integer into a
+char array unsafely:
+
+
+``` c
+#include <mulle-sprintf/mulle-sprintf.h>
+#include <stdio.h>
+
+
+int   main( void)
+{
+   auto char   storage[ 32];
+
+   mulle_sprintf( storage, "%d", 1848);
+   printf( "%s\n", storage);
+
+   return( 0);
+}
+```
+
+### Using an explicit mulle-buffer
+
+Here is an example that uses `mulle_buffer_sprintf` together with
+[`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print two integers into
+a char array safely. The printed result will be "1848":
+
+``` c
+#include <mulle-sprintf/mulle-sprintf.h>
+#include <mulle-buffer/mulle-buffer.h>
+#include <stdio.h>
+
+
+int   main( void)
+{
+   struct mulle_buffer   buffer;
+
+   mulle_buffer_init( &buffer, NULL);
+   mulle_buffer_sprintf( &buffer, "%d", 18);
+   mulle_buffer_sprintf( &buffer, "%d", 48);
+   printf( "%*s\n", mulle_buffer_get_string( &buffer));
+   mulle_buffer_done( &buffer);
+
+   return( 0);
+}
+```
+
+With the convenience macro `mulle_buffer_do` this reduces down to:
+
+
+```c
+int   main( void)
+{
+   mulle_buffer_do( buffer)
+   {
+      mulle_buffer_sprintf( buffer, "%d", 18);
+      mulle_buffer_sprintf( buffer, "%d", 48);
+      printf( "%*s\n", mulle_buffer_get_string( buffer));
+   }
+
+   return( 0);
+}
+```
+

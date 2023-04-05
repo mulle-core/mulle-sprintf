@@ -610,9 +610,9 @@ void   mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion
 }
 
 
-MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_integer_functions)
-static void  mulle_sprintf_register_default_integer_functions()
-{
-   mulle_sprintf_register_integer_functions( mulle_sprintf_get_defaultconversion());
-}
+// MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_integer_functions)
+// static void  mulle_sprintf_register_default_integer_functions()
+// {
+//    mulle_sprintf_register_integer_functions( mulle_sprintf_get_defaultconversion());
+// }
 

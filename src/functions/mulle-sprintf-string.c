@@ -253,8 +253,8 @@ void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *
 }
 
 
-MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_string_functions)
-static void  mulle_sprintf_register_default_string_functions()
-{
-   mulle_sprintf_register_string_functions( mulle_sprintf_get_defaultconversion());
-}
+// MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_string_functions)
+// static void  mulle_sprintf_register_default_string_functions()
+// {
+//    mulle_sprintf_register_string_functions( mulle_sprintf_get_defaultconversion());
+// }

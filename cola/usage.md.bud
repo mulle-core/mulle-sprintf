@@ -1,0 +1,32 @@
+## Usage
+
+### Convenient
+
+mulle-sprintf uses a dynamic loading scheme to add conversion routines. It is
+important that the linker doesn't strip presumably "dead" code. This will happen
+if you link mulle-sprintf as a static library without using `--all_load` or
+some such. [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
+
+
+### Inconvenient
+
+If you have or don't want to do it the convenient way, you need to add the
+character conversion routines yourself. Add them before you call a
+*mulle-sprintf* printing function:
+
+``` c
+struct mulle_sprintf_conversion   *conversion;
+
+conversion = mulle_sprintf_get_defaultconversion();
+mulle_sprintf_register_character_functions( conversion);
+mulle_sprintf_register_decimal_functions( conversion);
+mulle_sprintf_register_escape_functions( conversion);
+mulle_sprintf_register_integer_functions( conversion);
+mulle_sprintf_register_fp_functions( conversion);
+mulle_sprintf_register_pointer_functions( conversion);
+mulle_sprintf_register_return_functions( conversion);
+mulle_sprintf_register_string_functions( conversion);
+
+mulle_sprintf_register_standardmodifiers( conversion);
+```
+

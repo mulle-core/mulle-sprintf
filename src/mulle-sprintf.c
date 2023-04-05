@@ -86,7 +86,8 @@ struct mulle_sprintf_malloc_storage
 };
 
 
-static struct mulle_sprintf_malloc_storage   *mulle_sprintf_malloc_storage_create( struct mulle_allocator                      *allocator)
+static struct mulle_sprintf_malloc_storage
+   *mulle_sprintf_malloc_storage_create( struct mulle_allocator *allocator)
 {
    struct mulle_sprintf_malloc_storage   *storage;
 
@@ -96,7 +97,8 @@ static struct mulle_sprintf_malloc_storage   *mulle_sprintf_malloc_storage_creat
 }
 
 
-static void   mulle_sprintf_malloc_storage_done( struct mulle_sprintf_malloc_storage *storage)
+static void
+   mulle_sprintf_malloc_storage_done( struct mulle_sprintf_malloc_storage *storage)
 {
    mulle_allocator_free( storage->allocator, storage->starts);
    mulle_allocator_free( storage->allocator, storage->infos);
@@ -105,9 +107,10 @@ static void   mulle_sprintf_malloc_storage_done( struct mulle_sprintf_malloc_sto
 }
 
 
-static void   mulle_sprintf_malloc_storage_free( struct mulle_sprintf_malloc_storage *storage)
+static void
+   mulle_sprintf_malloc_storage_free( struct mulle_sprintf_malloc_storage *storage)
 {
-   struct mulle_sprintf_config           *config;
+   struct mulle_sprintf_config   *config;
 
    config = mulle_sprintf_get_config();
 
@@ -168,6 +171,22 @@ struct mulle_sprintf_config    mulle_sprintf_config =
    free_storage,
    { { 0}, { 0 } }
 };
+
+
+void   mulle_sprintf_register_default_conversion_functions_if_needed( struct mulle_sprintf_conversion *conversion)
+{
+   if( conversion->jumps[ mulle_sprintf_index_for_character( 'd')])
+      return;
+
+   mulle_sprintf_register_character_functions( conversion);
+   mulle_sprintf_register_escape_functions( conversion);
+   mulle_sprintf_register_fp_functions( conversion);
+   mulle_sprintf_register_integer_functions( conversion);
+   mulle_sprintf_register_pointer_functions( conversion);
+   mulle_sprintf_register_return_functions( conversion);
+   mulle_sprintf_register_string_functions( conversion);
+   mulle_sprintf_register_standardmodifiers( conversion);
+}
 
 
 static void   *space_for_starts( unsigned int n, struct mulle_allocator *allocator)
@@ -1066,6 +1085,8 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
    mulle_buffer_make_string( &buffer);
    mulle_buffer_done( &buffer);
 
+   if( rval == -1)
+      *buf = 0;
    return( rval);
 }
 
@@ -1088,6 +1109,9 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
    mulle_buffer_make_string( &buffer);
    mulle_buffer_done( &buffer);
 
+   if( rval == -1)
+      *buf = 0;
+
    return( rval);
 }
 
@@ -1096,12 +1120,6 @@ int   mulle_snprintf( char *buf, size_t size, char *format, ...)
 {
    va_list               args;
    int                   rval;
-
-   if( ! buf || ! size)
-   {
-      errno = EINVAL;
-      return( -1);
-   }
 
    va_start( args, format );
    rval = mulle_vsnprintf( buf, size, format, args);
