@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((2 << 20) | (2 << 8) | 0)
+#define MULLE_SPRINTF_VERSION  ((3 << 20) | (0 << 8) | 0)
 
 
 struct mulle_buffer;
@@ -173,7 +173,12 @@ static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
 static inline struct mulle_sprintf_conversion   *
   mulle_sprintf_get_defaultconversion( void)
 {
-   return( &mulle_sprintf_get_config()->defaultconversion);
+   void   mulle_sprintf_register_default_conversion_functions_if_needed( struct mulle_sprintf_conversion *conversion);
+   struct mulle_sprintf_conversion   *conversion;
+
+   conversion = &mulle_sprintf_get_config()->defaultconversion;
+   mulle_sprintf_register_default_conversion_functions_if_needed( conversion);
+   return( conversion);
 }
 
 
@@ -181,6 +186,8 @@ static inline void    mulle_sprintf_free_storage( void)
 {
    (*mulle_sprintf_get_config()->free_storage)();
 }
+
+
 
 #include "mulle-sprintf-character.h"
 #include "mulle-sprintf-escape.h"

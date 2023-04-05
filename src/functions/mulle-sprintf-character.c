@@ -143,9 +143,9 @@ void  mulle_sprintf_register_character_functions( struct mulle_sprintf_conversio
 }
 
 
-MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_character_functions)
-static void  mulle_sprintf_register_default_character_functions()
-{
-   mulle_sprintf_register_character_functions( mulle_sprintf_get_defaultconversion());
-}
+//MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_character_functions)
+// static void  mulle_sprintf_register_default_character_functions()
+// {
+//    mulle_sprintf_register_character_functions( mulle_sprintf_get_defaultconversion());
+// }
 

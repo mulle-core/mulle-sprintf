@@ -9,11 +9,20 @@ mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments. Because floating point to string conversion is hard, floating point
 conversions are handed down to `sprintf`. So it is not a sprintf replacement.
 
-| Release Version                   |
-|-----------------------------------|
-| [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions)  ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release) |
 
-## Format characters
+| Release Version                                       | Release Notes
+|-------------------------------------------------------|--------------
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions)| [RELEASENOTES](RELEASENOTES.md) |
+
+
+## API
+
+| File                                  | Description
+|-------------------------------------- | -------------------------------------
+| [`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
+
+
+### Format characters
 
 For more detailed information on each characte consult a
 [sprintf man page](https://manpages.org/sprintf).
@@ -100,13 +109,14 @@ Character | Description
 Used modifiers: `l`
 
 
-## Use
+
+## Usage
 
 ### Convenient
 
 mulle-sprintf uses a dynamic loading scheme to add conversion routines. It is
 important that the linker doesn't strip presumably "dead" code. This will happen
-if you link mulle-sprintf as a static library without using --all_load or
+if you link mulle-sprintf as a static library without using `--all_load` or
 some such. [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
 
 
@@ -114,7 +124,7 @@ some such. [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
 
 If you have or don't want to do it the convenient way, you need to add the
 character conversion routines yourself. Add them before you call a
-mulle-sprintf printing function:
+*mulle-sprintf* printing function:
 
 ``` c
 struct mulle_sprintf_conversion   *conversion;
@@ -133,88 +143,6 @@ mulle_sprintf_register_standardmodifiers( conversion);
 ```
 
 
-## Examples
-
-
-## Just like sprintf
-
-
-Here is an example that uses `mulle_sprintf` to print an integer into a
-char array unsafely:
-
-
-``` c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <stdio.h>
-
-
-int   main( void)
-{
-   auto char   storage[ 32];
-
-   mulle_sprintf( storage, "%d", 1848);
-   printf( "%s\n", storage);
-
-   return( 0);
-}
-```
-
-
-## Using an explicit mulle-buffer
-
-Here is an example that uses `mulle_buffer_sprintf` together with
-[`mulle-buffer`](//github.com/mulle-c/mulle-buffer) to print two integers into
-a char array safely. The printed result will be "1848":
-
-``` c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-buffer/mulle-buffer.h>
-#include <stdio.h>
-
-
-int   main( void)
-{
-   struct mulle_buffer   buffer;
-
-   mulle_buffer_init( &buffer, NULL);
-   mulle_buffer_sprintf( &buffer, "%d", 18);
-   mulle_buffer_sprintf( &buffer, "%d", 48);
-   printf( "%*s\n", mulle_buffer_get_string( &buffer));
-   mulle_buffer_done( &buffer);
-
-   return( 0);
-}
-```
-
-With the convenience macro `mulle_buffer_do` this reduces down to:
-
-
-```c
-int   main( void)
-{
-   mulle_buffer_do( buffer)
-   {
-      mulle_buffer_sprintf( buffer, "%d", 18);
-      mulle_buffer_sprintf( buffer, "%d", 48);
-      printf( "%*s\n", mulle_buffer_get_string( buffer));
-   }
-
-   return( 0);
-}
-```
-
-
-## API
-
-File                                  | Description
-------------------------------------- | -------------------------------------
-[`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
-
-
-
-### You are here
-
-![Overview](overview.dot.svg)
 
 
 
@@ -223,13 +151,23 @@ File                                  | Description
 Use [mulle-sde](//github.com/mulle-sde) to add mulle-sprintf to your project:
 
 ``` sh
-mulle-sde dependency add --marks all-load --c --github mulle-core mulle-sprintf
+mulle-sde add github:mulle-core/mulle-sprintf
 ```
+
+To only add the sources of mulle-sprintf with dependency
+sources use [clib](https://github.com/clibs/clib):
+
+
+``` sh
+clib install --out src/mulle-core mulle-core/mulle-sprintf
+```
+
+Add `-isystem src/mulle-core` to your `CFLAGS` and compile all the sources that were downloaded with your project.
 
 
 ## Install
 
-### mulle-sde
+### Install with mulle-sde
 
 Use [mulle-sde](//github.com/mulle-sde) to build and install mulle-sprintf and all dependencies:
 
@@ -242,14 +180,14 @@ mulle-sde install --prefix /usr/local \
 
 Install the requirements:
 
-Requirements                                               | Description
------------------------------------------------------------|-----------------------
-[mulle-thread](//github.com/mulle-concurrent/mulle-thread) | Threads and atomics
-[mulle-buffer](//github.com/mulle-c/mulle-buffer)          | Growing character array
-[mulle-utf](//github.com/mulle-c/mulle-utf)                | UTF functions
-[mulle-vararg](//github.com/mulle-c/mulle-vararg)          | Variable arguments
+| Requirements                                 | Description
+|----------------------------------------------|-----------------------
+| [mulle-buffer](https://github.com/mulle-c/mulle-buffer)             | ↗️ A growable C char array and also a stream
+| [mulle-utf](https://github.com/mulle-c/mulle-utf)             | 🔤 UTF8-16-32 analysis and manipulation library
+| [mulle-vararg](https://github.com/mulle-c/mulle-vararg)             |  ⏪ Access variable arguments in struct layout fashion in C
+| [mulle-thread](https://github.com/mulle-concurrent/mulle-thread)             | 🔠 Cross-platform thread/mutex/tss/atomic operations in C
 
-Install into `/usr/local`:
+Install **mulle-sprintf** into `/usr/local` with [cmake](https://cmake.org):
 
 ``` sh
 cmake -B build \
@@ -260,15 +198,8 @@ cmake --build build --config Release &&
 cmake --install build --config Release
 ```
 
-### Platforms and Compilers
-
-All platforms and compilers supported by
-[mulle-c11](//github.com/mulle-c/mulle-c11) and
-[mulle-thread](//github.com/mulle-concurrent/mulle-thread).
-
-
 ## Author
 
-[Nat!](//www.mulle-kybernetik.com/weblog) for
-[Mulle kybernetiK](//www.mulle-kybernetik.com) and
-[Codeon GmbH](//www.codeon.de)
+[Nat!](https://mulle-kybernetik.com/weblog) for Mulle kybernetiK
+
+
