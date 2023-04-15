@@ -1,3 +1,9 @@
+# 3.0.0
+
+* remove package.json as it conflicts with clib.json
+* for purposes of the amalgamated mulle-core, mulle-sprintf no longer uses constructor calls to piece internal things together
+
+
 ## 2.2.0
 
 * added `mulle_allocator_asprintf` and variants

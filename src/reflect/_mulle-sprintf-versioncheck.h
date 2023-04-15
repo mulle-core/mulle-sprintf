@@ -3,7 +3,7 @@
  *   Any edits will be lost.
  */
 #if defined( MULLE_BUFFER_VERSION)
-# if MULLE_BUFFER_VERSION < ((3 << 20) | (3 << 8) | 0)
+# if MULLE_BUFFER_VERSION < ((3 << 20) | (4 << 8) | 0)
 #  error "mulle-buffer is too old"
 # endif
 # if MULLE_BUFFER_VERSION >= ((4 << 20) | (0 << 8) | 0)
@@ -30,7 +30,7 @@
 #endif
 
 #if defined( MULLE_VARARG_VERSION)
-# if MULLE_VARARG_VERSION < ((1 << 20) | (1 << 8) | 4)
+# if MULLE_VARARG_VERSION < ((1 << 20) | (1 << 8) | 5)
 #  error "mulle-vararg is too old"
 # endif
 # if MULLE_VARARG_VERSION >= ((2 << 20) | (0 << 8) | 0)

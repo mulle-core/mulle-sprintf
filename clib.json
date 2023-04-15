@@ -1,6 +1,6 @@
 {
    "name" : "mulle-sprintf",
-   "version" : "2.2.0",
+   "version" : "3.0.0",
    "description" : "An extensible sprintf function supporting stdarg and mulle-vararg",
    "keywords" : [],
    "license" : "BSD-3-Clause",
