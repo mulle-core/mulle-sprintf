@@ -976,6 +976,11 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
    {
       len = strlen( format);
       mulle_buffer_add_bytes( buffer, format, len);  // we don't add a 0 byte
+      if( mulle_buffer_has_overflown( buffer))
+      {
+         errno = ENOMEM;
+         return( -1);
+      }
       return( (int) len);
    }
 
@@ -1022,7 +1027,13 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
    if( ! argc)
    {
       len = strlen( format);
-      mulle_buffer_add_bytes( buffer, format, len); // we don't add a null byte (because this makes multiple vsprintfs painful)
+      mulle_buffer_add_bytes( buffer, format, len);
+      if( mulle_buffer_has_overflown( buffer))
+      {
+         errno = ENOMEM;
+         return( -1);
+      }
+      // we don't add a null byte (because this makes multiple vsprintfs painful)
       return( (int) len);
    }
 
@@ -1071,6 +1082,7 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
 int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 {
    int                   rval;
+   int                   truncated;
    struct mulle_buffer   buffer;
 
    if( ! buf || ! size)
@@ -1082,8 +1094,14 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 
    rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
 
-   mulle_buffer_make_string( &buffer);
+   truncated = mulle_buffer_make_string( &buffer);
    mulle_buffer_done( &buffer);
+
+   if( truncated)
+   {
+      errno = ENOMEM;
+      rval  = -1;
+   }
 
    if( rval == -1)
       *buf = 0;
@@ -1094,6 +1112,7 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments)
 {
    int                   rval;
+   int                   truncated;
    struct mulle_buffer   buffer;
 
    if( ! buf || ! size)
@@ -1106,8 +1125,14 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
 
    rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
 
-   mulle_buffer_make_string( &buffer);
+   truncated = mulle_buffer_make_string( &buffer);
    mulle_buffer_done( &buffer);
+
+   if( truncated)
+   {
+      errno = ENOMEM;
+      rval  = -1;
+   }
 
    if( rval == -1)
       *buf = 0;
@@ -1186,7 +1211,7 @@ int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
 }
 
 
-int   mulle_asprintf(char **strp, char *format, ...)
+int   mulle_asprintf( char **strp, char *format, ...)
 {
    va_list   args;
    int       rval;
