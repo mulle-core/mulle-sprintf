@@ -79,11 +79,16 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                                struct mulle_sprintf_conversion *table);
 
 
+// These functions provide a nice mapping from C stdio to mulle sprintf.
 //
-// These functions provide a nice mapping from C stdio to
-// mulle sprintf. They use a mulle_buffer internally
-// but they return -1 on error, not the size that needs to be printed.
-// These functions append a '0'.
+// Use these functions to safely print into a fixed size C char array:
+// e.g.
+//   char   buf[ 32];
+//   mulle_snprintf( buf, sizeof( buf), "%d", i);
+//
+// They use a mulle_buffer internally. They return -1 on error, not the size
+// that was needed to print though. These functions always append a '0' even if
+// the buffer has overflown. Overflow will return -1, with errno set to ENOMEM.
 //
 MULLE_SPRINTF_GLOBAL
 int   mulle_snprintf( char *buf, size_t size, char *format, ...);
@@ -95,10 +100,9 @@ MULLE_SPRINTF_GLOBAL
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
 
 //
-// Or use these unsafer sprintf versions,
-// Use the buffer versions if you need flexibility.
+// Or use these unsafer sprintf versions. Preferably use the buffer versions,
+// though.
 //
-// You shouldn't use them though. Use the buffer versions
 MULLE_SPRINTF_GLOBAL
 int   mulle_sprintf( char *buf, char *format, ...);
 
@@ -116,11 +120,12 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 
 
 //
-// here are also the asprintf variety, theses return a mulle_default_allocator
-// allocated string in *strp. So you need to free it with mulle_free(!) not
-// free. It used to mulle_stdlib_allocator, but using "free" to free it is then
-// too strange for me. If you are replacing existing code, chances are high
-// you want to use mulle_malloc also, and then free is odd.
+// Here are also the asprintf variety functions. These functions return a
+// mulle_default_allocator allocated string in *strp. So you need to free it
+// with mulle_free(!) not free. It used to mulle_stdlib_allocator, but using
+// "free" to free becomes strange in the long run. If you are replacing
+// existing code, chances are high you want to use mulle_malloc also, and then
+// free is odd.
 //
 MULLE_SPRINTF_GLOBAL
 int   mulle_asprintf( char **strp, char *format, ...);
@@ -131,7 +136,10 @@ int   mulle_vasprintf( char **strp, char *format, va_list ap);
 MULLE_SPRINTF_GLOBAL
 int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments);
 
-// you can specify the allocator with these asprintf functions
+//
+// You can specify the allocator with these asprintf functions.
+// If you use the mulle_stdlib_allocator, then you can free (not mulle-free)
+//
 MULLE_SPRINTF_GLOBAL
 int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
                                 char **strp,
