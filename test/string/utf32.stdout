@@ -1,0 +1,63 @@
+   |          1         2         3         4         |
+   |01234567890123456789012345678901234567890123456789|
+p: ||
+p: ||  # %.0lS
+p: ||
+p: |                                                  |
+p: |                                                  |
+p: ||
+p: |                                                  |
+p: |                                                  |
+
+   |          1         2         3         4         |
+   |01234567890123456789012345678901234567890123456789|
+p: |VfL Bochum 1848|
+p: ||  # %.0lS
+p: |V|  # %.1lS
+p: |Vf|  # %.2lS
+p: |VfL|  # %.3lS
+p: |VfL |  # %.4lS
+p: |VfL B|  # %.5lS
+p: |VfL Bo|  # %.6lS
+p: |VfL Boc|  # %.7lS
+p: |VfL Boch|  # %.8lS
+p: |VfL Bochu|  # %.9lS
+p: |VfL Bochum|  # %.10lS
+p: |VfL Bochum |  # %.11lS
+p: |VfL Bochum 1|  # %.12lS
+p: |VfL Bochum 18|  # %.13lS
+p: |VfL Bochum 184|  # %.14lS
+p: |VfL Bochum 1848|  # %.15lS
+p: |VfL Bochum 1848|
+p: |                                   VfL Bochum 1848|
+p: |                                   VfL Bochum 1848|
+p: |VfL Bochum 1848|
+p: |                                   VfL Bochum 1848|
+p: |                                   VfL Bochum 1848|
+
+   |          1         2         3         4         |
+   |01234567890123456789012345678901234567890123456789|
+p: |👣#€VfL Bochum 🎲|
+p: ||  # %.0lS
+p: |👣|  # %.1lS
+p: |👣#|  # %.2lS
+p: |👣#€|  # %.3lS
+p: |👣#€V|  # %.4lS
+p: |👣#€Vf|  # %.5lS
+p: |👣#€VfL|  # %.6lS
+p: |👣#€VfL |  # %.7lS
+p: |👣#€VfL B|  # %.8lS
+p: |👣#€VfL Bo|  # %.9lS
+p: |👣#€VfL Boc|  # %.10lS
+p: |👣#€VfL Boch|  # %.11lS
+p: |👣#€VfL Bochu|  # %.12lS
+p: |👣#€VfL Bochum|  # %.13lS
+p: |👣#€VfL Bochum |  # %.14lS
+p: |👣#€VfL Bochum 🎲|  # %.15lS
+p: |👣#€VfL Bochum 🎲|
+p: |                                   👣#€VfL Bochum 🎲|
+p: |                                   👣#€VfL Bochum 🎲|
+p: |👣#€VfL Bochum 🎲|
+p: |                                   👣#€VfL Bochum 🎲|
+p: |                                   👣#€VfL Bochum 🎲|
+

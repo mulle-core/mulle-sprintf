@@ -6,6 +6,7 @@
 
 static mulle_sprintf_argumenttype_t  get_bool_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_int_argumenttype);
 }
 

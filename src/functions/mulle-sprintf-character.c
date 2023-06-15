@@ -76,7 +76,6 @@ static int   _mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
 }
 
 
-
 static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                                   struct mulle_buffer *buffer,
                                                   wint_t c)
@@ -87,6 +86,32 @@ static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatcon
    s[ 1] = 0;
 
    return( _mulle_sprintf_wcharstring_conversion( buffer, info, s));
+}
+
+
+static inline int   _utf16_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_buffer *buffer,
+                                            unsigned int c)
+{
+   mulle_utf16_t   s[ 2];
+
+   s[ 0] = c;
+   s[ 1] = 0;
+
+   return( _mulle_sprintf_utf16_conversion( buffer, info, s));
+}
+
+
+static inline int   _utf32_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_buffer *buffer,
+                                            unsigned int c)
+{
+   mulle_utf32_t   s[ 2];
+
+   s[ 0] = c;
+   s[ 1] = 0;
+
+   return( _mulle_sprintf_utf32_conversion( buffer, info, s));
 }
 
 
@@ -102,12 +127,27 @@ static int   _mulle_sprintf_wide_character_conversion( struct mulle_buffer *buff
    assert( arguments);
 
    v = arguments->values[ argc];
+   if( info->modifier[ 0] == 'h')
+      return( _utf16_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
+   if( info->modifier[ 0] == 'l')
+      return( _utf32_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
    return( _wide_char_string_conversion( info, buffer, v.wc));
 }
 
 
 static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widecharacter_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+   if( info->modifier[ 0] == 'h')
+   {
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from uint16_t
+   }
+   if( info->modifier[ 0] == 'l')
+   {
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from uint32_t
+   }
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_wint_t_argumenttype);
 }
 
@@ -115,7 +155,11 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widecharacter_argumenttyp
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_character_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    if( info->modifier[ 0] == 'l')
+   {
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_wint_t_argumenttype);
+   }
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_char_argumenttype);
 }
 
@@ -139,7 +183,7 @@ void  mulle_sprintf_register_character_functions( struct mulle_sprintf_conversio
 {
    mulle_sprintf_register_functions( tables, &mulle_sprintf_character_functions, 'c');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_widecharacter_functions, 'C');
-   mulle_sprintf_register_modifier( tables, 'l');
+   mulle_sprintf_register_modifiers( tables, "hl");
 }
 
 

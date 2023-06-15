@@ -496,18 +496,36 @@ static mulle_sprintf_argumenttype_t
    {
    case 'h' :
       if( info->modifier[ 1] == 'h')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_char_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_short_argumenttype);
 
    case 'l' :
       if( info->modifier[ 1] == 'l')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_long_long_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_long_argumenttype);
 
-   case 'j' : return( mulle_sprintf_intmax_t_argumenttype);
-   case 'q' : return( mulle_sprintf_int64_t_argumenttype);
-   case 't' : return( mulle_sprintf_ptrdiff_t_argumenttype);
+   case 'j' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_intmax_t_argumenttype);
+   case 'q' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_int64_t_argumenttype);
+   case 't' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_ptrdiff_t_argumenttype);
+   case 'z' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_signed_size_t_argumenttype);
    }
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_int_argumenttype);
 }
 
@@ -519,19 +537,36 @@ static mulle_sprintf_argumenttype_t
    {
    case 'h' :
       if( info->modifier[ 1] == 'h')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_unsigned_char_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_short_argumenttype);
 
    case 'l' :
       if( info->modifier[ 1] == 'l')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_unsigned_long_long_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_long_argumenttype);
 
-   case 'j' : return( mulle_sprintf_uintmax_t_argumenttype);
-   case 'q' : return( mulle_sprintf_uint64_t_argumenttype);
-   case 't' : return( mulle_sprintf_unsigned_ptrdiff_t_argumenttype);
-   case 'z' : return( mulle_sprintf_size_t_argumenttype);
+   case 'j' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_uintmax_t_argumenttype);
+   case 'q' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_uint64_t_argumenttype);
+   case 't' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_unsigned_ptrdiff_t_argumenttype);
+   case 'z' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_size_t_argumenttype);
    }
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_unsigned_int_argumenttype);
 }
 

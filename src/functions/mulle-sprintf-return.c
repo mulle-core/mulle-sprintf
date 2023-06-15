@@ -124,26 +124,39 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( str
    {
    case 'h' :
       if( info->modifier[ 1] == 'h')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_unsigned_char_pointer_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_short_pointer_argumenttype);
 
    case 'l' :
       if( info->modifier[ 1] == 'l')
+      {
+         assert( info->modifier[ 2] == '\0');
          return( mulle_sprintf_unsigned_long_long_pointer_argumenttype);
+      }
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_long_pointer_argumenttype);
 
    case 'j' :
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_size_t_pointer_argumenttype);
 
    case 't' :
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype);
 
    case 'z' :
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_uintmax_t_pointer_argumenttype);
 
    case 'q' :
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_uint64_t_pointer_argumenttype);
    }
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_unsigned_int_pointer_argumenttype);
 }
 

@@ -40,18 +40,18 @@
 
 #include "mulle-sprintf-function.h"
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion *tables);
 
 
 // support functions used by mulle-sprintf-decimal later on
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
                                  struct mulle_sprintf_formatconversioninfo *info,
                                  char *p,
@@ -61,7 +61,7 @@ void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
                                  int  precision,
                                  char prefix);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void   _mulle_sprintf_justified_and_prefixed( struct mulle_buffer *buffer,
                                               struct mulle_sprintf_formatconversioninfo *info,
                                               char *p,

@@ -40,7 +40,7 @@
 
 #include "mulle-sprintf-function.h"
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

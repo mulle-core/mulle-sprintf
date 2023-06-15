@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE_SPRINTF_VERSION  ((3 << 20) | (0 << 8) | 0)
+#define MULLE__SPRINTF_VERSION  ((3 << 20) | (0 << 8) | 0)
 
 
 struct mulle_buffer;
@@ -51,28 +51,28 @@ struct mulle_sprintf_conversion;
 
 
 // will not append '\0' !
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_sprintf( struct mulle_buffer *buffer,
                             char *format,
                             ...);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                              char *format,
                              va_list va);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
                               char *format,
                               va_list va,
                               struct mulle_sprintf_conversion *table);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                               char *format,
                               mulle_vararg_list va);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
                                char *format,
                                mulle_vararg_list arguments,
@@ -90,20 +90,20 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 // that was needed to print though. These functions always append a '0' even if
 // the buffer has overflown. Overflow will return -1, with errno set to ENOMEM.
 //
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_snprintf( char *buf, size_t size, char *format, ...);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
 
 //
 // Or use these unsafer sprintf versions. Preferably use the buffer versions,
 // though.
 //
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf( char *buf, char *format, ...);
 
 
@@ -127,31 +127,31 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 // existing code, chances are high you want to use mulle_malloc also, and then
 // free is odd.
 //
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_asprintf( char **strp, char *format, ...);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_vasprintf( char **strp, char *format, va_list ap);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments);
 
 //
 // You can specify the allocator with these asprintf functions.
 // If you use the mulle_stdlib_allocator, then you can free (not mulle-free)
 //
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
                                 char **strp,
                                 char *format, ...);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
                                  char **strp,
                                  char *format,
                                  va_list ap);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
                                   char **strp,
                                   char *format,
@@ -172,7 +172,7 @@ struct mulle_sprintf_config
 
 static inline struct mulle_sprintf_config  *mulle_sprintf_get_config( void)
 {
-   MULLE_SPRINTF_GLOBAL struct mulle_sprintf_config   mulle_sprintf_config;
+   MULLE__SPRINTF_GLOBAL struct mulle_sprintf_config   mulle_sprintf_config;
 
    return( &mulle_sprintf_config);
 }

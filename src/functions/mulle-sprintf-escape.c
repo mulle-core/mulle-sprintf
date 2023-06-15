@@ -62,6 +62,7 @@ static int   _mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
 
 static mulle_sprintf_argumenttype_t  mulle_sprintf_get_escape_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_void_argumenttype);
 }
 

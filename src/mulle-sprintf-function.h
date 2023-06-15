@@ -111,7 +111,7 @@ enum
    mulle_sprintf_int64_t_argumenttype,
    mulle_sprintf_short_argumenttype,
 
-   mulle_sprintf_signed_size_t_argumenttype,
+   mulle_sprintf_signed_size_t_argumenttype,  // unused (z is size_t and ssize_t)
    mulle_sprintf_size_t_argumenttype,
    mulle_sprintf_size_t_pointer_argumenttype,
    mulle_sprintf_uint64_t_argumenttype,
@@ -140,6 +140,8 @@ enum
    mulle_sprintf_void_pointer_argumenttype,
    mulle_sprintf_wchar_pointer_argumenttype,
    mulle_sprintf_wint_t_argumenttype,
+   mulle_sprintf_uint16_t_pointer_argumenttype,
+   mulle_sprintf_uint32_t_pointer_argumenttype,
 
    // ugliness ensues...
    mulle_sprintf_NSDecimal_pointer_argumenttype
@@ -159,6 +161,24 @@ typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 #   define MULLE_SPRINTF_PTRDIFF_TYPE long
 #  else
 #   error "need __PTRDIFF_TYPE__"
+#  endif
+# endif
+#endif
+
+// https://github.com/vlm/asn1c/issues/159
+#ifndef SSIZE_T
+# ifdef __linux__
+#  include <sys/types.h>
+# else
+#  ifdef __APPLE__
+#   include <limits.h>
+#  else
+#   ifdef _MSC_VER
+#    include <windows.h>
+     typedef SSIZE_T ssize_t;
+#   else
+#    error "need SSIZE_T"
+#   endif
 #  endif
 # endif
 #endif
@@ -183,6 +203,7 @@ union mulle_sprintf_argumentvalue
    void                *obj;
    int64_t             qt;
    short               s;
+   ssize_t             sSt;
    size_t              St;
    size_t              *pSt;
    uint64_t            Qt;
@@ -204,11 +225,13 @@ union mulle_sprintf_argumentvalue
    void                *pv;
    wchar_t             *pwc;
    wint_t              wc;
+   uint16_t            *pu16;
+   uint32_t            *pu32;
    struct _NSDecimal   *pDecimal;
 };
 
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 unsigned char   mulle_sprintf_argumentsize[];
 
 struct mulle_sprintf_argumentarray
@@ -219,13 +242,13 @@ struct mulle_sprintf_argumentarray
 };
 
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                   mulle_sprintf_argumenttype_t  *type,
                                   unsigned int n,
                                   mulle_vararg_list va);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                  mulle_sprintf_argumenttype_t  *type,
                                  unsigned int n,
@@ -276,32 +299,32 @@ static inline int
 }
 
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         struct mulle_sprintf_function *functions,
                                         mulle_sprintf_conversioncharacter_t c);
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                        mulle_sprintf_modifiercharacter c);
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_modifiercharacter *s);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
                                                 mulle_sprintf_conversioncharacter_t c);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s);
 
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_default_modifiers_on_load( void);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 #endif

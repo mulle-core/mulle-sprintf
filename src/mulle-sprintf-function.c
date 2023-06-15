@@ -67,7 +67,7 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( int64_t),
    SIZEOF( short),
 
-   SIZEOF( size_t),           // mulle_sprintf_signed_size_t_argumenttype
+   SIZEOF( size_t),           // mulle_sprintf_signed_size_t_argumenttype (unused)
    SIZEOF( size_t),
    SIZEOF( size_t *),
    SIZEOF( uint64_t),
@@ -95,6 +95,8 @@ unsigned char   mulle_sprintf_argumentsize[] =
    0,    // void                 // mulle_sprintf_void_argumenttype
    SIZEOF( void *),
    SIZEOF( wchar_t *),
+   SIZEOF( uint16_t *),
+   SIZEOF( uint32_t *),
    SIZEOF( wint_t),
 
    SIZEOF( struct _NSDecimal *)  // mulle_sprintf_NSDecimal_pointer_argumenttype
@@ -135,6 +137,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_object_argumenttype                 : p->obj  = va_arg( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = va_arg( va, int64_t); break;
       case mulle_sprintf_short_argumenttype                  : p->s    = (short) va_arg( va, int); break;  // promotion(!)
+      case mulle_sprintf_signed_size_t_argumenttype          : p->sSt  = va_arg( va, ssize_t); break;
       case mulle_sprintf_size_t_argumenttype                 : p->St   = va_arg( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = va_arg( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
@@ -154,8 +157,10 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = va_arg( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = va_arg( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = va_arg( va, wchar_t *); break;
-      case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = va_arg( va, struct _NSDecimal *); break;
       case mulle_sprintf_wint_t_argumenttype                 : p->wc   = va_arg( va, wint_t); break;
+      case mulle_sprintf_uint16_t_pointer_argumenttype       : p->pu16 = va_arg( va, uint16_t *); break;
+      case mulle_sprintf_uint32_t_pointer_argumenttype       : p->pu32 = va_arg( va, uint32_t *); break;
+      case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = va_arg( va, struct _NSDecimal *); break;
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = va_arg( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE *); break;
@@ -196,6 +201,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_object_argumenttype                 : p->obj  = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = mulle_vararg_next_integer( va, int64_t); break;
       case mulle_sprintf_short_argumenttype                  : p->s    = (short) mulle_vararg_next_integer( va, short); break;  // promotion(!)
+//      case mulle_sprintf_signed_size_t_argumenttype          : p->sSt  = mulle_vararg_next_integer( va, ssize_t); break;
       case mulle_sprintf_size_t_argumenttype                 : p->St   = mulle_vararg_next_integer( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = mulle_vararg_next_pointer( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
@@ -216,6 +222,8 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = mulle_vararg_next_pointer( va, wchar_t *); break;
       case mulle_sprintf_wint_t_argumenttype                 : p->wc   = mulle_vararg_next_integer( va, wint_t); break;
+      case mulle_sprintf_uint16_t_pointer_argumenttype       : p->pu16 = mulle_vararg_next_pointer( va, uint16_t *); break;
+      case mulle_sprintf_uint32_t_pointer_argumenttype       : p->pu32 = mulle_vararg_next_pointer( va, uint32_t *); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = mulle_vararg_next_pointer( va, struct _NSDecimal *); break;
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = mulle_vararg_next_pointer( va, unsigned long long *); break;

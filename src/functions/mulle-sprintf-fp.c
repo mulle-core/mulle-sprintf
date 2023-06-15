@@ -111,6 +111,7 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct 
 {
    if( info->modifier[ 0] == 'L')
       return( mulle_sprintf_long_double_argumenttype);
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_double_argumenttype);
 }
 
