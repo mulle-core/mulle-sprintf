@@ -39,17 +39,29 @@
 
 #include "mulle-sprintf-function.h"
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
                                             struct mulle_sprintf_formatconversioninfo *info,
                                             char *s);
 
-MULLE_SPRINTF_GLOBAL
+MULLE__SPRINTF_GLOBAL
 int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              wchar_t *s);
 
-MULLE_SPRINTF_GLOBAL
-void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables);
+MULLE__SPRINTF_GLOBAL
+void   mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables);
+
+
+
+MULLE__SPRINTF_GLOBAL
+int   _mulle_sprintf_utf32_conversion( struct mulle_buffer *buffer,
+                                       struct mulle_sprintf_formatconversioninfo *info,
+                                       mulle_utf32_t *s);
+
+MULLE__SPRINTF_GLOBAL
+int   _mulle_sprintf_utf16_conversion( struct mulle_buffer *buffer,
+                                       struct mulle_sprintf_formatconversioninfo *info,
+                                       mulle_utf16_t *s);
 
 #endif

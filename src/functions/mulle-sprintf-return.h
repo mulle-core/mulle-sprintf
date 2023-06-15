@@ -41,7 +41,7 @@
 #include "mulle-sprintf-function.h"
 
 
-void  MULLE_SPRINTF_GLOBAL
+void  MULLE__SPRINTF_GLOBAL
 mulle_sprintf_register_return_functions( struct mulle_sprintf_conversion *tables);
 
 #endif

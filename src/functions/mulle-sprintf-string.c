@@ -54,19 +54,65 @@
 #ifdef HAVE_MULLE_UTF
 #include "include-private.h"
 
-#if MULLE_UTF_VERSION < ((1 << 20) | (0 << 8) | 7)
+#if MULLE__UTF_VERSION < ((1 << 20) | (0 << 8) | 7)
 # error "mulle_utf is too old"
 #endif
 
 
-static int
-   _mulle_sprintf_utf16conversion( struct mulle_buffer *buffer,
+int
+   _mulle_sprintf_utf8_conversion( struct mulle_buffer *buffer,
                                    struct mulle_sprintf_formatconversioninfo *info,
-                                   mulle_utf16_t *s)
+                                   mulle_utf8_t *s)
+{
+   int             o_length;
+   int             rval;
+   mulle_utf32_t   tmp_stack[ 32];
+   mulle_utf32_t   *tmp;
+   mulle_utf32_t   *tmp_malloc;
+
+   assert( buffer);
+   assert( info);
+
+   if( s)
+   {
+      // check if we have composed multi-chars, if yes convert to utf32 and go
+      // there, because otherwise the length/width calculations get too involved
+      o_length = (int) mulle_utf8_strlen( s);
+      if( ! mulle_utf8_is_ascii( s, o_length))
+      {
+         // MEMO: don't want mulle-container as a dependency here, so do it
+         // the hard way
+         // mulle_flexarray_do( tmp, uint32_t, 32, o_length + 1)
+         tmp_malloc = NULL;
+         tmp        = tmp_stack;
+         if( o_length >= sizeof( tmp_stack) / sizeof( uint32_t))
+         {
+            tmp_malloc = mulle_malloc( (o_length + 1) * sizeof( uint32_t));
+            tmp        = tmp_malloc;
+         }
+         _mulle_utf8_convert_to_utf32( s, o_length + 1, tmp);
+         rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
+         mulle_free( tmp_malloc);
+         return( rval);
+      }
+   }
+
+   return( _mulle_sprintf_charstring_conversion( buffer, info, (char *) s));
+}
+
+
+int
+   _mulle_sprintf_utf16_conversion( struct mulle_buffer *buffer,
+                                    struct mulle_sprintf_formatconversioninfo *info,
+                                    mulle_utf16_t *s)
 {
    int                    length;
    int                    o_length;
+   int                    rval;
    static mulle_utf16_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
+   mulle_utf32_t          tmp_stack[ 32];
+   mulle_utf32_t          *tmp;
+   mulle_utf32_t          *tmp_malloc;
 
    assert( buffer);
    assert( info);
@@ -74,7 +120,28 @@ static int
    if( ! s)
       s = null_description;
 
+   // check if we have composed multi-chars, if yes convert to utf32 and go
+   // there, because otherwise the length/width calculations get too involved
    o_length = (int) mulle_utf16_strlen( s);
+   if( ! mulle_utf16_is_utf15( s, o_length))
+   {
+      // MEMO: don't want mulle-container as a dependency here, so do it
+      // the hard way
+      // mulle_flexarray_do( tmp, uint32_t, 32, o_length + 1)
+      tmp_malloc = NULL;
+      tmp        = tmp_stack;
+      if( o_length >= sizeof( tmp_stack) / sizeof( uint32_t))
+      {
+         tmp_malloc = mulle_malloc( (o_length + 1) * sizeof( uint32_t));
+         tmp        = tmp_malloc;
+      }
+      _mulle_utf16_convert_to_utf32( s, o_length + 1, tmp);
+      rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
+      mulle_free( tmp_malloc);
+      return( rval);
+   }
+
+   // back to the usual program
    length   = (int) o_length;
    if( info->memory.precision_found)
       length = (info->precision > o_length) ? o_length  : info->precision;
@@ -97,10 +164,10 @@ static int
 }
 
 
-static int
-   _mulle_sprintf_utf32conversion( struct mulle_buffer *buffer,
-                                   struct mulle_sprintf_formatconversioninfo *info,
-                                   mulle_utf32_t *s)
+int
+   _mulle_sprintf_utf32_conversion( struct mulle_buffer *buffer,
+                                    struct mulle_sprintf_formatconversioninfo *info,
+                                    mulle_utf32_t *s)
 {
    int                    length;
    int                    o_length;
@@ -137,8 +204,8 @@ int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
                                              wchar_t  *s)
 {
    if( sizeof( wchar_t) == sizeof( mulle_utf16_t))
-      return( _mulle_sprintf_utf16conversion( buffer, info, (mulle_utf16_t *) s));
-   return( _mulle_sprintf_utf32conversion( buffer, info, (mulle_utf32_t *) s));
+      return( _mulle_sprintf_utf16_conversion( buffer, info, (mulle_utf16_t *) s));
+   return( _mulle_sprintf_utf32_conversion( buffer, info, (mulle_utf32_t *) s));
 }
 
 
@@ -151,6 +218,16 @@ static int
    union mulle_sprintf_argumentvalue  v;
 
    v = arguments->values[ argc];
+#ifdef HAVE_MULLE_UTF
+   if( info->modifier[ 0] == 'h')
+   {
+      if( info->modifier[ 1] == 'h')
+         return( _mulle_sprintf_utf8_conversion( buffer, info, (mulle_utf8_t *) v.pC));
+      return( _mulle_sprintf_utf16_conversion( buffer, info, (mulle_utf16_t *) v.pu16));
+   }
+   if( info->modifier[ 0] == 'l')
+      return( _mulle_sprintf_utf32_conversion( buffer, info, (mulle_utf32_t *) v.pu32));
+#endif
    return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
 }
 
@@ -158,8 +235,28 @@ static int
 static mulle_sprintf_argumenttype_t
    mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+#ifdef HAVE_MULLE_UTF
+   if( info->modifier[ 0] == 'h')
+   {
+      if( info->modifier[ 1] == 'h')
+      {
+         assert( info->modifier[ 2] == '\0');
+         return( mulle_sprintf_unsigned_char_pointer_argumenttype);
+      }
+
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_uint16_t_pointer_argumenttype);
+   }
+   if( info->modifier[ 0] == 'l')
+   {
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_uint32_t_pointer_argumenttype);
+   }
+#endif
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_wchar_pointer_argumenttype);
 }
+
 
 static struct mulle_sprintf_function     mulle_widestring_functions =
 {
@@ -230,8 +327,12 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_string_argumenttype( str
 {
 #ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
+   {
+      assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_wchar_pointer_argumenttype);
+   }
 #endif
+   assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_char_pointer_argumenttype);
 }
 
@@ -248,7 +349,7 @@ void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *
    mulle_sprintf_register_functions( tables, &mulle_string_functions, 's');
 #ifdef HAVE_MULLE_UTF
    mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
-   mulle_sprintf_register_modifier( tables, 'l');
+   mulle_sprintf_register_modifiers( tables, "hl");
 #endif
 }
 
