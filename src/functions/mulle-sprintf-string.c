@@ -62,7 +62,7 @@
 int
    _mulle_sprintf_utf8_conversion( struct mulle_buffer *buffer,
                                    struct mulle_sprintf_formatconversioninfo *info,
-                                   mulle_utf8_t *s)
+                                   char *s)
 {
    int             o_length;
    int             rval;
@@ -222,7 +222,7 @@ static int
    if( info->modifier[ 0] == 'h')
    {
       if( info->modifier[ 1] == 'h')
-         return( _mulle_sprintf_utf8_conversion( buffer, info, (mulle_utf8_t *) v.pC));
+         return( _mulle_sprintf_utf8_conversion( buffer, info, (char *) v.pC));
       return( _mulle_sprintf_utf16_conversion( buffer, info, (mulle_utf16_t *) v.pu16));
    }
    if( info->modifier[ 0] == 'l')
