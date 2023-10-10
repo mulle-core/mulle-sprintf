@@ -13,7 +13,7 @@
 // p: |👣#€|
 // The emoji is twice as wide...
 //
-static mulle_utf8_t   emojimix[] =
+static char   emojimix[] =
 {
    /* UTF16 feet, hash, euro */
    0xf0, 0x9f, 0x91, 0xa3, 0x23, 0xe2, 0x82, 0xac,
@@ -22,20 +22,20 @@ static mulle_utf8_t   emojimix[] =
    /* dice */
 };
 
-static mulle_utf8_t   plain[] =
+static char   plain[] =
 {
    'V', 'f', 'L', ' ', 'B', 'o', 'c', 'h', 'u', 'm', ' ', '1', '8', '4', '8', 0
 };
 
 
-static mulle_utf8_t   empty[] =
+static char   empty[] =
 {
    0
 };
 
 
 
-static void   test( mulle_utf8_t *test_string)
+static void   test( char *test_string)
 {
    auto char   buf[ 1024];
    int         i;
