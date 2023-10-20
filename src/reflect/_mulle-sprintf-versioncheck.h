@@ -7,7 +7,7 @@
 
 #if defined( MULLE__BUFFER_VERSION)
 # ifndef MULLE__BUFFER_VERSION_MIN
-#  define MULLE__BUFFER_VERSION_MIN  ((3 << 20) | (4 << 8) | 0)
+#  define MULLE__BUFFER_VERSION_MIN  ((3 << 20) | (5 << 8) | 0)
 # endif
 # ifndef MULLE__BUFFER_VERSION_MAX
 #  define MULLE__BUFFER_VERSION_MAX  ((4 << 20) | (0 << 8) | 0)
@@ -22,7 +22,7 @@
 
 #if defined( MULLE__THREAD_VERSION)
 # ifndef MULLE__THREAD_VERSION_MIN
-#  define MULLE__THREAD_VERSION_MIN  ((4 << 20) | (5 << 8) | 1)
+#  define MULLE__THREAD_VERSION_MIN  ((4 << 20) | (5 << 8) | 2)
 # endif
 # ifndef MULLE__THREAD_VERSION_MAX
 #  define MULLE__THREAD_VERSION_MAX  ((5 << 20) | (0 << 8) | 0)
@@ -52,7 +52,7 @@
 
 #if defined( MULLE__VARARG_VERSION)
 # ifndef MULLE__VARARG_VERSION_MIN
-#  define MULLE__VARARG_VERSION_MIN  ((1 << 20) | (1 << 8) | 5)
+#  define MULLE__VARARG_VERSION_MIN  ((1 << 20) | (1 << 8) | 6)
 # endif
 # ifndef MULLE__VARARG_VERSION_MAX
 #  define MULLE__VARARG_VERSION_MAX  ((2 << 20) | (0 << 8) | 0)

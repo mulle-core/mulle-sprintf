@@ -30,47 +30,47 @@ For more detailed information on each characte consult a
 
 ### Flag Characters
 
-Character | Description
-----------|---------------
-<tt>&nbsp;</tt> (SPC) | A blank should be left before a positive number.
-`0`       | The value should be zero padded.
-`#`       | The value should be converted to an "alternate form".
-`-`       | The converted value is to be left adjusted on the field boundary.
-`+`       | A sign  (+  or -) should always be placed before a number.
-`'`       | Use thousands' grouping characters (UNUSED)
-`b`       | BOOL, print as YES or NO (for Objective-C)
+| Character | Description
+|-----------|---------------
+| <tt>&nbsp;</tt> (SPC) | A blank should be left before a positive number.
+| `0`       | The value should be zero padded.
+| `#`       | The value should be converted to an "alternate form".
+| `-`       | The converted value is to be left adjusted on the field boundary.
+| `+`       | A sign  (+  or -) should always be placed before a number.
+| `'`       | Use thousands' grouping characters (UNUSED)
+| `b`       | BOOL, print as YES or NO (for Objective-C)
 
 
 ### Length modifier
 
-Characters | Description
------------|---------------
-`h`        | `short`
-`hh`       | `char`
-`j`        | `intmax_t`
-`l`        | `long`
-`ll`       | `long long`
-`L`        | `long double` (FP only)
-`q`        | `int64.`
-`t`        | `ptrdiff_t`
-`z`        | `size_t`
+| Characters | Description
+|------------|---------------
+| `h`        | `short` (or utf16)
+| `hh`       | `char`  (or utf8)
+| `j`        | `intmax_t`
+| `l`        | `long`  (or utf32)
+| `ll`       | `long long`
+| `L`        | `long double` (FP only)
+| `q`        | `int64.`
+| `t`        | `ptrdiff_t`
+| `z`        | `size_t`
 
 
 ### Conversion Specifiers (built in)
 
 #### Integer
 
-Character | Description
-----------|---------------
-`i`       | `int` as decimal
-`d`       | `int` as decimal
-`D`       | `long int`                   (compatibility)
-`u`       | `unsigned int`
-`o`       | `int` as octal
-`x`       | `int` as lowercase hex
-`U`       | `unsigned long int`          (compatibility)
-`O`       | `unsigned long int` as octal (compatibility)
-`X`       | `unsigned long int` as hex   (compatibility)
+| Character | Description
+|-----------|---------------
+| `i`       | `int` as decimal
+| `d`       | `int` as decimal
+| `D`       | `long int`                   (compatibility)
+| `u`       | `unsigned int`
+| `o`       | `int` as octal
+| `x`       | `int` as lowercase hex
+| `U`       | `unsigned long int`          (compatibility)
+| `O`       | `unsigned long int` as octal (compatibility)
+| `X`       | `unsigned long int` as hex   (compatibility)
 
 Used modifiers: all except `L`
 
@@ -79,16 +79,16 @@ Used modifiers: all except `L`
 Uppercase conversion specifiers output value such as 0e-20 or nan as
 uppercase 0E-20 or NAN.
 
-Character | Description
-----------|---------------
-`a`       | double as hex [-]0xh.hhhhp+-d
-`e`       | double as [-]d.ddde+-dd
-`f`       | double as [-]ddd.ddd  with lowercase for inf/nan
-`g`       | double in `e` or `f`
-`A`       | double as hex [-]0Xh.hhhhP+-d
-`E`       | double as [-]d.dddE+-dd
-`F`       | double as [-]d.ddde+-dd with uppercase for INF/NAN
-`G`       | double in `E` or `F`
+| Character | Description
+|-----------|---------------
+| `a`       | double as hex [-]0xh.hhhhp+-d
+| `e`       | double as [-]d.ddde+-dd
+| `f`       | double as [-]ddd.ddd  with lowercase for inf/nan
+| `g`       | double in `e` or `f`
+| `A`       | double as hex [-]0Xh.hhhhP+-d
+| `E`       | double as [-]d.dddE+-dd
+| `F`       | double as [-]d.ddde+-dd with uppercase for INF/NAN
+| `G`       | double in `E` or `F`
 
 Used modifiers: `L`.
 
@@ -98,15 +98,17 @@ contrast with the other conversions, which are not using the C library.
 
 #### Pointer / String / Other
 
-Character | Description
-----------|---------------
-`n`       | return conversion
-`p`       | void * as hex with 0x prefix
-`s`       | char * as utf8
-`S`       | utf16 / utf32 with `l` modifier
+| Character | Description
+|-----------|---------------
+| `c`       | single character
+| `C`       | wide character (utf16 with `h`, utf32 with `l`)
+| `n`       | return conversion
+| `p`       | void * as hex with 0x prefix
+| `s`       | char * as utf8
+| `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
 
 
-Used modifiers: `l`
+Used modifiers: `hl`
 
 
 
@@ -193,6 +195,8 @@ Install the requirements:
 | [mulle-utf](https://github.com/mulle-c/mulle-utf)             | 🔤 UTF8-16-32 analysis and manipulation library
 | [mulle-vararg](https://github.com/mulle-c/mulle-vararg)             |  ⏪ Access variable arguments in struct layout fashion in C
 | [mulle-thread](https://github.com/mulle-concurrent/mulle-thread)             | 🔠 Cross-platform thread/mutex/tss/atomic operations in C
+
+Download the latest [tar](https://github.com/mulle-core/mulle-sprintf/archive/refs/tags/latest.tar.gz) or [zip](https://github.com/mulle-core/mulle-sprintf/archive/refs/tags/latest.zip) archive and unpack it.
 
 Install **mulle-sprintf** into `/usr/local` with [cmake](https://cmake.org):
 
