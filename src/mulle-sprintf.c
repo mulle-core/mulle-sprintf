@@ -74,7 +74,9 @@ typedef enum
 // per default, this is stored in a global variable
 // when "threading" gets linked it, this will be
 // stored thread locally
-//
+// TODO: maybe put in a '\n' replacement, to expand '\n' into '\r\n'
+//       this could also help with indentation to expand '\n' into '\n\t\t'
+//       maybe ?
 struct mulle_sprintf_malloc_storage
 {
    char                                        **starts;
