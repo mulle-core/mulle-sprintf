@@ -109,6 +109,9 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
 
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+   assert( info->width < 64);
+   assert( info->precision < 64);
+
    if( info->modifier[ 0] == 'L')
       return( mulle_sprintf_long_double_argumenttype);
    assert( info->modifier[ 0] == '\0');

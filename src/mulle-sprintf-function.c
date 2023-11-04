@@ -108,7 +108,7 @@ unsigned char   mulle_sprintf_argumentsize[] =
 //
 void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
                                  mulle_sprintf_argumenttype_t  *type,
-                                 unsigned int   n,
+                                 unsigned int n,
                                  va_list va)
 {
    union mulle_sprintf_argumentvalue   *sentinel;
@@ -121,7 +121,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
    {
       switch( *type)
       {
-      default                                             : abort();
+      default                                                : abort();
 
       case mulle_sprintf_int_argumenttype                    : p->i    = va_arg( va, int); break;
 
@@ -201,7 +201,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_object_argumenttype                 : p->obj  = mulle_vararg_next_pointer( va, void *); break;
       case mulle_sprintf_int64_t_argumenttype                : p->qt   = mulle_vararg_next_integer( va, int64_t); break;
       case mulle_sprintf_short_argumenttype                  : p->s    = (short) mulle_vararg_next_integer( va, short); break;  // promotion(!)
-//      case mulle_sprintf_signed_size_t_argumenttype          : p->sSt  = mulle_vararg_next_integer( va, ssize_t); break;
+      case mulle_sprintf_signed_size_t_argumenttype          : p->sSt  = mulle_vararg_next_integer( va, ssize_t); break;
       case mulle_sprintf_size_t_argumenttype                 : p->St   = mulle_vararg_next_integer( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = mulle_vararg_next_pointer( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
@@ -234,78 +234,6 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
    }
 }
 
-// static inline int   mulle_sprintf_is_flag_character( int c)
-// {
-//    return( strchr( "#0- +b'", c) != NULL);
-// }
-// 
-
-static int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
-                                               mulle_sprintf_modifiercharacter c)
-{
-   int   i;
-
-   i = mulle_sprintf_index_for_character( c);
-   if( i < 0) 
-      return( EINVAL);
-   if( table->jumps[ i])
-      return( EEXIST);
-
-   //
-   // just mark as used, override is OK, since modifiers are
-   // shared
-   //
-   table->modifiers[ i] = c;
-   return( 0);
-}
-
-
-static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
-                                                struct mulle_sprintf_function *functions,
-                                                mulle_sprintf_conversioncharacter_t c)
-{
-   struct mulle_sprintf_function   **p;
-   int                             i;
-
-   i = mulle_sprintf_index_for_character( c);
-   if( i < 0) 
-      return( EINVAL);
-   if( table->modifiers[ i])
-      return( EEXIST);
-
-   p = &table->jumps[ i];
-   assert( ! *p);
-
-   *p = functions;
-   return( 0);
-}
-
-
-
-static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
-                                                mulle_sprintf_modifiercharacter *s)
-{
-   int   rval;
-   int   c;
-
-   rval = 0;
-   while( c = *s++)
-   {
-      rval = _mulle_sprintf_register_modifier( table, (char) c);
-      if( rval)
-         break;
-   }
-   return( rval);
-}
-
-
-//
-// this not only contains length modifiers but also flag characters
-//
-int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
-{
-   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'b*$"));
-}
 
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table)
@@ -332,7 +260,36 @@ void  _mulle_sprintf_dump_available_defaultconversion_characters( void)
 }
 
 
-#pragma mark - API
+// static inline int   mulle_sprintf_is_flag_character( int c)
+// {
+//    return( strchr( "#0- +b'", c) != NULL);
+// }
+//
+
+#pragma mark - functions
+
+static int   _mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
+                                                struct mulle_sprintf_function *functions,
+                                                mulle_sprintf_conversioncharacter_t c)
+{
+   struct mulle_sprintf_function   **p;
+   int                             i;
+
+   i = mulle_sprintf_index_for_character( c);
+   if( i < 0)
+      return( EINVAL);
+   if( table->modifiers[ i])
+      return( EEXIST);
+
+   p  = &table->jumps[ i];
+
+   // overwriting something, why not ?
+   *p = functions;
+   return( 0);
+}
+
+
+#pragma mark - functions API
 
 int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         struct mulle_sprintf_function *functions,
@@ -340,11 +297,14 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
 {
    int   rval;
 
-   if( ! functions || c < '!' || c > '~')
+   if( ! functions)
    {
       errno = EINVAL;
       return( -1);
    }
+
+   assert( functions->determine_argument_type);
+   assert( functions->convert_argument);
 
    if( ! table)
       table = mulle_sprintf_get_defaultconversion();
@@ -357,6 +317,59 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
    }
    return( 0);
 }
+
+
+int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
+                                                mulle_sprintf_conversioncharacter_t c)
+{
+   return( mulle_sprintf_register_functions( mulle_sprintf_get_defaultconversion(),
+                                             functions,
+                                             c));
+}
+
+
+#pragma mark - modifiers
+
+
+static int   _mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
+                                               mulle_sprintf_modifiercharacter c)
+{
+   int   i;
+
+   i = mulle_sprintf_index_for_character( c);
+   if( i < 0)
+      return( EINVAL);
+   if( table->jumps[ i])
+      return( EEXIST);
+
+   //
+   // just mark as used, override is OK, since modifiers are
+   // shared
+   //
+   table->modifiers[ i] = c;
+   return( 0);
+}
+
+
+static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
+                                                mulle_sprintf_modifiercharacter *s)
+{
+   int   rval;
+   int   c;
+
+   rval = 0;
+   while( c = *s++)
+   {
+      rval = _mulle_sprintf_register_modifier( table, (char) c);
+      if( rval)
+         break;
+   }
+   return( rval);
+}
+
+
+
+#pragma mark - modifiers API
 
 
 int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
@@ -388,15 +401,8 @@ int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
 {
    int   rval;
 
-   if( c < '!' || c > '~')
-   {
-      errno = EINVAL;
-      return( -1);
-   }
-
    if( ! table)
       table = mulle_sprintf_get_defaultconversion();
-
 
    rval = _mulle_sprintf_register_modifier( table, c);
    if( rval)
@@ -408,30 +414,30 @@ int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
 }
 
 
-
-int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
-                                                        mulle_sprintf_conversioncharacter_t c)
-{
-   return( mulle_sprintf_register_functions( mulle_sprintf_get_defaultconversion(),
-                                         functions,
-                                         c));
-}
-
-
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c)
 {
-   return( mulle_sprintf_register_modifier( mulle_sprintf_get_defaultconversion(), c));
+   return( mulle_sprintf_register_modifier( NULL, c));
 }
 
 
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s)
 {
-   return( mulle_sprintf_register_modifiers( mulle_sprintf_get_defaultconversion(), s));
+   return( mulle_sprintf_register_modifiers( NULL, s));
 }
+
+//
+// this not only contains length modifiers but also flag characters
+//
+int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
+{
+   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'b*$"));
+}
+
 
 
 MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_modifiers_on_load)
 void  mulle_sprintf_register_default_modifiers_on_load()
 {
-   mulle_sprintf_register_standardmodifiers( mulle_sprintf_get_defaultconversion());
+   mulle_sprintf_register_standardmodifiers( NULL);
 }
+

@@ -69,10 +69,9 @@ struct mulle_sprintf_formatconversionflags
    unsigned int   precision_is_argument:1;
    unsigned int   precision_is_indexed_argument:1;
 
-   unsigned int   modifier_found:1;
    unsigned int   left_justify:1;         // not filled during parse
 
-//   unsigned int   unused:1;
+   unsigned int   unused:1;
 };
 
 
@@ -101,12 +100,12 @@ enum
    mulle_sprintf_char_pointer_argumenttype,
    mulle_sprintf_double_argumenttype,
 
-   mulle_sprintf_intmax_t_argumenttype,
+   mulle_sprintf_intmax_t_argumenttype,                  // 4
    mulle_sprintf_long_argumenttype,
    mulle_sprintf_long_double_argumenttype,
    mulle_sprintf_long_long_argumenttype,
 
-   mulle_sprintf_object_argumenttype,
+   mulle_sprintf_object_argumenttype,                    // 8
    mulle_sprintf_ptrdiff_t_argumenttype,
    mulle_sprintf_int64_t_argumenttype,
    mulle_sprintf_short_argumenttype,
@@ -116,31 +115,32 @@ enum
    mulle_sprintf_size_t_pointer_argumenttype,
    mulle_sprintf_uint64_t_argumenttype,
 
-   mulle_sprintf_uint64_t_pointer_argumenttype,
+   mulle_sprintf_uint64_t_pointer_argumenttype,           // 16
    mulle_sprintf_uintmax_t_argumenttype,
    mulle_sprintf_uintmax_t_pointer_argumenttype,
    mulle_sprintf_unsigned_char_argumenttype,
 
-   mulle_sprintf_unsigned_char_pointer_argumenttype,
+   mulle_sprintf_unsigned_char_pointer_argumenttype,      // 20
    mulle_sprintf_unsigned_int_argumenttype,
    mulle_sprintf_unsigned_int_pointer_argumenttype,
    mulle_sprintf_unsigned_long_argumenttype,
 
-   mulle_sprintf_unsigned_long_long_argumenttype,
+   mulle_sprintf_unsigned_long_long_argumenttype,         // 24
    mulle_sprintf_unsigned_long_long_pointer_argumenttype,
    mulle_sprintf_unsigned_long_pointer_argumenttype,
    mulle_sprintf_unsigned_ptrdiff_t_argumenttype,
 
-   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype,
+   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype, // 28
    mulle_sprintf_unsigned_short_argumenttype,
    mulle_sprintf_unsigned_short_pointer_argumenttype,
    mulle_sprintf_vector_argumenttype,
 
-   mulle_sprintf_void_argumenttype,
+   mulle_sprintf_void_argumenttype,                       // 32
    mulle_sprintf_void_pointer_argumenttype,
    mulle_sprintf_wchar_pointer_argumenttype,
    mulle_sprintf_wint_t_argumenttype,
-   mulle_sprintf_uint16_t_pointer_argumenttype,
+
+   mulle_sprintf_uint16_t_pointer_argumenttype,          // 36
    mulle_sprintf_uint32_t_pointer_argumenttype,
 
    // ugliness ensues...
@@ -259,9 +259,9 @@ struct mulle_sprintf_function
 {
    mulle_sprintf_argumenttype_t   (*determine_argument_type)( struct mulle_sprintf_formatconversioninfo *info);
    int                            (*convert_argument)( struct mulle_buffer *buffer,
-                                                 struct mulle_sprintf_formatconversioninfo *info,
-                                                 struct mulle_sprintf_argumentarray *arguments,
-                                                 int i);
+                                                       struct mulle_sprintf_formatconversioninfo *info,
+                                                       struct mulle_sprintf_argumentarray *arguments,
+                                                       int i);
 };
 
 
@@ -304,6 +304,10 @@ int   mulle_sprintf_register_functions( struct mulle_sprintf_conversion *table,
                                         struct mulle_sprintf_function *functions,
                                         mulle_sprintf_conversioncharacter_t c);
 MULLE__SPRINTF_GLOBAL
+int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
+                                                mulle_sprintf_conversioncharacter_t c);
+
+MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_modifier( struct mulle_sprintf_conversion *table,
                                        mulle_sprintf_modifiercharacter c);
 MULLE__SPRINTF_GLOBAL
@@ -311,20 +315,16 @@ int   mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion *table,
                                         mulle_sprintf_modifiercharacter *s);
 
 MULLE__SPRINTF_GLOBAL
-int   mulle_sprintf_register_default_functions( struct mulle_sprintf_function *functions,
-                                                mulle_sprintf_conversioncharacter_t c);
-
-MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifier( mulle_sprintf_modifiercharacter c);
 
 MULLE__SPRINTF_GLOBAL
 int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter *s);
 
+MULLE__SPRINTF_GLOBAL
+int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_default_modifiers_on_load( void);
 
-MULLE__SPRINTF_GLOBAL
-int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table);
 
 #endif

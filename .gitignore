@@ -39,3 +39,6 @@ wilted/
 mulle-template-composer-*
 mulle-markdown-preview-*.html
 includes/
+*.gcno
+*.gcda
+coverage*.html
