@@ -64,34 +64,42 @@ int
                                    struct mulle_sprintf_formatconversioninfo *info,
                                    char *s)
 {
-   int             o_length;
-   int             rval;
-   mulle_utf32_t   tmp_stack[ 32];
-   mulle_utf32_t   *tmp;
-   mulle_utf32_t   *tmp_malloc;
+   int                            rval;
+   mulle_utf32_t                  tmp_stack[ 32];
+   mulle_utf32_t                  *tmp;
+   mulle_utf32_t                  *tmp_malloc;
+   struct mulle_utf_information   utfinfo;
 
    assert( buffer);
    assert( info);
 
    if( s)
    {
+      if( mulle_utf8_information( s, (size_t) -1, &utfinfo))
+      {
+         errno = EINVAL;
+         return( -1);
+      }
+
       // check if we have composed multi-chars, if yes convert to utf32 and go
       // there, because otherwise the length/width calculations get too involved
-      o_length = (int) mulle_utf8_strlen( s);
-      if( ! mulle_utf8_is_ascii( s, o_length))
+      if( ! utfinfo.is_ascii)
       {
          // MEMO: don't want mulle-container as a dependency here, so do it
          // the hard way
          // mulle_flexarray_do( tmp, uint32_t, 32, o_length + 1)
          tmp_malloc = NULL;
          tmp        = tmp_stack;
-         if( o_length >= sizeof( tmp_stack) / sizeof( uint32_t))
+
+         if( utfinfo.utf32len >= sizeof( tmp_stack) / sizeof( mulle_utf32_t))
          {
-            tmp_malloc = mulle_malloc( (o_length + 1) * sizeof( uint32_t));
+            tmp_malloc = mulle_malloc( (utfinfo.utf32len + 1) * sizeof( mulle_utf32_t));
             tmp        = tmp_malloc;
          }
-         _mulle_utf8_convert_to_utf32( s, o_length + 1, tmp);
+
+         _mulle_utf8_convert_to_utf32( s, utfinfo.utf8len + 1, tmp);
          rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
+
          mulle_free( tmp_malloc);
          return( rval);
       }
@@ -149,17 +157,17 @@ int
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
    {
-      mulle_utf16_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      mulle_utf16_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_bytes_callback);
 
       if( info->width > length)
-         mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+         mulle_buffer_memset( buffer, ' ', info->width - length);
       return( 0);
    }
 
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
 
-   mulle_utf16_bufferconvert_to_utf8( s, length, buffer,  (void *) mulle_buffer_add_bytes);
+   mulle_utf16_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_bytes_callback);
    return( 0);
 }
 
@@ -184,17 +192,17 @@ int
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
    {
-      mulle_utf32_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
+      mulle_utf32_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_bytes_callback);
 
       if( info->width > length)
-         mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+         mulle_buffer_memset( buffer, ' ', info->width - length);
       return( 0);
    }
 
    if( info->width > length)
       mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
 
-   mulle_utf32_bufferconvert_to_utf8( s, length, buffer, (void *) mulle_buffer_add_bytes);
+   mulle_utf32_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_bytes_callback);
    return( 0);
 }
 
@@ -287,8 +295,10 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
       else
          mulle_buffer_add_string( buffer, s);
       length = mulle_buffer_get_length( buffer) - before;
+      // as we are definitely left justified with -, 0 has no meaning
+      // so just use space
       if( info->width > length)
-         mulle_buffer_memset( buffer, info->memory.zero_found ? '0' : ' ', info->width - length);
+         mulle_buffer_memset( buffer, ' ', info->width - length);
       return( 0);
    }
 

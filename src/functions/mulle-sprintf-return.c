@@ -84,12 +84,12 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
       *v.pLL = (unsigned long long) len;
       return( 0);
    }
-   if( t == mulle_sprintf_unsigned_short_argumenttype)
+   if( t == mulle_sprintf_unsigned_short_pointer_argumenttype)
    {
       *v.pS = (unsigned short) len;
       return( 0);
    }
-   if( t == mulle_sprintf_unsigned_char_argumenttype)
+   if( t == mulle_sprintf_unsigned_char_pointer_argumenttype)
    {
       *v.pC = (unsigned char) len;
       return( 0);

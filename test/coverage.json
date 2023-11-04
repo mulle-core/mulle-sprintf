@@ -1,0 +1,111 @@
+{
+    "branch_covered": 450,
+    "branch_percent": 69.6,
+    "branch_total": 647,
+    "files": [
+        {
+            "branch_covered": 14,
+            "branch_percent": 1.0,
+            "branch_total": 14,
+            "filename": "functions/mulle-sprintf-character.c",
+            "line_covered": 43,
+            "line_percent": 1.0,
+            "line_total": 43
+        },
+        {
+            "branch_covered": 4,
+            "branch_percent": 1.0,
+            "branch_total": 4,
+            "filename": "functions/mulle-sprintf-escape.c",
+            "line_covered": 11,
+            "line_percent": 1.0,
+            "line_total": 11
+        },
+        {
+            "branch_covered": 12,
+            "branch_percent": 1.0,
+            "branch_total": 12,
+            "filename": "functions/mulle-sprintf-fp.c",
+            "line_covered": 36,
+            "line_percent": 1.0,
+            "line_total": 36
+        },
+        {
+            "branch_covered": 94,
+            "branch_percent": 0.825,
+            "branch_total": 114,
+            "filename": "functions/mulle-sprintf-integer.c",
+            "line_covered": 176,
+            "line_percent": 0.898,
+            "line_total": 196
+        },
+        {
+            "branch_covered": 0,
+            "branch_percent": null,
+            "branch_total": 0,
+            "filename": "functions/mulle-sprintf-pointer.c",
+            "line_covered": 8,
+            "line_percent": 1.0,
+            "line_total": 8
+        },
+        {
+            "branch_covered": 28,
+            "branch_percent": 0.966,
+            "branch_total": 29,
+            "filename": "functions/mulle-sprintf-return.c",
+            "line_covered": 54,
+            "line_percent": 0.982,
+            "line_total": 55
+        },
+        {
+            "branch_covered": 49,
+            "branch_percent": 0.645,
+            "branch_total": 76,
+            "filename": "functions/mulle-sprintf-string.c",
+            "line_covered": 95,
+            "line_percent": 0.872,
+            "line_total": 109
+        },
+        {
+            "branch_covered": 64,
+            "branch_percent": 0.512,
+            "branch_total": 125,
+            "filename": "mulle-sprintf-function.c",
+            "line_covered": 101,
+            "line_percent": 0.5870000000000001,
+            "line_total": 172
+        },
+        {
+            "branch_covered": 3,
+            "branch_percent": 0.5,
+            "branch_total": 6,
+            "filename": "mulle-sprintf-function.h",
+            "line_covered": 6,
+            "line_percent": 0.857,
+            "line_total": 7
+        },
+        {
+            "branch_covered": 182,
+            "branch_percent": 0.682,
+            "branch_total": 267,
+            "filename": "mulle-sprintf.c",
+            "line_covered": 383,
+            "line_percent": 0.768,
+            "line_total": 499
+        },
+        {
+            "branch_covered": 0,
+            "branch_percent": null,
+            "branch_total": 0,
+            "filename": "mulle-sprintf.h",
+            "line_covered": 6,
+            "line_percent": 1.0,
+            "line_total": 6
+        }
+    ],
+    "gcovr/summary_format_version": "0.2",
+    "line_covered": 919,
+    "line_percent": 80.5,
+    "line_total": 1142,
+    "root": "../../src"
+}

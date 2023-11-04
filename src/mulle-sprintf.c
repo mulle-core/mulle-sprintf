@@ -503,24 +503,28 @@ static inline int
 
 
 //
-// returns: number of arguments it needs
+// returns: next argument index
+//          and max used argument (for indexes maybe in max_arg)
 //
 static inline int
    parse_conversion_info( char *format,
                           struct mulle_sprintf_formatconversioninfo *info,
-                          int arg)
+                          int arg,
+                          int *max_arg,
+                          mulle_sprintf_modifier_t modifier_table)
 {
    format_conversion_parser  parser;
-   char           c;
-   int            value;
+   char                      c;
+   int                       value;
 
    memset( info, 0, sizeof( struct mulle_sprintf_formatconversioninfo));
-   parser.memo     = NULL;
-   parser.curr     = format;
-   parser.sentinel = &format[ 127];  // %2147483647$0#- +\[,;:_]2147483647.2147483647hllX"
 
-   parser.memo  = NULL;
-   parser.state = state_begin;
+   parser.memo           = NULL;
+   parser.curr           = format;
+   parser.sentinel       = &format[ 127];  // %2147483647$0#- +\[,;:_]2147483647.2147483647hllX"
+
+   parser.memo           = NULL;
+   parser.state          = state_begin;
 
    parser.modifier_index = 0;
 
@@ -580,6 +584,8 @@ static inline int
             parser.memo                       = NULL;
             parser.state                      = state_opt_flags;
             arg                               = value;
+            if( arg > *max_arg)
+               *max_arg = arg;
             continue;
          }
          // asume it's width
@@ -622,10 +628,14 @@ state_width_entry:
                if( value <= 0)
                   return( -1);
 
-               info->argv_index[ 1] = value;
-               parser.memo          = NULL;
-               parser.state         = state_precision;
-               arg                  = value;
+               info->argv_index[ 1]                   = value;
+               info->memory.width_is_indexed_argument = 1;
+               parser.memo                            = NULL;
+               parser.state                           = state_precision;
+               arg                                    = value;
+               if( arg > *max_arg)
+                  *max_arg = arg;
+               ++arg;  // dial up for conversion
                continue;
             }
 
@@ -634,16 +644,19 @@ state_width_entry:
                info->width = positive_int_value_from_memo( &parser, info);
                if( info->width < 0)
                   return( -1);
+               info->memory.width_found = 1;
             }
             else
             {
                if( parser.memo[ -1] != '*')
                   return( -1);
-               ++arg;     // consume one
+               if( arg > *max_arg)
+                  *max_arg = arg;
+               ++arg;  // dial up for conversion
             }
          }
          parser.state = state_precision;
-         parser.memo = NULL;
+         parser.memo  = NULL;
 
          // after a precision, dot all digits belong to precision
       case state_precision :
@@ -676,13 +689,16 @@ state_width_entry:
                   return( -1);
 
                value = positive_int_value_from_memo( &parser, info);
-               if( value == 0)
+               if( value <= 0)
                   return( -1);
 
                info->memory.precision_is_indexed_argument = 1;
                info->argv_index[ 2]                       = value;
                parser.state                               = state_modifier;
                arg                                        = value;
+               if( arg > *max_arg)
+                  *max_arg = arg;
+               ++arg;  // dial up for conversion
                continue;
                // parser.memo = NULL;
             }
@@ -699,7 +715,9 @@ state_width_entry:
             {
                if( parser.memo[ -1] != '*')
                   return( -1);
-               ++arg;     // consume one
+               if( arg > *max_arg)
+                  *max_arg = arg;
+               ++arg;  // dial up for conversion
             }
                // parser.memo = NULL;
          }
@@ -707,15 +725,8 @@ state_width_entry:
 
       case state_modifier :
          // TODO: no _real_ need to hardcode this or ?
-         switch( c)
+         if( mulle_sprintf_is_modifier_character( modifier_table, c))
          {
-         case 'h' :
-         case 'l' :
-         case 'j' :
-         case 't' :
-         case 'z' :
-         case 'q' :
-         case 'L' :
             if( parser.modifier_index >= 3)
                return( -1);
 
@@ -727,6 +738,8 @@ state_width_entry:
       case state_conversion :
          info->conversion = c;
          info->length     = (int) ((parser.curr - format) + 1);
+         if( arg > *max_arg)
+            *max_arg = arg;
          return( arg + 1);
       }
    }
@@ -768,6 +781,9 @@ static int
 
    arg = 0;
 
+   // positional parameters will have been preset to int already
+   // ctxt->arguments->types[ arg] all to int (for positional arguments)
+
    for( i = 0; i < ctxt->n; i++)
    {
       info = &ctxt->infos[ i];
@@ -790,11 +806,11 @@ static int
          return( -4);
 
       // looks so wrong, but is sprintf compatible
-      if( info->memory.width_is_argument && info->memory.width_is_indexed_argument)
-         arg = info->argv_index[ 1];
+      if( info->memory.width_is_indexed_argument)
+         arg = info->argv_index[ 1] + 1;
 
-      if( info->memory.precision_is_argument && info->memory.precision_is_indexed_argument)
-         arg = info->argv_index[ 2];
+      if( info->memory.precision_is_indexed_argument)
+         arg = info->argv_index[ 2] + 1;
    }
 
    return( 0);
@@ -821,10 +837,10 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
                                     table);
    if( ctxt->n <= 0)
       return( ctxt->n);  // if we have a malformed % we bail usual printf
-                         // just prints, but I don't like it
+                         // just prints, but I don't like it, if zero fine!
 
 //
-// use stdlib allocator(it will not show up as a leak in other
+// use stdlib allocator (it will not show up as a leak in other
 // projects, necessarily)
 //
    allocator    = &mulle_stdlib_allocator;
@@ -851,21 +867,22 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    // at the same time, we calculate the
    // max index of arguments consumed from stack
    // args are indexed from 1 to argc
-
-   arg     = 0;
+   //
+   arg     = 1;
    max_arg = 0;
 
    for( i = 0; i < ctxt->n; i++)
    {
-      arg = parse_conversion_info( ctxt->starts[ i], &ctxt->infos[ i], arg);
+      arg = parse_conversion_info( ctxt->starts[ i],
+                                   &ctxt->infos[ i],
+                                   arg,
+                                   &max_arg,
+                                   table->modifiers);
       if( arg <= 0)
          return( -4);
-
-      if( arg > max_arg)
-         max_arg = arg;
    }
 
-   argc = max_arg + 1;
+   argc = max_arg + 1;  // need one empty space in front
    if( argc <= STACKABLE_N)
    {
       ctxt->argumentBuf.types  = ctxt->typesBuf;

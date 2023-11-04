@@ -46,7 +46,7 @@ static void   test()
    mulle_flushablebuffer_init( &buffer,
                                storage,
                                sizeof( storage),
-                               (mulle_flushablebuffer_flusher *) fwrite,
+                               (mulle_flushablebuffer_flusher_t *) fwrite,
                                stdout);
 
    mulle_buffer_sprintf( (struct mulle_buffer *) &buffer, "%B %B %B\n", 1, 0, -1);
