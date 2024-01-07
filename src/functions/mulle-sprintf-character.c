@@ -41,7 +41,7 @@
 #include "mulle-sprintf-string.h"
 #include "mulle-sprintf.h"
 
-
+#include <stddef.h>
 
 static inline int   _char_string_conversion( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,

@@ -65,9 +65,6 @@ int
                                    char *s)
 {
    int                            rval;
-   mulle_utf32_t                  tmp_stack[ 32];
-   mulle_utf32_t                  *tmp;
-   mulle_utf32_t                  *tmp_malloc;
    struct mulle_utf_information   utfinfo;
 
    assert( buffer);
@@ -85,22 +82,11 @@ int
       // there, because otherwise the length/width calculations get too involved
       if( ! utfinfo.is_ascii)
       {
-         // MEMO: don't want mulle-container as a dependency here, so do it
-         // the hard way
-         // mulle_flexarray_do( tmp, uint32_t, 32, o_length + 1)
-         tmp_malloc = NULL;
-         tmp        = tmp_stack;
-
-         if( utfinfo.utf32len >= sizeof( tmp_stack) / sizeof( mulle_utf32_t))
+         mulle_alloca_do( tmp, mulle_utf32_t, utfinfo.utf32len + 1)
          {
-            tmp_malloc = mulle_malloc( (utfinfo.utf32len + 1) * sizeof( mulle_utf32_t));
-            tmp        = tmp_malloc;
+            _mulle_utf8_convert_to_utf32( s, utfinfo.utf8len + 1, tmp);
+            rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
          }
-
-         _mulle_utf8_convert_to_utf32( s, utfinfo.utf8len + 1, tmp);
-         rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
-
-         mulle_free( tmp_malloc);
          return( rval);
       }
    }
@@ -150,9 +136,16 @@ int
    }
 
    // back to the usual program
-   length   = (int) o_length;
+   length = (int) o_length;
    if( info->memory.precision_found)
-      length = (info->precision > o_length) ? o_length  : info->precision;
+      length = (info->precision > o_length) ? o_length : info->precision;
+
+   // alternate (quoted) ignores all other info (as output will vary in length)
+   if( info->memory.hash_found)
+   {
+      mulle_utf16_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_c_chars_callback);
+      return( 0);
+   }
 
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
@@ -188,6 +181,13 @@ int
    length   = (int) o_length;
    if( info->memory.precision_found)
       length = (info->precision > o_length) ? o_length  : info->precision;
+
+   // alternate (quoted) ignores all other info (as output will vary in length)
+   if( info->memory.hash_found)
+   {
+      mulle_utf32_bufferconvert_to_utf8( s, length, buffer, mulle_buffer_add_c_chars_callback);
+      return( 0);
+   }
 
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
@@ -283,13 +283,27 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
    ptrdiff_t  length;
 
    if( ! s)
-      s = "(null)";
+      s = "(null)";  // TODO: make this a global variable ?
 
-   before = mulle_buffer_get_length( buffer);
+   // alternate (quoted) ignores all other info (as output will vary in length)
+   // but precision
+   if( info->memory.hash_found)
+   {
+      length = (int) strlen( s);
+      if( info->memory.precision_found)
+      {
+         if( length > info->precision)
+            length = info->precision;
+      }
+      mulle_buffer_add_c_chars( buffer, s, length);
+      return( 0);
+   }
 
    // left justify or no width is faster
    if( info->memory.left_justify || ! info->width)
    {
+      before = mulle_buffer_get_length( buffer);
+
       if( info->memory.precision_found)
          mulle_buffer_add_string_with_maxlength( buffer, s, info->precision);
       else

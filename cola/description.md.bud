@@ -1,7 +1,13 @@
-The extensibility is used in **MulleObjCStandardFoundation** to add the
-'@' conversion character for object conversion.
+The extensibility is used in **MulleObjCStandardFoundation** to add object
+conversion (%@) and to print BOOL values as 'YES', 'NO' (%bd).
+
+Supports non-standard UTF32 (%lS) and UTF16 (%hS) output. No more `wchar_t`
+pain.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
-arguments. Because floating point to string conversion is hard, floating point
-conversions are handed down to `sprintf`. So it is not a sprintf replacement.
+arguments.
+
+Because floating point to string conversion is hard, floating point
+conversions are (still) handed down to `sprintf`. So it is technically not a
+complete sprintf replacement.
 

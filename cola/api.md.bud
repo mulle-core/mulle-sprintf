@@ -87,7 +87,7 @@ contrast with the other conversions, which are not using the C library.
 | `C`       | wide character (utf16 with `h`, utf32 with `l`)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
-| `s`       | char * as utf8
+| `s`       | char * as utf8 (alternate form: escaped for C String)
 | `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
 
 

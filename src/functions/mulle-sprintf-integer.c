@@ -418,10 +418,13 @@ static char   *convert_hex_unsigned_long_long( unsigned long long value,
 
 static int   set_hex_prefix( char *s, int value_is_zero, int length, int precision)
 {
+   // For x and X conversions, a nonzero result has the string "0x" (or "0X"
+   // for X conversions) prepended to it.
+   // why not for 0 ? Stay compatible ? nah
    if( length)
    {
       *s    = '0';
-      s[ 1] = 'x';
+      s[ 1] = 'x'; // TODO: should be uppercase for 'X' but I don't like it
       return( 2);
    }
    return( 0);
@@ -439,7 +442,7 @@ static integer_converters  hex_converters =
 
 
 static char   *convert_hex_upper_unsigned_int( unsigned int value,
-                                              char *s)
+                                             char *s)
 {
    char   v;
 

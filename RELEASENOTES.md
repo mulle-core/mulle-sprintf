@@ -1,3 +1,16 @@
+## 3.1.0
+
+* mulle-sprintf now supports the alternate flag for %s, therefore %#s will output C escaped text instead without the double quotes
+* Added more tests, only some `wchar_t` branch and some obscure error conditions not hit are outside of the coverage
+* remove deprecated and never used O D U conversion functions, unless ``HAVE_DEPRECATED_INT_LONG_CONVERSIONS`` is defined
+* fix X conversion to properly output uppercase
+* fix %n conversion for unsigned char * and unsigned short *
+* you can now override already registered conversion characters, if you think you an do a better job
+* fix for positional parameters
+* `mulle_utf8_t` is no more, it is now just char
+* added UTF16 and UTF32 output modifiers
+
+
 # 3.0.0
 
 * remove package.json as it conflicts with clib.json

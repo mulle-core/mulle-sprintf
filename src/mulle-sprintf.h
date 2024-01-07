@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE__SPRINTF_VERSION  ((3 << 20) | (1 << 8) | 0)
+#define MULLE__SPRINTF_VERSION  ((3UL << 20) | (1 << 8) | 0)
 
 
 struct mulle_buffer;

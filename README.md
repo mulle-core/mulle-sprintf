@@ -2,17 +2,25 @@
 
 #### 🔢 An extensible sprintf function supporting stdarg and mulle-vararg
 
-The extensibility is used in **MulleObjCStandardFoundation** to add the
-'@' conversion character for object conversion.
+The extensibility is used in **MulleObjCStandardFoundation** to add object
+conversion (%@) and to print BOOL values as 'YES', 'NO' (%bd).
+
+Supports non-standard UTF32 (%lS) and UTF16 (%hS) output. No more `wchar_t`
+pain.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
-arguments. Because floating point to string conversion is hard, floating point
-conversions are handed down to `sprintf`. So it is not a sprintf replacement.
+arguments.
+
+Because floating point to string conversion is hard, floating point
+conversions are (still) handed down to `sprintf`. So it is technically not a
+complete sprintf replacement.
+
+
 
 
 | Release Version                                       | Release Notes
 |-------------------------------------------------------|--------------
-| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions)| [RELEASENOTES](RELEASENOTES.md) |
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions) | [RELEASENOTES](RELEASENOTES.md) |
 
 
 ## API
@@ -104,7 +112,7 @@ contrast with the other conversions, which are not using the C library.
 | `C`       | wide character (utf16 with `h`, utf32 with `l`)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
-| `s`       | char * as utf8
+| `s`       | char * as utf8 (alternate form: escaped for C String)
 | `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
 
 
@@ -143,6 +151,12 @@ mulle_sprintf_register_string_functions( conversion);
 
 mulle_sprintf_register_standardmodifiers( conversion);
 ```
+
+
+
+### You are here
+
+![Overview](overview.dot.svg)
 
 
 
@@ -209,8 +223,10 @@ cmake --build build --config Release &&
 cmake --install build --config Release
 ```
 
+
 ## Author
 
-[Nat!](https://mulle-kybernetik.com/weblog) for Mulle kybernetiK
+[Nat!](https://mulle-kybernetik.com/weblog) for Mulle kybernetiK  
+
 
 

@@ -42,3 +42,4 @@ includes/
 *.gcno
 *.gcda
 coverage*.html
+cola/wilted/
