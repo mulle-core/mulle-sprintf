@@ -6,8 +6,8 @@
       name="mulle-sprintf";
       user="mulle-core";
       repo="mulle-sprintf";
-      homepage="https://github.com/mulle-core/mulle-sprintf";
-      license="BSD-3-Clause"
+      homepage="https://github.com/mulle-c/mulle-sprintf";
+      license="BSD-3-Clause";
    };
    dependencies =
    (
@@ -28,7 +28,7 @@
          user="mulle-c";
       },
       {
-         description=" ⏪ Access variable arguments in struct layout fashion in C";
+         description="⏪ Access variable arguments in struct layout fashion in C";
          domain="github";
          name="mulle-vararg";
          repo="mulle-vararg";
@@ -43,5 +43,5 @@
          url="https://github.com/mulle-concurrent/mulle-thread";
          user="mulle-concurrent";
       }
-   )
+   );
 }
