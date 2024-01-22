@@ -1,3 +1,7 @@
+### 3.1.1
+
+* fix for cosmopolitan
+
 ## 3.1.0
 
 * mulle-sprintf now supports the alternate flag for %s, therefore %#s will output C escaped text instead without the double quotes

@@ -167,27 +167,22 @@ typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 
 // https://github.com/vlm/asn1c/issues/159
 #ifndef SSIZE_T
-# ifdef __linux__
-#  include <sys/types.h>
+# ifdef _MSC_VER
+#  include <windows.h>
+   typedef SSIZE_T ssize_t;
 # else
-#  ifdef __APPLE__
-#   include <limits.h>
-#  else
-#   ifdef _MSC_VER
-#    include <windows.h>
-     typedef SSIZE_T ssize_t;
-#   else
-#    error "need SSIZE_T"
-#   endif
-#  endif
+#  include <sys/types.h>
 # endif
 #endif
 
 
 // cosmopolitan weirdness
-#ifdef I
-# undef I
-#endif
+#ifdef __COSMOPOLITAN__    
+# ifdef I
+#  undef I
+# endif
+#endif 
+
 
 union mulle_sprintf_argumentvalue
 {
