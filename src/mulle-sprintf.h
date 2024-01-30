@@ -43,7 +43,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE__SPRINTF_VERSION  ((3UL << 20) | (1 << 8) | 1)
+#define MULLE__SPRINTF_VERSION  ((3UL << 20) | (1 << 8) | 2)
 
 
 struct mulle_buffer;
@@ -207,9 +207,7 @@ static inline void    mulle_sprintf_free_storage( void)
 
 #ifdef __has_include
 # if __has_include( "_mulle-sprintf-versioncheck.h")
-#  define MULLE__UTF_VERSION_MAX    ((5 << 20) | (0 << 8) | 0)
 #  include "_mulle-sprintf-versioncheck.h"
-#  undef MULLE__UTF_VERSION_MAX
 # endif
 #endif
 
