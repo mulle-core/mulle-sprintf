@@ -49,9 +49,9 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
                                                int argc)
 {
    union mulle_sprintf_argumentvalue  v;
-   mulle_sprintf_argumenttype_t   t;
-   size_t          len;
-   int             before;
+   mulle_sprintf_argumenttype_t       t;
+   size_t                             len;
+   int                                before;
 
    assert( buffer);
    assert( info);
@@ -131,6 +131,10 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( str
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_short_pointer_argumenttype);
 
+   case 'j' :
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_uintmax_t_pointer_argumenttype);
+
    case 'l' :
       if( info->modifier[ 1] == 'l')
       {
@@ -140,9 +144,9 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( str
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_long_pointer_argumenttype);
 
-   case 'j' :
+   case 'q' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_size_t_pointer_argumenttype);
+      return( mulle_sprintf_uint64_t_pointer_argumenttype);
 
    case 't' :
       assert( info->modifier[ 1] == '\0');
@@ -150,11 +154,8 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( str
 
    case 'z' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_uintmax_t_pointer_argumenttype);
+      return( mulle_sprintf_size_t_pointer_argumenttype);
 
-   case 'q' :
-      assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_uint64_t_pointer_argumenttype);
    }
    assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_unsigned_int_pointer_argumenttype);
