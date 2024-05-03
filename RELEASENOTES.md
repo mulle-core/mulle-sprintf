@@ -1,3 +1,7 @@
+### 3.1.3
+
+* fix return (%n) bugs for 32 bit arch
+
 ### 3.1.2
 
 * Various small improvements
