@@ -77,6 +77,8 @@ Used modifiers: `L`.
 
 The actual conversion is done with the C-library `sprintf` function. This is
 contrast with the other conversions, which are not using the C library.
+For portability across platforms `-nan` and `-0.0` will not be printed with the
+leading minus sign.  
 
 
 #### Pointer / String / Other

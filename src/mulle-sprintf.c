@@ -444,7 +444,7 @@ static int   number_of_conversions( char *format,
          {
             //
             // TODO: this does not catch mixups of %tbd vs (correct) %btd
-            //       therefore the error checking is superflous and needs
+            //       therefore the error checking is superfluous and needs
             //       to be done later
             switch( determine_is_valid_conversion_character( table, c))
             {
@@ -1094,6 +1094,7 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
    va_start( args, format );
    rval = _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
    va_end( args);
+
    return( rval);
 }
 
@@ -1113,11 +1114,12 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
       errno = EINVAL;
       return( -1);
    }
+
    mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
-
-   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
-
-   truncated = mulle_buffer_make_string( &buffer);
+   {
+      rval      = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
+      truncated = mulle_buffer_make_string( &buffer);
+   }
    mulle_buffer_done( &buffer);
 
    if( truncated)
@@ -1145,10 +1147,10 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
    }
 
    mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
-
-   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
-
-   truncated = mulle_buffer_make_string( &buffer);
+   {
+      rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+      truncated = mulle_buffer_make_string( &buffer);
+   }
    mulle_buffer_done( &buffer);
 
    if( truncated)
@@ -1192,8 +1194,8 @@ int   mulle_sprintf( char *buf, char *format, ...)
 
 int   mulle_vasprintf( char **strp, char *format, va_list va)
 {
-   struct mulle_buffer   buffer;
-   int                   rval;
+   int    rval;
+   char   *s;
 
    if( ! strp)
    {
@@ -1201,12 +1203,11 @@ int   mulle_vasprintf( char **strp, char *format, va_list va)
       return( -1);
    }
 
-   mulle_buffer_init_with_capacity( &buffer, 256, NULL);
-
-   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
-
-   *strp = mulle_buffer_extract_string( &buffer);
-   mulle_buffer_done( &buffer);
+   mulle_buffer_do_string( buffer, NULL, s)
+   {
+      rval = _mulle_buffer_vsprintf( buffer, format, va, mulle_sprintf_get_defaultconversion());
+   }
+   *strp = s;
 
    return( rval);
 }
@@ -1214,8 +1215,8 @@ int   mulle_vasprintf( char **strp, char *format, va_list va)
 
 int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
 {
-   struct mulle_buffer   buffer;
-   int                   rval;
+   int    rval;
+   char   *s;
 
    if( ! strp)
    {
@@ -1223,12 +1224,11 @@ int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
       return( -1);
    }
 
-   mulle_buffer_init_with_capacity( &buffer, 256, NULL);
-
-   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
-
-   *strp = mulle_buffer_extract_string( &buffer);
-   mulle_buffer_done( &buffer);
+   mulle_buffer_do_string( buffer, NULL, s)
+   {
+      rval = _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+   }
+   *strp = s;
 
    return( rval);
 }
@@ -1252,8 +1252,8 @@ int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
                                  char *format,
                                  va_list va)
 {
-   struct mulle_buffer   buffer;
-   int                   rval;
+   int    rval;
+   char   *s;
 
    if( ! strp)
    {
@@ -1261,12 +1261,11 @@ int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
       return( -1);
    }
 
-   mulle_buffer_init_with_capacity( &buffer, 256, allocator);
-
-   rval = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
-
-   *strp = mulle_buffer_extract_string( &buffer);
-   mulle_buffer_done( &buffer);
+   mulle_buffer_do_string( buffer, allocator, s)
+   {
+      rval = _mulle_buffer_vsprintf( buffer, format, va, mulle_sprintf_get_defaultconversion());
+   }
+   *strp = s;
 
    return( rval);
 }
@@ -1277,8 +1276,8 @@ int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
                                   char *format,
                                   mulle_vararg_list arguments)
 {
-   struct mulle_buffer   buffer;
-   int                   rval;
+   int    rval;
+   char   *s;
 
    if( ! strp)
    {
@@ -1286,12 +1285,11 @@ int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
       return( -1);
    }
 
-   mulle_buffer_init_with_capacity( &buffer, 256, allocator);
-
-   rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
-
-   *strp = mulle_buffer_extract_string( &buffer);
-   mulle_buffer_done( &buffer);
+   mulle_buffer_do_string( buffer, allocator, s)
+   {
+      rval = _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+   }
+   *strp = s;
 
    return( rval);
 }
