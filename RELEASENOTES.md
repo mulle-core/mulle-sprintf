@@ -1,3 +1,8 @@
+## 3.2.0
+
+* unified printing of nan across platforms
+
+
 ### 3.1.3
 
 * fix return (%n) bugs for 32 bit arch

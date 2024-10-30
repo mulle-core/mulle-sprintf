@@ -7,10 +7,10 @@
 
 #if defined( MULLE__BUFFER_VERSION)
 # ifndef MULLE__BUFFER_VERSION_MIN
-#  define MULLE__BUFFER_VERSION_MIN  ((3UL << 20) | (5 << 8) | 0)
+#  define MULLE__BUFFER_VERSION_MIN  ((4UL << 20) | (0 << 8) | 0)
 # endif
 # ifndef MULLE__BUFFER_VERSION_MAX
-#  define MULLE__BUFFER_VERSION_MAX  ((4UL << 20) | (0 << 8) | 0)
+#  define MULLE__BUFFER_VERSION_MAX  ((5UL << 20) | (0 << 8) | 0)
 # endif
 # if MULLE__BUFFER_VERSION < MULLE__BUFFER_VERSION_MIN
 #  error "mulle-buffer is too old"
@@ -22,7 +22,7 @@
 
 #if defined( MULLE__THREAD_VERSION)
 # ifndef MULLE__THREAD_VERSION_MIN
-#  define MULLE__THREAD_VERSION_MIN  ((4UL << 20) | (5 << 8) | 3)
+#  define MULLE__THREAD_VERSION_MIN  ((4UL << 20) | (6 << 8) | 0)
 # endif
 # ifndef MULLE__THREAD_VERSION_MAX
 #  define MULLE__THREAD_VERSION_MAX  ((5UL << 20) | (0 << 8) | 0)
@@ -37,10 +37,10 @@
 
 #if defined( MULLE__UTF_VERSION)
 # ifndef MULLE__UTF_VERSION_MIN
-#  define MULLE__UTF_VERSION_MIN  ((4UL << 20) | (0 << 8) | 0)
+#  define MULLE__UTF_VERSION_MIN  ((5UL << 20) | (0 << 8) | 0)
 # endif
 # ifndef MULLE__UTF_VERSION_MAX
-#  define MULLE__UTF_VERSION_MAX  ((5UL << 20) | (0 << 8) | 0)
+#  define MULLE__UTF_VERSION_MAX  ((6UL << 20) | (0 << 8) | 0)
 # endif
 # if MULLE__UTF_VERSION < MULLE__UTF_VERSION_MIN
 #  error "mulle-utf is too old"
@@ -52,7 +52,7 @@
 
 #if defined( MULLE__VARARG_VERSION)
 # ifndef MULLE__VARARG_VERSION_MIN
-#  define MULLE__VARARG_VERSION_MIN  ((1UL << 20) | (1 << 8) | 7)
+#  define MULLE__VARARG_VERSION_MIN  ((1UL << 20) | (1 << 8) | 8)
 # endif
 # ifndef MULLE__VARARG_VERSION_MAX
 #  define MULLE__VARARG_VERSION_MAX  ((2UL << 20) | (0 << 8) | 0)

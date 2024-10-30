@@ -41,6 +41,7 @@
 #include "include-private.h"
 #include <float.h>
 #include <stdio.h>
+#include <math.h>
 
 
 //
@@ -74,6 +75,103 @@ static void  produce_format_string( char format[ 64],
 }
 
 
+// #include <float.h>
+//
+// static inline int isnan(double x) {
+//     union {
+//         double d;
+//         uint64_t u;
+//     } u;
+//
+//     u.d = x;
+//     return (u.u & 0x7FF0000000000000ULL) == 0x7FF0000000000000ULL;
+// }
+
+#define MASK_TOP_UINT64_BIT_ZERO(x) ((x) & (UINT64_MAX >> 1))
+
+
+static inline double   make_non_negative_zero_double_if_zero( double x)
+{
+    if( x != 0.0)
+      return( x);
+
+    // Use union to access the bit representation of the double
+    union
+    {
+        double d;
+        uint64_t i;
+    } u = { .d = x };
+
+    u.i = MASK_TOP_UINT64_BIT_ZERO( u.i);
+    return( u.d);
+}
+
+
+
+static inline int   make_non_negative_zero_long_double_if_zero( long double x)
+{
+    if( x != 0.0)
+      return( x);
+
+    // Use union to access the bytes of the long double
+   union
+   {
+      long double     ld;
+      unsigned char   bytes[ sizeof( long double)];
+   } u;
+
+    memcpy( &u.ld, &x, sizeof( long double));
+
+#if __LITTLE_ENDIAN__
+        // For little-endian /first, check the last byte
+     u.bytes[ sizeof( long double) - 1] &= 0x7F;
+#else
+     u.bytes[ 0] &= 0x7F;
+#endif
+     return( u.ld);
+}
+
+
+static inline int   is_negative_nan_double( double x)
+{
+    if( ! isnan( x))
+      return( 0);
+
+    // Use union to access the bit representation of the double
+    union
+    {
+        double d;
+        uint64_t i;
+    } u = { .d = x };
+
+    // Check the sign bit (most significant bit)
+    return( (u.i >> 63) != 0);
+}
+
+
+static inline int   is_negative_nan_long_double( long double x)
+{
+    if( ! isnan( x))
+      return( 0);
+
+    // Use union to access the bytes of the long double
+   union
+   {
+      long double     ld;
+      unsigned char   bytes[ sizeof( long double)];
+   } u;
+
+    memcpy( &u.ld, &x, sizeof( long double));
+
+#if __LITTLE_ENDIAN__
+        // For little-endian /first, check the last byte
+     return( (u.bytes[ sizeof( long double) - 1] & 0x80) != 0);
+#else
+     return( (u.bytes[ 0] & 0x80) != 0);
+#endif
+}
+
+
 static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
                                            struct mulle_sprintf_formatconversioninfo *info,
                                            struct mulle_sprintf_argumentarray *arguments,
@@ -93,13 +191,29 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
 
    if( t == mulle_sprintf_double_argumenttype)
    {
-      produce_format_string( format, info, 0);
-      snprintf( result, sizeof( result), format, v.d);
+      // On MacOSX -nan is never printed, but on Linux
+      // it is, which is inconsistent (do now want)
+      if( is_negative_nan_double( v.d))
+         snprintf( result, sizeof( result), "-nan");
+      else
+      {
+         produce_format_string( format, info, 0);
+         // avoid negative -0.0 on BSDs which leads to test output that
+         // doesn't diff
+         v.d = make_non_negative_zero_double_if_zero( v.d);
+         snprintf( result, sizeof( result), format, v.d);
+      }
    }
    else
    {
-      produce_format_string( format, info, 1);
-      snprintf( result, sizeof( result), format, v.ld);
+      if( is_negative_nan_long_double( v.ld))
+         snprintf( result, sizeof( result), "-nan");
+      else
+      {
+         produce_format_string( format, info, 1);
+         v.ld = make_non_negative_zero_long_double_if_zero( v.ld);
+         snprintf( result, sizeof( result), format, v.ld);
+      }
    }
    mulle_buffer_add_string_with_maxlength( buffer, result, sizeof( result));
    return( 0);

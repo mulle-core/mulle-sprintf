@@ -66,3 +66,23 @@ int   main( void)
 }
 ```
 
+or
+
+
+```c
+int   main( void)
+{
+   char   *s;
+
+   mulle_buffer_do_string( buffer, &mulle_stdlib_allocator, s)
+   {
+      mulle_buffer_sprintf( buffer, "%d", 18);
+      mulle_buffer_sprintf( buffer, "%d", 48);
+   }
+   printf( "%*s\n", s);
+   free( s);
+
+   return( 0);
+}
+```
+
