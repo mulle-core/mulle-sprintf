@@ -108,7 +108,7 @@ static inline double   make_non_negative_zero_double_if_zero( double x)
 
 
 
-static inline int   make_non_negative_zero_long_double_if_zero( long double x)
+static inline long double   make_non_negative_zero_long_double_if_zero( long double x)
 {
     if( x != 0.0)
       return( x);
