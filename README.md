@@ -20,7 +20,7 @@ complete sprintf replacement.
 
 | Release Version                                       | Release Notes
 |-------------------------------------------------------|--------------
-| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg?branch=release) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg?branch=release)](//github.com/mulle-core/mulle-sprintf/actions) | [RELEASENOTES](RELEASENOTES.md) |
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg)](//github.com/mulle-core/mulle-sprintf/actions) | [RELEASENOTES](RELEASENOTES.md) |
 
 
 ## API
@@ -102,6 +102,8 @@ Used modifiers: `L`.
 
 The actual conversion is done with the C-library `sprintf` function. This is
 contrast with the other conversions, which are not using the C library.
+For portability across platforms `-nan` and `-0.0` will not be printed with the
+leading minus sign.  
 
 
 #### Pointer / String / Other
@@ -190,8 +192,6 @@ Add `-isystem src/mulle-core` to your `CFLAGS` and compile all the sources that 
 
 ## Install
 
-### Install with mulle-sde
-
 Use [mulle-sde](//github.com/mulle-sde) to build and install mulle-sprintf and all dependencies:
 
 ``` sh
@@ -199,7 +199,7 @@ mulle-sde install --prefix /usr/local \
    https://github.com/mulle-core/mulle-sprintf/archive/latest.tar.gz
 ```
 
-### Manual Installation
+### Legacy Installation
 
 Install the requirements:
 
