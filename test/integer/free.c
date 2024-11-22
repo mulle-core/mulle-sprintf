@@ -9,7 +9,7 @@ static void   simple_sprintf_free_test()
    struct mulle_buffer   buffer;
    int                   len;
 
-   mulle_buffer_init( &buffer, NULL);
+   mulle_buffer_init_default( &buffer);
 
    fprintf( stderr, " -- before sprintf\n");
 
