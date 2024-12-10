@@ -1,3 +1,7 @@
+### 3.2.1
+
+* fix `mulle_snprintf` in truncation case
+
 ## 3.2.0
 
 * unified printing of nan across platforms
