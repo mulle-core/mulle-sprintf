@@ -1024,7 +1024,10 @@ int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
       return( -1);
    }
 
-   return( _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion()));
+   return( _mulle_buffer_mvsprintf( buffer,
+                                    format,
+                                    arguments,
+                                    mulle_sprintf_get_defaultconversion()));
 }
 
 
@@ -1074,7 +1077,10 @@ int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, char *format, va_list 
       errno = EINVAL;
       return( -1);
    }
-   return( _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion()));
+   return( _mulle_buffer_vsprintf( buffer,
+                                   format,
+                                   args,
+                                   mulle_sprintf_get_defaultconversion()));
 }
 
 
@@ -1092,7 +1098,10 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
    }
 
    va_start( args, format );
-   rval = _mulle_buffer_vsprintf( buffer, format, args, mulle_sprintf_get_defaultconversion());
+   rval = _mulle_buffer_vsprintf( buffer,
+                                  format,
+                                  args,
+                                  mulle_sprintf_get_defaultconversion());
    va_end( args);
 
    return( rval);
@@ -1105,9 +1114,9 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
 
 int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 {
-   int                   rval;
-   int                   truncated;
    struct mulle_buffer   buffer;
+   int                   truncated;
+   int                   rval;
 
    if( ! buf || ! size)
    {
@@ -1117,28 +1126,28 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 
    mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
    {
-      rval      = _mulle_buffer_vsprintf( &buffer, format, va, mulle_sprintf_get_defaultconversion());
+      rval      = _mulle_buffer_vsprintf( &buffer,
+                                          format,
+                                          va,
+                                          mulle_sprintf_get_defaultconversion());
       truncated = mulle_buffer_make_string( &buffer);
+      if( truncated)
+      {
+         errno = ENOMEM;
+         rval  = -1;
+      }
    }
    mulle_buffer_done( &buffer);
 
-   if( truncated)
-   {
-      errno = ENOMEM;
-      rval  = -1;
-   }
-
-   if( rval == -1)
-      *buf = 0;
    return( rval);
 }
 
 
 int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments)
 {
-   int                   rval;
-   int                   truncated;
    struct mulle_buffer   buffer;
+   int                   truncated;
+   int                   rval;
 
    if( ! buf || ! size)
    {
@@ -1148,19 +1157,18 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
 
    mulle_buffer_init_inflexible_with_static_bytes( &buffer, buf, size);
    {
-      rval = _mulle_buffer_mvsprintf( &buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+      rval      = _mulle_buffer_mvsprintf( &buffer,
+                                           format,
+                                           arguments,
+                                           mulle_sprintf_get_defaultconversion());
       truncated = mulle_buffer_make_string( &buffer);
+      if( truncated)
+      {
+         errno = ENOMEM;
+         rval  = -1;
+      }
    }
    mulle_buffer_done( &buffer);
-
-   if( truncated)
-   {
-      errno = ENOMEM;
-      rval  = -1;
-   }
-
-   if( rval == -1)
-      *buf = 0;
 
    return( rval);
 }
@@ -1168,8 +1176,8 @@ int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list 
 
 int   mulle_snprintf( char *buf, size_t size, char *format, ...)
 {
-   va_list               args;
-   int                   rval;
+   va_list   args;
+   int       rval;
 
    va_start( args, format );
    rval = mulle_vsnprintf( buf, size, format, args);
@@ -1205,7 +1213,10 @@ int   mulle_vasprintf( char **strp, char *format, va_list va)
 
    mulle_buffer_do_string( buffer, NULL, s)
    {
-      rval = _mulle_buffer_vsprintf( buffer, format, va, mulle_sprintf_get_defaultconversion());
+      rval = _mulle_buffer_vsprintf( buffer,
+                                     format,
+                                     va,
+                                     mulle_sprintf_get_defaultconversion());
    }
    *strp = s;
 
@@ -1226,7 +1237,10 @@ int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
 
    mulle_buffer_do_string( buffer, NULL, s)
    {
-      rval = _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+      rval = _mulle_buffer_mvsprintf( buffer,
+                                      format,
+                                      arguments,
+                                      mulle_sprintf_get_defaultconversion());
    }
    *strp = s;
 
@@ -1263,7 +1277,10 @@ int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
 
    mulle_buffer_do_string( buffer, allocator, s)
    {
-      rval = _mulle_buffer_vsprintf( buffer, format, va, mulle_sprintf_get_defaultconversion());
+      rval = _mulle_buffer_vsprintf( buffer,
+                                     format,
+                                     va,
+                                     mulle_sprintf_get_defaultconversion());
    }
    *strp = s;
 
@@ -1287,7 +1304,10 @@ int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
 
    mulle_buffer_do_string( buffer, allocator, s)
    {
-      rval = _mulle_buffer_mvsprintf( buffer, format, arguments, mulle_sprintf_get_defaultconversion());
+      rval = _mulle_buffer_mvsprintf( buffer,
+                                      format,
+                                      arguments,
+                                      mulle_sprintf_get_defaultconversion());
    }
    *strp = s;
 
