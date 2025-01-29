@@ -358,7 +358,7 @@ static int   _mulle_sprintf_register_modifiers( struct mulle_sprintf_conversion 
    int   c;
 
    rval = 0;
-   while( c = *s++)
+   while( (c = *s++))
    {
       rval = _mulle_sprintf_register_modifier( table, (char) c);
       if( rval)
