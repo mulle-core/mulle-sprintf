@@ -425,7 +425,7 @@ static int   number_of_conversions( char *format,
    *remainder = NULL;
 
    n = 0;
-   while( c = *format)
+   while( (c = *format))
    {
       if( c == '%')
       {
@@ -440,7 +440,7 @@ static int   number_of_conversions( char *format,
                *starts++ = format;
          }
 
-         while( c = *++format)
+         while( (c = *++format))
          {
             //
             // TODO: this does not catch mixups of %tbd vs (correct) %btd
@@ -528,7 +528,7 @@ static inline int
 
    parser.modifier_index = 0;
 
-   while( c = *++parser.curr)
+   while( (c = *++parser.curr))
    {
       // bail on obvious syntax error
       if( parser.curr == parser.sentinel)

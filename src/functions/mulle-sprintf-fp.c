@@ -192,7 +192,7 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
    if( t == mulle_sprintf_double_argumenttype)
    {
       // On MacOSX -nan is never printed, but on Linux
-      // it is, which is inconsistent (do now want)
+      // it is, which is inconsistent (do not want)
       if( is_negative_nan_double( v.d))
          snprintf( result, sizeof( result), "-nan");
       else
