@@ -43,3 +43,6 @@ includes/
 *.gcda
 coverage*.html
 cola/wilted/
+CMakeLists.txt.bak
+.mulle/etc/make/build-dir
+vgcore.*
