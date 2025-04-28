@@ -74,7 +74,7 @@ int
 
    if( s)
    {
-      length = info->memory.precision_found ? info->precision : (size_t) -1;
+      length = info->memory.precision_found ? (size_t) info->precision : (size_t) -1;
       if( mulle_utf8_information( s, length, &utfinfo))
       {
          errno = EINVAL;
@@ -148,7 +148,7 @@ int
    // back to the usual program
    length = (int) o_length;
    if( info->memory.precision_found)
-      length = (info->precision > o_length) ? o_length : info->precision;
+      length = ((size_t) info->precision > o_length) ? o_length : (size_t) info->precision;
 
    // alternate (quoted) ignores all other info (as output will vary in length)
    if( info->memory.hash_found)
@@ -194,7 +194,7 @@ int
 
    length = (int) o_length;
    if( info->memory.precision_found)
-      length = (info->precision > o_length) ? o_length  : info->precision;
+      length = ((size_t) info->precision > o_length) ? o_length : (size_t) info->precision;
 
    // alternate (quoted) ignores all other info (as output will vary in length)
    if( info->memory.hash_found)
