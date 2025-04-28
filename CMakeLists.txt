@@ -1,6 +1,6 @@
-cmake_minimum_required( VERSION 3.14)
+cmake_minimum_required( VERSION 3.13...99.99)
 
-project( mulle-sprintf VERSION 3.2.2 LANGUAGES C)
+project( mulle-sprintf VERSION 3.2.3 LANGUAGES C)
 
 
 

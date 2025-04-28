@@ -66,25 +66,31 @@ int
 {
    int                            rval;
    struct mulle_utf_information   utfinfo;
+   size_t                         length;
+   mulle_utf32_t                  *dst;
 
    assert( buffer);
    assert( info);
 
    if( s)
    {
-      if( mulle_utf8_information( s, (size_t) -1, &utfinfo))
+      length = info->memory.precision_found ? info->precision : (size_t) -1;
+      if( mulle_utf8_information( s, length, &utfinfo))
       {
          errno = EINVAL;
          return( -1);
       }
 
       // check if we have composed multi-chars, if yes convert to utf32 and go
-      // there, because otherwise the length/width calculations get too involved
+      // there, because otherwise the length/width calculations get too
+      // involved
       if( ! utfinfo.is_ascii)
       {
          mulle_alloca_do( tmp, mulle_utf32_t, utfinfo.utf32len + 1)
          {
-            _mulle_utf8_convert_to_utf32( s, utfinfo.utf8len + 1, tmp);
+            dst  = _mulle_utf8_convert_to_utf32( s, utfinfo.utf8len, tmp);
+            *dst = 0;
+
             rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
          }
          return( rval);
@@ -101,7 +107,7 @@ int
                                     mulle_utf16_t *s)
 {
    int                    length;
-   int                    o_length;
+   size_t                 o_length;
    int                    rval;
    static mulle_utf16_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
    mulle_utf32_t          tmp_stack[ 32];
@@ -116,7 +122,11 @@ int
 
    // check if we have composed multi-chars, if yes convert to utf32 and go
    // there, because otherwise the length/width calculations get too involved
-   o_length = (int) mulle_utf16_strlen( s);
+   if( info->memory.precision_found)
+      o_length = mulle_utf16_strnlen( s, info->precision);
+   else
+      o_length = mulle_utf16_strlen( s);
+
    if( ! mulle_utf16_is_utf15( s, o_length))
    {
       // MEMO: don't want mulle-container as a dependency here, so do it
@@ -171,14 +181,18 @@ int
                                     mulle_utf32_t *s)
 {
    int                    length;
-   int                    o_length;
+   size_t                 o_length;
    static mulle_utf32_t   null_description[] = { '(', 'n', 'u', 'l', 'l', ')', 0 };
 
    if( ! s)
       s = null_description;
 
-   o_length = (int) mulle_utf32_strlen( s);
-   length   = (int) o_length;
+   if( info->memory.precision_found)
+      o_length = mulle_utf32_strnlen( s, info->precision);
+   else
+      o_length = mulle_utf32_strlen( s);
+
+   length = (int) o_length;
    if( info->memory.precision_found)
       length = (info->precision > o_length) ? o_length  : info->precision;
 
@@ -281,15 +295,21 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
 {
    size_t     before;
    ptrdiff_t  length;
+   size_t     o_length;
 
    if( ! s)
       s = "(null)";  // TODO: make this a global variable ?
 
    // alternate (quoted) ignores all other info (as output will vary in length)
    // but precision
+   if( info->memory.precision_found)
+      o_length = strnlen( s, info->precision);
+   else
+      o_length = strlen( s);
+
    if( info->memory.hash_found)
    {
-      length = (int) strlen( s);
+      length = (int) o_length;
       if( info->memory.precision_found)
       {
          if( length > info->precision)
@@ -316,7 +336,7 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
       return( 0);
    }
 
-   length = (int) strlen( s);
+   length = (int) o_length;
    if( info->memory.precision_found)
       length = info->precision > length ? length : info->precision;
 
@@ -347,7 +367,8 @@ static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
 }
 
 
-static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t
+   _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
 #ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
