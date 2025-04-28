@@ -4,7 +4,7 @@
    "description" : "🔢 An extensible sprintf function supporting stdarg and mulle-vararg",
    "keywords" : [],
    "license" : "BSD-3-Clause",
-   "repo" : "mulle-c/mulle-sprintf",
+   "repo" : "mulle-core/mulle-sprintf",
    "src" : [
       "src/functions/mulle-sprintf-character.c",
       "src/functions/mulle-sprintf-character.h",
