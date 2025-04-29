@@ -148,7 +148,7 @@ int
    // back to the usual program
    length = (int) o_length;
    if( info->memory.precision_found)
-      length = ((size_t) info->precision > o_length) ? o_length : (size_t) info->precision;
+      length = ((size_t) info->precision > o_length) ? (int) o_length : info->precision;
 
    // alternate (quoted) ignores all other info (as output will vary in length)
    if( info->memory.hash_found)
@@ -194,7 +194,7 @@ int
 
    length = (int) o_length;
    if( info->memory.precision_found)
-      length = ((size_t) info->precision > o_length) ? o_length : (size_t) info->precision;
+      length = ((size_t) info->precision > o_length) ? (int) o_length : info->precision;
 
    // alternate (quoted) ignores all other info (as output will vary in length)
    if( info->memory.hash_found)
