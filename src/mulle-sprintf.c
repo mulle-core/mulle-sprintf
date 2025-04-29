@@ -657,7 +657,7 @@ state_width_entry:
          }
          parser.state = state_precision;
          parser.memo  = NULL;
-         __attribute__(( fallthrough));
+         MULLE_C_FALLTHROUGH;
          // after a precision, dot all digits belong to precision
       case state_precision :
          if( ! parser.memo)

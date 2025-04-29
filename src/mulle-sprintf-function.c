@@ -157,7 +157,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_unsigned_short_pointer_argumenttype : p->pS   = va_arg( va, unsigned short *); break;
       case mulle_sprintf_void_pointer_argumenttype           : p->pv   = va_arg( va, void *); break;
       case mulle_sprintf_wchar_pointer_argumenttype          : p->pwc  = va_arg( va, wchar_t *); break;
-      case mulle_sprintf_wint_t_argumenttype                 : p->wc   = va_arg( va, wint_t); break;
+      case mulle_sprintf_wint_t_argumenttype                 : p->wc   = (wint_t) va_arg( va, int); break; // promotion(!)
       case mulle_sprintf_uint16_t_pointer_argumenttype       : p->pu16 = va_arg( va, uint16_t *); break;
       case mulle_sprintf_uint32_t_pointer_argumenttype       : p->pu32 = va_arg( va, uint32_t *); break;
       case mulle_sprintf_NSDecimal_pointer_argumenttype      : p->pDecimal = va_arg( va, struct _NSDecimal *); break;
