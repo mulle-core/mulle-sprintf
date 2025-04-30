@@ -489,6 +489,9 @@ static inline int
    char     buf[ 63 + 1];
    size_t   len;
 
+
+   MULLE_C_UNUSED( info);
+
    len = parser->curr - parser->memo;
    if( ! len)
       return( 0);  // it's OK!

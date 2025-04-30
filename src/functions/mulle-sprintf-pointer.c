@@ -67,9 +67,13 @@ static int  _mulle_sprintf_pointer_conversion( struct mulle_buffer *buffer,
 
 
 
-static mulle_sprintf_argumenttype_t  mulle_sprintf_get_pointer_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t
+   mulle_sprintf_get_pointer_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    assert( info->modifier[ 0] == '\0');
+
+   MULLE_C_UNUSED( info);
+
    return( mulle_sprintf_void_pointer_argumenttype);
 }
 

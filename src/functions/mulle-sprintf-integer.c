@@ -60,6 +60,11 @@ static int   set_decimal_prefix( char *s,
                                  int length,
                                  int precision)
 {
+   MULLE_C_UNUSED( s);
+   MULLE_C_UNUSED( value_is_zero);
+   MULLE_C_UNUSED( length);
+   MULLE_C_UNUSED( precision);
+
    return( 0);
 }
 
@@ -355,6 +360,9 @@ static char  *convert_octal_unsigned_long_long( unsigned long long value,
 
 static int   set_octal_prefix( char *s, int value_is_zero, int length, int precision)
 {
+   MULLE_C_UNUSED( s);
+   MULLE_C_UNUSED( value_is_zero);
+
    if( length && precision <= length)
       return( -1);      // increase precision
    return( 0);
@@ -420,6 +428,9 @@ static char   *convert_hex_unsigned_long_long( unsigned long long value,
 
 static int   set_hex_prefix( char *s, int value_is_zero, int length, int precision)
 {
+   MULLE_C_UNUSED( value_is_zero);
+   MULLE_C_UNUSED( precision);
+
    // For x and X conversions, a nonzero result has the string "0x" (or "0X"
    // for X conversions) prepended to it.
    // why not for 0 ? Stay compatible ? nah
