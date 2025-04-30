@@ -49,12 +49,15 @@ static int   _mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
 
    assert( buffer);
    assert( info);
-   assert( arguments);
+
+   MULLE_C_UNUSED( arguments);
+   MULLE_C_UNUSED( argc);
 
    width_char = info->memory.zero_found ? '0' : ' ';
    if( info->width > 1)
       mulle_buffer_memset( buffer, width_char, info->width - 1);
    mulle_buffer_add_byte( buffer, '%');
+
    return( 0);
 }
 
@@ -63,6 +66,9 @@ static int   _mulle_sprintf_escape_conversion( struct mulle_buffer *buffer,
 static mulle_sprintf_argumenttype_t  mulle_sprintf_get_escape_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    assert( info->modifier[ 0] == '\0');
+
+   MULLE_C_UNUSED( info);
+
    return( mulle_sprintf_void_argumenttype);
 }
 
