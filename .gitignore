@@ -48,3 +48,5 @@ CMakeLists.txt.bak
 vgcore.*
 *.test.*
 src/mulle-dtoa/
+dox/API_SPRINTF.html
+test/include.h
