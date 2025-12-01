@@ -86,3 +86,20 @@ int   main( void)
 }
 ```
 
+### Using a convenience macro for a single sprintf
+
+
+If you just want to do a single string format, you can use `mulle_sprintf_do`:
+
+
+```c
+int   main( void)
+{
+   mulle_sprintf_do( s, "%d", 1848)
+   {
+      puts( s);   // s  is available in this block
+   }
+
+   return( 0);
+}
+```

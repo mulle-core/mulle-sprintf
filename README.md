@@ -11,16 +11,14 @@ pain.
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments.
 
-Because floating point to string conversion is hard, floating point
-conversions are (still) handed down to `sprintf`. So it is technically not a
-complete sprintf replacement.
+Floating point conversion is done by [mulle-dtoa](https://github.com/mulle-core/mulle-dtoa), but fallback to C library FP can be used with `NO_MULLE__DTOA`.
 
 
 
 
 | Release Version                                       | Release Notes  | AI Documentation
 |-------------------------------------------------------|----------------|---------------
-| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg)](//github.com/mulle-core/mulle-sprintf/actions) | [RELEASENOTES](RELEASENOTES.md) | [DeepWiki for mulle-sprintf](https://deepwiki.com/mulle-core/mulle-sprintf)
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg)](//github.com/mulle-core/mulle-sprintf/actions)| [RELEASENOTES](RELEASENOTES.md) | [DeepWiki for mulle-sprintf](https://deepwiki.com/mulle-core/mulle-sprintf)
 
 
 ## API
@@ -29,12 +27,20 @@ complete sprintf replacement.
 |-------------------------------------- | -------------------------------------
 | [`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
 
+### Major stdlib-compatible functions
+
+| Function | Description
+|----------|------------
+| `mulle_sprintf` | sprintf replacement
+| `mulle_snprintf` | snprintf replacement
+| `mulle_asprintf` | asprintf replacement
+| `mulle_buffer_sprintf` | sprintf into mulle_buffer
+| `mulle_allocator_asprintf` | asprintf with custom allocator
 
 ### Format characters
 
 For more detailed information on each characte consult a
 [sprintf man page](https://manpages.org/sprintf).
-
 
 ### Flag Characters
 
@@ -47,7 +53,6 @@ For more detailed information on each characte consult a
 | `+`       | A sign  (+  or -) should always be placed before a number.
 | `'`       | Use thousands' grouping characters (UNUSED)
 | `b`       | BOOL, print as YES or NO (for Objective-C)
-
 
 ### Length modifier
 
@@ -62,7 +67,6 @@ For more detailed information on each characte consult a
 | `q`        | `int64.`
 | `t`        | `ptrdiff_t`
 | `z`        | `size_t`
-
 
 ### Conversion Specifiers (built in)
 
@@ -105,7 +109,6 @@ contrast with the other conversions, which are not using the C library.
 For portability across platforms `-nan` and `-0.0` will not be printed with the
 leading minus sign.  
 
-
 #### Pointer / String / Other
 
 | Character | Description
@@ -114,46 +117,34 @@ leading minus sign.
 | `C`       | wide character (utf16 with `h`, utf32 with `l`)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
-| `s`       | char * as utf8 (alternate form: escaped for C String)
+| `s`       | char * as utf8 (alternate form `#s`: escaped for C String)
 | `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
-
 
 Used modifiers: `hl`
 
-
-
 ## Usage
 
-### Convenient
+mulle-sprintf provides stdlib-compatible functions that work out of the box:
 
-mulle-sprintf uses a dynamic loading scheme to add conversion routines. It is
-important that the linker doesn't strip presumably "dead" code. This will happen
-if you link mulle-sprintf as a static library without using `--all_load` or
-some such. [Reference](//www.chrisgummer.com/llvm-load_all-and-force_load)
+```c
+char buf[ 32];
 
-
-### Inconvenient
-
-If you have or don't want to do it the convenient way, you need to add the
-character conversion routines yourself. Add them before you call a
-*mulle-sprintf* printing function:
-
-``` c
-struct mulle_sprintf_conversion   *conversion;
-
-conversion = mulle_sprintf_get_defaultconversion();
-mulle_sprintf_register_character_functions( conversion);
-mulle_sprintf_register_decimal_functions( conversion);
-mulle_sprintf_register_escape_functions( conversion);
-mulle_sprintf_register_integer_functions( conversion);
-mulle_sprintf_register_fp_functions( conversion);
-mulle_sprintf_register_pointer_functions( conversion);
-mulle_sprintf_register_return_functions( conversion);
-mulle_sprintf_register_string_functions( conversion);
-
-mulle_sprintf_register_standardmodifiers( conversion);
+mulle_snprintf( buf, sizeof( buf), "%d", 1848);
 ```
 
+```c
+char *str;
+
+mulle_asprintf( &str, "%s %d", "VfL", 1848);
+mulle_free( str);
+```
+
+```c
+mulle_buffer_do( buffer)
+{
+    mulle_buffer_sprintf( buffer, "%d", 1848);
+}
+```
 
 
 ### You are here
@@ -205,7 +196,7 @@ Install the requirements:
 
 | Requirements                                 | Description
 |----------------------------------------------|-----------------------
-| [mulle-buffer](https://github.com/mulle-c/mulle-buffer)             | ↗️ A growable C char array and also a stream
+| [mulle-buffer](https://github.com/mulle-c/mulle-buffer)             | ↗️  A growable C char array and also a stream - on stack and heap
 | [mulle-utf](https://github.com/mulle-c/mulle-utf)             | 🔤 UTF8-16-32 analysis and manipulation library
 | [mulle-vararg](https://github.com/mulle-c/mulle-vararg)             | ⏪ Access variable arguments in struct layout fashion in C
 | [mulle-thread](https://github.com/mulle-concurrent/mulle-thread)             | 🔠 Cross-platform thread/mutex/tss/atomic operations in C

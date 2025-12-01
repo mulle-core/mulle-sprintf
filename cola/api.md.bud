@@ -4,12 +4,20 @@
 |-------------------------------------- | -------------------------------------
 | [`mulle_sprintf`](dox/API_SPRINTF.md) | The various sprintf like functions
 
+### Major stdlib-compatible functions
+
+| Function | Description
+|----------|------------
+| `mulle_sprintf` | sprintf replacement
+| `mulle_snprintf` | snprintf replacement
+| `mulle_asprintf` | asprintf replacement
+| `mulle_buffer_sprintf` | sprintf into mulle_buffer
+| `mulle_allocator_asprintf` | asprintf with custom allocator
 
 ### Format characters
 
 For more detailed information on each characte consult a
 [sprintf man page](https://manpages.org/sprintf).
-
 
 ### Flag Characters
 
@@ -22,7 +30,6 @@ For more detailed information on each characte consult a
 | `+`       | A sign  (+  or -) should always be placed before a number.
 | `'`       | Use thousands' grouping characters (UNUSED)
 | `b`       | BOOL, print as YES or NO (for Objective-C)
-
 
 ### Length modifier
 
@@ -37,7 +44,6 @@ For more detailed information on each characte consult a
 | `q`        | `int64.`
 | `t`        | `ptrdiff_t`
 | `z`        | `size_t`
-
 
 ### Conversion Specifiers (built in)
 
@@ -80,7 +86,6 @@ contrast with the other conversions, which are not using the C library.
 For portability across platforms `-nan` and `-0.0` will not be printed with the
 leading minus sign.  
 
-
 #### Pointer / String / Other
 
 | Character | Description
@@ -89,10 +94,7 @@ leading minus sign.
 | `C`       | wide character (utf16 with `h`, utf32 with `l`)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
-| `s`       | char * as utf8 (alternate form: escaped for C String)
+| `s`       | char * as utf8 (alternate form `#s`: escaped for C String)
 | `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
 
-
 Used modifiers: `hl`
-
-

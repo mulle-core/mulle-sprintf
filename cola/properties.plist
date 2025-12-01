@@ -3,16 +3,18 @@
    {
       description="🔢 An extensible sprintf function supporting stdarg and mulle-vararg";
       domain="github";
+      language="c";
+      dialect="c";
       name="mulle-sprintf";
       user="mulle-core";
       repo="mulle-sprintf";
-      homepage="https://github.com/mulle-c/mulle-sprintf";
+      homepage="https://github.com/mulle-core/mulle-sprintf";
       license="BSD-3-Clause";
    };
    dependencies =
    (
       {
-         description="↗️ A growable C char array and also a stream";
+         description="↗️  A growable C char array and also a stream - on stack and heap";
          domain="github";
          name="mulle-buffer";
          repo="mulle-buffer";
@@ -42,6 +44,25 @@
          repo="mulle-thread";
          url="https://github.com/mulle-concurrent/mulle-thread";
          user="mulle-concurrent";
+      }
+   );
+   embedded =
+   (
+      {
+         description="A C implementation of the Schubfach algorithm - fast and accurate conversion";
+         domain="github";
+         name="src/mulle-dtoa/mulle-dtoa.h";
+         repo="mulle-dtoa";
+         url="https://raw.githubusercontent.com/mulle-core/mulle-dtoa";
+         user="mulle-core";
+      },
+      {
+         description="A C implementation of the Schubfach algorithm - fast and accurate conversion";
+         domain="github";
+         name="src/mulle-dtoa/mulle-dtoa.c";
+         repo="mulle-dtoa";
+         url="https://raw.githubusercontent.com/mulle-core/mulle-dtoa";
+         user="mulle-core";
       }
    );
 }
