@@ -25,7 +25,7 @@ else()
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_STATIC_LIBRARY_SUFFIX}
          mulle-buffer
-         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH
+         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
       if( NOT MULLE__BUFFER_LIBRARY AND NOT DEPENDENCY_IGNORE_SYSTEM_LIBARIES)
          find_library( MULLE__BUFFER_LIBRARY NAMES
@@ -86,7 +86,9 @@ else()
          endforeach()
       else()
          # Disable with: `mulle-sourcetree mark mulle-buffer no-require-link`
-         message( SEND_ERROR "MULLE__BUFFER_LIBRARY was not found")
+         message( SEND_ERROR "MULLE__BUFFER_LIBRARY was not found in ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+${CMAKE_STATIC_LIBRARY_PREFIX}mulle-buffer${CMAKE_STATIC_LIBRARY_SUFFIX}
+mulle-buffer")
       endif()
    endif()
 endif()
@@ -106,7 +108,7 @@ else()
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_STATIC_LIBRARY_SUFFIX}
          mulle-utf
-         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH
+         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
       if( NOT MULLE__UTF_LIBRARY AND NOT DEPENDENCY_IGNORE_SYSTEM_LIBARIES)
          find_library( MULLE__UTF_LIBRARY NAMES
@@ -167,7 +169,9 @@ else()
          endforeach()
       else()
          # Disable with: `mulle-sourcetree mark mulle-utf no-require-link`
-         message( SEND_ERROR "MULLE__UTF_LIBRARY was not found")
+         message( SEND_ERROR "MULLE__UTF_LIBRARY was not found in ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+${CMAKE_STATIC_LIBRARY_PREFIX}mulle-utf${CMAKE_STATIC_LIBRARY_SUFFIX}
+mulle-utf")
       endif()
    endif()
 endif()
@@ -187,7 +191,7 @@ else()
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_STATIC_LIBRARY_SUFFIX}
          mulle-vararg
-         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH
+         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
       if( NOT MULLE__VARARG_LIBRARY AND NOT DEPENDENCY_IGNORE_SYSTEM_LIBARIES)
          find_library( MULLE__VARARG_LIBRARY NAMES
@@ -210,7 +214,9 @@ else()
          # intentionally left blank
       else()
          # Disable with: `mulle-sourcetree mark mulle-vararg no-require-link`
-         message( SEND_ERROR "MULLE__VARARG_LIBRARY was not found")
+         message( SEND_ERROR "MULLE__VARARG_LIBRARY was not found in ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+${CMAKE_STATIC_LIBRARY_PREFIX}mulle-vararg${CMAKE_STATIC_LIBRARY_SUFFIX}
+mulle-vararg")
       endif()
    endif()
 endif()
@@ -230,7 +236,7 @@ else()
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
          ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_STATIC_LIBRARY_SUFFIX}
          mulle-thread
-         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH
+         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
       if( NOT MULLE__THREAD_LIBRARY AND NOT DEPENDENCY_IGNORE_SYSTEM_LIBARIES)
          find_library( MULLE__THREAD_LIBRARY NAMES
@@ -291,7 +297,9 @@ else()
          endforeach()
       else()
          # Disable with: `mulle-sourcetree mark mulle-thread no-require-link`
-         message( SEND_ERROR "MULLE__THREAD_LIBRARY was not found")
+         message( SEND_ERROR "MULLE__THREAD_LIBRARY was not found in ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+${CMAKE_STATIC_LIBRARY_PREFIX}mulle-thread${CMAKE_STATIC_LIBRARY_SUFFIX}
+mulle-thread")
       endif()
    endif()
 endif()

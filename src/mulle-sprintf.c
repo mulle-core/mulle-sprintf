@@ -1146,7 +1146,10 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 }
 
 
-int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments)
+int   mulle_mvsnprintf( char *buf,
+                        size_t size,
+                        char *format,
+                        mulle_vararg_list arguments)
 {
    struct mulle_buffer   buffer;
    int                   truncated;
@@ -1318,7 +1321,9 @@ int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
 }
 
 
-int   mulle_allocator_asprintf( struct mulle_allocator *allocator, char **strp, char *format, ...)
+int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
+                                char **strp,
+                                char *format, ...)
 {
    va_list   args;
    int       rval;
