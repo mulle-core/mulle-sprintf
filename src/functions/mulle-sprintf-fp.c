@@ -113,7 +113,7 @@ static inline double   make_non_negative_zero_double_if_zero( double x)
 }
 
 
-
+#ifdef NO_MULLE__DTOA
 static inline long double   make_non_negative_zero_long_double_if_zero( long double x)
 {
     if( x != 0.0)
@@ -176,6 +176,7 @@ static inline int   is_negative_nan_long_double( long double x)
      return( (u.bytes[ 0] & 0x80) != 0);
 #endif
 }
+#endif
 
 
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
