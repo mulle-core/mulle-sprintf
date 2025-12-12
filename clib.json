@@ -22,6 +22,8 @@
       "src/functions/mulle-sprintf-string.h",
       "src/generic/include-private.h",
       "src/generic/include.h",
+      "src/mulle-dtoa/mulle-dtoa.c",
+      "src/mulle-dtoa/mulle-dtoa.h",
       "src/mulle-sprintf-function.c",
       "src/mulle-sprintf-function.h",
       "src/mulle-sprintf-standalone.c",

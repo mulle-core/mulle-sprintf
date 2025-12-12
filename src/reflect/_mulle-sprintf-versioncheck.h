@@ -7,7 +7,7 @@
 
 #if defined( MULLE__BUFFER_VERSION)
 # ifndef MULLE__BUFFER_VERSION_MIN
-#  define MULLE__BUFFER_VERSION_MIN  ((5UL << 20) | (0 << 8) | 0)
+#  define MULLE__BUFFER_VERSION_MIN  ((5UL << 20) | (0 << 8) | 1)
 # endif
 # ifndef MULLE__BUFFER_VERSION_MAX
 #  define MULLE__BUFFER_VERSION_MAX  ((6UL << 20) | (0 << 8) | 0)
@@ -43,7 +43,7 @@
 #endif
 #if defined( MULLE__UTF_VERSION)
 # ifndef MULLE__UTF_VERSION_MIN
-#  define MULLE__UTF_VERSION_MIN  ((5UL << 20) | (0 << 8) | 1)
+#  define MULLE__UTF_VERSION_MIN  ((5UL << 20) | (0 << 8) | 2)
 # endif
 # ifndef MULLE__UTF_VERSION_MAX
 #  define MULLE__UTF_VERSION_MAX  ((6UL << 20) | (0 << 8) | 0)
