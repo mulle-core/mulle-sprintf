@@ -52,8 +52,8 @@
 //
 // first idea was to use dtoa or gcvt, but those use global variables
 // in the end, it's just easier to use sprintf and produce a format
-// string on the fly.
-//
+// string on the fly. (historic comment, with the new mulle-dtoa this
+// has become moot)
 static void  produce_format_string( char format[ 64],
                                     struct mulle_sprintf_formatconversioninfo *info,
                                     int is_long)
@@ -304,7 +304,7 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    for( ; i < precision; i++)
       mulle_buffer_add_byte( buffer, '0');
    
-   mulle_buffer_add_byte( buffer, info->conversion);
+   mulle_buffer_add_byte( buffer, (info->conversion == 'E' || info->conversion == 'G') ? 'E' : 'e');
    mulle_buffer_add_byte( buffer, exponent >= 0 ? '+' : '-');
    
    if( exponent < 0)

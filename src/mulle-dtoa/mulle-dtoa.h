@@ -8,6 +8,8 @@
 #ifndef MULLE__DTOA_H
 #define MULLE__DTOA_H
 
+#define MULLE__DTOA_VERSION   ((0 << 24) | (1 << 8) | 0)
+
 #include <stdint.h>
 
 #ifdef __cplusplus
