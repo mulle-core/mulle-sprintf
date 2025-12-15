@@ -303,3 +303,78 @@ mulle-thread")
       endif()
    endif()
 endif()
+
+
+#
+# Generated from sourcetree: 874B3A05-7C80-4741-949D-E0BE7D9A6599;mulle-dtostr;no-all-load,no-cmake-loader,no-cmake-searchpath,no-import;
+# Disable with : `mulle-sourcetree mark mulle-dtostr no-link`
+# Disable for this platform: `mulle-sourcetree mark mulle-dtostr no-cmake-platform-${MULLE_UNAME}`
+# Disable for a sdk: `mulle-sourcetree mark mulle-dtostr no-cmake-sdk-<name>`
+#
+if( COLLECT_DEPENDENCY_LIBRARIES_AS_NAMES)
+   list( APPEND DEPENDENCY_LIBRARIES "mulle-dtostr")
+else()
+   if( NOT MULLE__DTOSTR_LIBRARY)
+      find_library( MULLE__DTOSTR_LIBRARY NAMES
+         ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+         ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_STATIC_LIBRARY_SUFFIX}
+         mulle-dtostr
+         NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_FIND_ROOT_PATH
+      )
+      if( NOT MULLE__DTOSTR_LIBRARY AND NOT DEPENDENCY_IGNORE_SYSTEM_LIBARIES)
+         find_library( MULLE__DTOSTR_LIBRARY NAMES
+            ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+            ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_STATIC_LIBRARY_SUFFIX}
+            mulle-dtostr
+         )
+      endif()
+      message( STATUS "MULLE__DTOSTR_LIBRARY is ${MULLE__DTOSTR_LIBRARY}")
+      #
+      # The order looks ascending, but due to the way this file is read
+      # it ends up being descending, which is what we need.
+      #
+      if( MULLE__DTOSTR_LIBRARY)
+         #
+         # Add MULLE__DTOSTR_LIBRARY to DEPENDENCY_LIBRARIES list.
+         # Disable with: `mulle-sourcetree mark mulle-dtostr no-cmake-add`
+         #
+         list( APPEND DEPENDENCY_LIBRARIES ${MULLE__DTOSTR_LIBRARY})
+         #
+         # Inherit information from dependency.
+         # Encompasses: no-cmake-searchpath,no-cmake-dependency,no-cmake-loader
+         # Disable with: `mulle-sourcetree mark mulle-dtostr no-cmake-inherit`
+         #
+         # temporarily expand CMAKE_MODULE_PATH
+         get_filename_component( _TMP_MULLE__DTOSTR_ROOT "${MULLE__DTOSTR_LIBRARY}" DIRECTORY)
+         get_filename_component( _TMP_MULLE__DTOSTR_ROOT "${_TMP_MULLE__DTOSTR_ROOT}" DIRECTORY)
+         #
+         #
+         # Search for "Definitions.cmake" and "DependenciesAndLibraries.cmake" to include.
+         # Disable with: `mulle-sourcetree mark mulle-dtostr no-cmake-dependency`
+         #
+         foreach( _TMP_MULLE__DTOSTR_NAME "mulle-dtostr")
+            set( _TMP_MULLE__DTOSTR_DIR "${_TMP_MULLE__DTOSTR_ROOT}/include/${_TMP_MULLE__DTOSTR_NAME}/cmake")
+            # use explicit path to avoid "surprises"
+            if( IS_DIRECTORY "${_TMP_MULLE__DTOSTR_DIR}")
+               list( INSERT CMAKE_MODULE_PATH 0 "${_TMP_MULLE__DTOSTR_DIR}")
+               #
+               include( "${_TMP_MULLE__DTOSTR_DIR}/DependenciesAndLibraries.cmake" OPTIONAL)
+               #
+               list( REMOVE_ITEM CMAKE_MODULE_PATH "${_TMP_MULLE__DTOSTR_DIR}")
+               #
+               unset( MULLE__DTOSTR_DEFINITIONS)
+               include( "${_TMP_MULLE__DTOSTR_DIR}/Definitions.cmake" OPTIONAL)
+               list( APPEND INHERITED_DEFINITIONS ${MULLE__DTOSTR_DEFINITIONS})
+               break()
+            else()
+               message( STATUS "${_TMP_MULLE__DTOSTR_DIR} not found")
+            endif()
+         endforeach()
+      else()
+         # Disable with: `mulle-sourcetree mark mulle-dtostr no-require-link`
+         message( SEND_ERROR "MULLE__DTOSTR_LIBRARY was not found in ${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_DEBUG_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
+${CMAKE_STATIC_LIBRARY_PREFIX}mulle-dtostr${CMAKE_STATIC_LIBRARY_SUFFIX}
+mulle-dtostr")
+      endif()
+   endif()
+endif()

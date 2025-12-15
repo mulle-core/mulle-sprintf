@@ -14,7 +14,6 @@ set( INCLUDE_DIRS
 src/reflect
 src/generic
 src/functions
-src/mulle-dtoa
 src
 )
 
@@ -58,7 +57,6 @@ src/functions/mulle-sprintf-integer.h
 src/functions/mulle-sprintf-pointer.h
 src/functions/mulle-sprintf-return.h
 src/functions/mulle-sprintf-string.h
-src/mulle-dtoa/mulle-dtoa.h
 src/mulle-sprintf-function.h
 src/mulle-sprintf.h
 )

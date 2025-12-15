@@ -7,5 +7,6 @@ pain.
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments.
 
-Floating point conversion is done by [mulle-dtoa](https://github.com/mulle-core/mulle-dtoa), but fallback to C library FP can be used with `NO_MULLE__DTOA`.
+Floating point conversion is done by [mulle-dtoa](https://github.com/mulle-core/mulle-dtoa),
+but fallback to C library FP can be used with `NO_MULLE__DTOA`.
 

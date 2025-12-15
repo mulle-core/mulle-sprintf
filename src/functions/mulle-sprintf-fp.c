@@ -43,16 +43,16 @@
 #include <stdio.h>
 #include <math.h>
 
-#ifndef NO_MULLE__DTOA
-# include "../mulle-dtoa/mulle-dtoa.h"
+#ifndef NO_MULLE__DTOSTR
+# include <mulle-dtostr/mulle-dtostr.h>
 #endif
 
 
-#ifdef NO_MULLE__DTOA
+#ifdef NO_MULLE__DTOSTR
 //
-// first idea was to use dtoa or gcvt, but those use global variables
+// first idea was to use dtostr or gcvt, but those use global variables
 // in the end, it's just easier to use sprintf and produce a format
-// string on the fly. (historic comment, with the new mulle-dtoa this
+// string on the fly. (historic comment, with the new mulle-dtostr this
 // has become moot)
 static void  produce_format_string( char format[ 64],
                                     struct mulle_sprintf_formatconversioninfo *info,
@@ -113,7 +113,7 @@ static inline double   make_non_negative_zero_double_if_zero( double x)
 }
 
 
-#ifdef NO_MULLE__DTOA
+#ifdef NO_MULLE__DTOSTR
 static inline long double   make_non_negative_zero_long_double_if_zero( long double x)
 {
     if( x != 0.0)
@@ -191,7 +191,7 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct 
 }
 
 
-#ifndef NO_MULLE__DTOA
+#ifndef NO_MULLE__DTOSTR
 
 static int   _count_decimal_digits( uint64_t n)
 {
@@ -246,7 +246,7 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc) {
    union mulle_sprintf_argumentvalue   v;
-   struct mulle_dtoa_decimal           decimal;
+   struct mulle_dtostr_decimal         decimal;
    uint64_t                            significand;
    uint64_t                            divisor;
    int                                 exponent;
@@ -259,7 +259,7 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
       v.d = (double) v.ld;
 
    v.d     = make_non_negative_zero_double_if_zero( v.d);
-   decimal = mulle_dtoa_decompose( v.d);
+   decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
    {
@@ -289,7 +289,7 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    for( i = 1; i < num_digits; i++)
       divisor *= 10;
    
-   mulle_buffer_add_byte( buffer, '0' + (significand / divisor));
+   mulle_buffer_add_byte( buffer, '0' + (unsigned char) (significand / divisor));
    significand %= divisor;
    
    if( precision > 0 || info->memory.hash_found)
@@ -298,7 +298,7 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    for( i = 0; i < precision && i < num_digits - 1; i++)
    {
       divisor /= 10;
-      mulle_buffer_add_byte( buffer, '0' + (significand / divisor));
+      mulle_buffer_add_byte( buffer, '0' + (unsigned char) (significand / divisor));
       significand %= divisor;
    }
    for( ; i < precision; i++)
@@ -323,7 +323,7 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc) {
    union mulle_sprintf_argumentvalue   v;
-   struct mulle_dtoa_decimal           decimal;
+   struct mulle_dtostr_decimal           decimal;
    uint64_t                            significand;
    uint64_t                            divisor;
    int                                 exponent;
@@ -338,7 +338,7 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
       v.d = (double) v.ld;
 
    v.d     = make_non_negative_zero_double_if_zero( v.d);
-   decimal = mulle_dtoa_decompose( v.d);
+   decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
    {
@@ -404,7 +404,7 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
          
          for( ; i < precision && num_digits > 0; i++)
          {
-            mulle_buffer_add_byte( buffer, '0' + (significand / divisor));
+            mulle_buffer_add_byte( buffer, '0' + (unsigned char) (significand / divisor));
             significand %= divisor;
             divisor     /= 10;
             num_digits--;
@@ -421,7 +421,7 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
       
       for( i = 0; i < int_digits && num_digits > 0; i++)
       {
-         mulle_buffer_add_byte( buffer, '0' + (significand / divisor));
+         mulle_buffer_add_byte( buffer, '0' + (unsigned char) (significand / divisor));
          significand %= divisor;
          divisor     /= 10;
          num_digits--;
@@ -434,7 +434,7 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
          mulle_buffer_add_byte( buffer, '.');
          for( i = 0; i < precision && num_digits > 0; i++)
          {
-            mulle_buffer_add_byte( buffer, '0' + (significand / divisor));
+            mulle_buffer_add_byte( buffer, '0' + (unsigned char) (significand / divisor));
             significand %= divisor;
             divisor     /= 10;
             num_digits--;
@@ -451,7 +451,7 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc) {
    union mulle_sprintf_argumentvalue         v;
-   struct mulle_dtoa_decimal                 decimal;
+   struct mulle_dtostr_decimal                 decimal;
    struct mulle_sprintf_formatconversioninfo info_copy;
    int                                       precision;
    int                                       exponent;
@@ -467,7 +467,7 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
       v.d = (double) v.ld;
 
    v.d     = make_non_negative_zero_double_if_zero( v.d);
-   decimal = mulle_dtoa_decompose( v.d);
+   decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
    {
@@ -668,22 +668,22 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
    return( 0);
 }
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtoa_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_functions = {
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_e_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtoa_f_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_f_functions = {
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_f_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtoa_g_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_g_functions = {
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_g_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtoa_a_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_a_functions = {
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_a_conversion
 };
@@ -691,7 +691,7 @@ static struct mulle_sprintf_function mulle_sprintf_fp_dtoa_a_functions = {
 #endif
 
 
-#ifdef NO_MULLE__DTOA
+#ifdef NO_MULLE__DTOSTR
 static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
                                            struct mulle_sprintf_formatconversioninfo *info,
                                            struct mulle_sprintf_argumentarray *arguments,
@@ -752,16 +752,16 @@ static struct mulle_sprintf_function     mulle_sprintf_fp_functions =
 
 void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables)
 {
-#ifndef NO_MULLE__DTOA
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_a_functions, 'a');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_functions, 'e');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_f_functions, 'f');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_g_functions, 'g');
+#ifndef NO_MULLE__DTOSTR
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_a_functions, 'a');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions, 'e');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_f_functions, 'f');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_g_functions, 'g');
 
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_a_functions, 'A');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_functions, 'E');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_f_functions, 'F');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtoa_g_functions, 'G');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_a_functions, 'A');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions, 'E');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_f_functions, 'F');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_g_functions, 'G');
 #else
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'a');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_functions, 'e');
