@@ -1,6 +1,6 @@
 {
    "name" : "mulle-sprintf",
-   "version" : "3.2.3",
+   "version" : "3.3.0",
    "description" : "🔢 An extensible sprintf function supporting stdarg and mulle-vararg",
    "keywords" : [],
    "license" : "BSD-3-Clause",
@@ -22,8 +22,6 @@
       "src/functions/mulle-sprintf-string.h",
       "src/generic/include-private.h",
       "src/generic/include.h",
-      "src/mulle-dtoa/mulle-dtoa.c",
-      "src/mulle-dtoa/mulle-dtoa.h",
       "src/mulle-sprintf-function.c",
       "src/mulle-sprintf-function.h",
       "src/mulle-sprintf-standalone.c",
@@ -37,6 +35,7 @@
       "mulle-c/mulle-buffer": "*",
       "mulle-c/mulle-utf": "*",
       "mulle-c/mulle-vararg": "*",
-      "mulle-concurrent/mulle-thread": "*"
+      "mulle-concurrent/mulle-thread": "*",
+      "mulle-core/mulle-dtostr": "*"
    }
 }

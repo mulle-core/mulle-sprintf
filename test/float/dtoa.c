@@ -2,7 +2,7 @@
 #include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
-
+#include <math.h>
 
 int  main()
 {
@@ -136,7 +136,7 @@ int  main()
       printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), (char *) mulle_buffer_get_bytes( buffer));
       mulle_buffer_reset( buffer);
 
-      mulle_buffer_sprintf( buffer, "%f", 0.0/0.0);
+      mulle_buffer_sprintf( buffer, "%f", -NAN);
       printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), (char *) mulle_buffer_get_bytes( buffer));
       mulle_buffer_reset( buffer);
    }

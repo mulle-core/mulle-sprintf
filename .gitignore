@@ -49,3 +49,9 @@ vgcore.*
 *.test.*
 dox/API_SPRINTF.html
 test/include.h
+test*/**/*.test.*
+/*.md
+!/AGENTS.md
+!/README.md
+build-*/
+*.new
