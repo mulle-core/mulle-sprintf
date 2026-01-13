@@ -11,14 +11,15 @@ pain.
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
 arguments.
 
-Floating point conversion is done by [mulle-dtoa](https://github.com/mulle-core/mulle-dtoa), but fallback to C library FP can be used with `NO_MULLE__DTOA`.
+Floating point conversion is done by [mulle-dtoa](https://github.com/mulle-core/mulle-dtoa),
+but fallback to C library FP can be used with `NO_MULLE__DTOA`.
 
 
 
 
 | Release Version                                       | Release Notes  | AI Documentation
 |-------------------------------------------------------|----------------|---------------
-| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg)](//github.com/mulle-core/mulle-sprintf/actions)| [RELEASENOTES](RELEASENOTES.md) | [DeepWiki for mulle-sprintf](https://deepwiki.com/mulle-core/mulle-sprintf)
+| ![Mulle kybernetiK tag](https://img.shields.io/github/tag/mulle-core/mulle-sprintf.svg) [![Build Status](https://github.com/mulle-core/mulle-sprintf/workflows/CI/badge.svg)](//github.com/mulle-core/mulle-sprintf/actions) | [RELEASENOTES](RELEASENOTES.md) | [DeepWiki for mulle-sprintf](https://deepwiki.com/mulle-core/mulle-sprintf)
 
 
 ## API
@@ -200,6 +201,7 @@ Install the requirements:
 | [mulle-utf](https://github.com/mulle-c/mulle-utf)             | 🔤 UTF8-16-32 analysis and manipulation library
 | [mulle-vararg](https://github.com/mulle-c/mulle-vararg)             | ⏪ Access variable arguments in struct layout fashion in C
 | [mulle-thread](https://github.com/mulle-concurrent/mulle-thread)             | 🔠 Cross-platform thread/mutex/tss/atomic operations in C
+| [mulle-dtostr](https://github.com/mulle-core/mulle-dtostr)             | 🧶 Double to string conversion
 
 Download the latest [tar](https://github.com/mulle-core/mulle-sprintf/archive/refs/tags/latest.tar.gz) or [zip](https://github.com/mulle-core/mulle-sprintf/archive/refs/tags/latest.zip) archive and unpack it.
 
