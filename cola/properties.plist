@@ -44,24 +44,13 @@
          repo="mulle-thread";
          url="https://github.com/mulle-concurrent/mulle-thread";
          user="mulle-concurrent";
-      }
-   );
-   embedded =
-   (
-      {
-         description="A C implementation of the Schubfach algorithm - fast and accurate conversion";
-         domain="github";
-         name="src/mulle-dtoa/mulle-dtoa.h";
-         repo="mulle-dtoa";
-         url="https://raw.githubusercontent.com/mulle-core/mulle-dtoa";
-         user="mulle-core";
       },
       {
-         description="A C implementation of the Schubfach algorithm - fast and accurate conversion";
+         description="🧶 Double to string conversion";
          domain="github";
-         name="src/mulle-dtoa/mulle-dtoa.c";
-         repo="mulle-dtoa";
-         url="https://raw.githubusercontent.com/mulle-core/mulle-dtoa";
+         name="mulle-dtostr";
+         repo="mulle-dtostr";
+         url="https://github.com/mulle-core/mulle-dtostr";
          user="mulle-core";
       }
    );
