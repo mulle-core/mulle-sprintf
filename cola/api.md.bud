@@ -91,10 +91,21 @@ leading minus sign.
 | Character | Description
 |-----------|---------------
 | `c`       | single character
-| `C`       | wide character (utf16 with `h`, utf32 with `l`)
+| `C`       | wide character (utf16 with `h`, utf32 default, wchar_t with `l`)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
 | `s`       | char * as utf8 (alternate form `#s`: escaped for C String)
-| `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
+| `S`       | wide string (utf16 with `h`, utf32 default, wchar_t with `l`, utf8 with `hh`)
+
+**Note on %C and %lC:**
+- `%C` (no modifier): uint32_t value (explicit UTF-32 codepoint)
+- `%lC` (l modifier): wint_t value (platform-dependent: 16-bit on Windows, 32-bit on Linux)
+- `%hC` (h modifier): uint16_t value (explicit UTF-16 code unit)
+
+**Note on %S and %lS:**
+- `%S` (no modifier): utf32_t * string (explicit UTF-32)
+- `%lS` (l modifier): wchar_t * string (platform-dependent: UTF-16 on Windows, UTF-32 on Linux)
+- `%hS` (h modifier): utf16_t * string (explicit UTF-16)
+- `%hhS` (hh modifier): char * string as UTF-8
 
 Used modifiers: `hl`

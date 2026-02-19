@@ -248,9 +248,9 @@ static int
       return( _mulle_sprintf_utf16_conversion( buffer, info, (mulle_utf16_t *) v.pu16));
    }
    if( info->modifier[ 0] == 'l')
-      return( _mulle_sprintf_utf32_conversion( buffer, info, (mulle_utf32_t *) v.pu32));
+      return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
 #endif
-   return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
+   return( _mulle_sprintf_utf32_conversion( buffer, info, (mulle_utf32_t *) v.pu32));
 }
 
 
@@ -272,11 +272,11 @@ static mulle_sprintf_argumenttype_t
    if( info->modifier[ 0] == 'l')
    {
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_uint32_t_pointer_argumenttype);
+      return( mulle_sprintf_wchar_pointer_argumenttype);
    }
 #endif
    assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_wchar_pointer_argumenttype);
+   return( mulle_sprintf_uint32_t_pointer_argumenttype);
 }
 
 
