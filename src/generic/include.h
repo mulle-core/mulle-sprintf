@@ -21,17 +21,16 @@
 
 #include "_mulle-sprintf-include.h"
 
-#ifdef MULLE__SPRINTF_BUILD
-# define MULLE__SPRINTF_GLOBAL    MULLE_C_GLOBAL
-//# warning "MULLE__SPRINTF_GLOBAL is MULLE_C_GLOBAL"
+#if defined( MULLE__SPRINTF_BUILD) || defined( MULLE__CORE_BUILD)
+# define MULLE__SPRINTF_GLOBAL      MULLE_C_GLOBAL
+# define MULLE__SPRINTF_GLOBAL_VAR  MULLE_C_GLOBAL_VAR
 #else
 # if defined( MULLE_SPRINTF_INCLUDE_DYNAMIC) || (defined( MULLE_INCLUDE_DYNAMIC) && ! defined( MULLE_SPRINTF_INCLUDE_STATIC))
-#  define MULLE__SPRINTF_GLOBAL   MULLE_C_EXTERN_GLOBAL
-//#  warning "MULLE__SPRINTF_GLOBAL is MULLE_C_EXTERN_GLOBAL"
+#  define MULLE__SPRINTF_GLOBAL     MULLE_C_EXTERN_GLOBAL
 # else
-#  define MULLE__SPRINTF_GLOBAL   extern
-//#  warning "MULLE__SPRINTF_GLOBAL is extern"
+#  define MULLE__SPRINTF_GLOBAL     extern
 # endif
+# define MULLE__SPRINTF_GLOBAL_VAR
 #endif
 
 
