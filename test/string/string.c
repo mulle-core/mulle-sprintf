@@ -107,11 +107,9 @@ static void   simple_long_test()
 
 static void   simple_wchar_test()
 {
-   wchar_t   test_string[] = { 'V', 'f', 'L', 0 };
-
    mulle_buffer_do( buffer)
    {
-      mulle_buffer_sprintf( buffer, "|%ls|\n", test_string);
+      mulle_buffer_sprintf( buffer, "|%ls|\n", L"VfL");
       mulle_buffer_make_string( buffer);
       printf( "%s", (char *) mulle_buffer_get_bytes( buffer));
    }
