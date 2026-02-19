@@ -166,6 +166,7 @@ static void   free_storage( void)
 }
 
 
+MULLE__SPRINTF_GLOBAL_VAR
 struct mulle_sprintf_config    mulle_sprintf_config =
 {
    (mulle_thread_tss_t) -1,

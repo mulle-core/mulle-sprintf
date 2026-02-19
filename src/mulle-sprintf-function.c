@@ -70,35 +70,36 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( size_t),           // mulle_sprintf_signed_size_t_argumenttype (unused)
    SIZEOF( size_t),
    SIZEOF( size_t *),
-   SIZEOF( uint64_t),
+   SIZEOF( int32_t),
 
+   SIZEOF( uint64_t),
    SIZEOF( uint64_t *),      // mulle_sprintf_uint64_t_pointer_argumenttype
    SIZEOF( uintmax_t),
    SIZEOF( uintmax_t *),
-   SIZEOF( unsigned char),
 
+   SIZEOF( unsigned char),
    SIZEOF( unsigned char *), // mulle_sprintf_unsigned_char_pointer_argumenttype
    SIZEOF( unsigned int),
    SIZEOF( unsigned int *),
-   SIZEOF( unsigned long),
 
+   SIZEOF( unsigned long),
    SIZEOF( unsigned long long), // mulle_sprintf_unsigned_long_long_argumenttype
    SIZEOF( unsigned long long *),
    SIZEOF( unsigned long *),
-   SIZEOF( unsigned MULLE_SPRINTF_PTRDIFF_TYPE),
 
+   SIZEOF( unsigned MULLE_SPRINTF_PTRDIFF_TYPE),
    SIZEOF( unsigned MULLE_SPRINTF_PTRDIFF_TYPE *), // mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype
    SIZEOF( unsigned short),
    SIZEOF( unsigned short *),
-   0,    // vector
 
+   0,    // vector
    0,    // void                 // mulle_sprintf_void_argumenttype
    SIZEOF( void *),
    SIZEOF( wchar_t *),
+
    SIZEOF( uint16_t *),
    SIZEOF( uint32_t *),
    SIZEOF( wint_t),
-
    SIZEOF( struct _NSDecimal *)  // mulle_sprintf_NSDecimal_pointer_argumenttype
 };
 
@@ -141,6 +142,7 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_size_t_argumenttype                 : p->St   = va_arg( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = va_arg( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
+      case mulle_sprintf_int32_t_argumenttype                : p->i32  = va_arg( va, int32_t); break;
       case mulle_sprintf_uint64_t_argumenttype               : p->Qt   = va_arg( va, uint64_t); break;
       case mulle_sprintf_uint64_t_pointer_argumenttype       : p->pQt  = va_arg( va, uint64_t *); break;
       case mulle_sprintf_uintmax_t_argumenttype              : p->Imt  = va_arg( va, uintmax_t); break;
@@ -205,6 +207,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
       case mulle_sprintf_size_t_argumenttype                 : p->St   = mulle_vararg_next_integer( va, size_t); break;
       case mulle_sprintf_size_t_pointer_argumenttype         : p->pSt  = mulle_vararg_next_pointer( va, size_t *); break;
          //case mulle_sprintf_sse_argumenttype             : p->char = va_arg( va, char); break;
+      case mulle_sprintf_int32_t_argumenttype                : p->i32  = mulle_vararg_next_integer( va, int32_t); break;
       case mulle_sprintf_uint64_t_argumenttype               : p->Qt   = mulle_vararg_next_integer( va, uint64_t); break;
       case mulle_sprintf_uint64_t_pointer_argumenttype       : p->pQt  = mulle_vararg_next_pointer( va, uint64_t *); break;
       case mulle_sprintf_uintmax_t_argumenttype              : p->Imt  = mulle_vararg_next_integer( va, uintmax_t); break;
@@ -235,7 +238,7 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
 }
 
 
-void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
+
 void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table)
 {
    // ' ' && c <= '~'
@@ -253,7 +256,6 @@ void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_
 }
 
 
-void  _mulle_sprintf_dump_available_defaultconversion_characters( void);
 void  _mulle_sprintf_dump_available_defaultconversion_characters( void)
 {
    _mulle_sprintf_dump_available_conversion_characters( mulle_sprintf_get_defaultconversion());

@@ -1,4 +1,5 @@
 # mulle-sprintf Library Documentation for AI
+<!-- Keywords: sprintf, formatting -->
 
 ## 1. Introduction & Purpose
 

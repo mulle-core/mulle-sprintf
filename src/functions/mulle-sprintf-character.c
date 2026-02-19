@@ -43,6 +43,11 @@
 
 #include <stddef.h>
 
+// Forward declaration
+static inline int   _utf32_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_buffer *buffer,
+                                            unsigned int c);
+
 static inline int   _char_string_conversion( struct mulle_buffer *buffer,
                                              struct mulle_sprintf_formatconversioninfo *info,
                                              char c)
@@ -78,14 +83,9 @@ static int   _mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
 
 static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                                   struct mulle_buffer *buffer,
-                                                  wint_t c)
+                                                  int32_t c)
 {
-   wchar_t   s[ 2];
-
-   s[ 0] = c;
-   s[ 1] = 0;
-
-   return( _mulle_sprintf_wcharstring_conversion( buffer, info, s));
+   return( _utf32_char_conversion( info, buffer, c));
 }
 
 
@@ -131,7 +131,7 @@ static int   _mulle_sprintf_wide_character_conversion( struct mulle_buffer *buff
       return( _utf16_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
    if( info->modifier[ 0] == 'l')
       return( _utf32_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
-   return( _wide_char_string_conversion( info, buffer, v.wc));
+   return( _wide_char_string_conversion( info, buffer, v.i32));
 }
 
 
@@ -145,10 +145,10 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widecharacter_argumenttyp
    if( info->modifier[ 0] == 'l')
    {
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from uint32_t
+      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from wint_t (platform)
    }
    assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_wint_t_argumenttype);
+   return( mulle_sprintf_int32_t_argumenttype);
 }
 
 

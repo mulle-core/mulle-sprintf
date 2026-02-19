@@ -113,34 +113,35 @@ enum
    mulle_sprintf_signed_size_t_argumenttype,  // unused (z is size_t and ssize_t)
    mulle_sprintf_size_t_argumenttype,
    mulle_sprintf_size_t_pointer_argumenttype,
-   mulle_sprintf_uint64_t_argumenttype,
+   mulle_sprintf_int32_t_argumenttype,
 
-   mulle_sprintf_uint64_t_pointer_argumenttype,           // 16
+   mulle_sprintf_uint64_t_argumenttype,                   // 16
+   mulle_sprintf_uint64_t_pointer_argumenttype,
    mulle_sprintf_uintmax_t_argumenttype,
    mulle_sprintf_uintmax_t_pointer_argumenttype,
-   mulle_sprintf_unsigned_char_argumenttype,
 
-   mulle_sprintf_unsigned_char_pointer_argumenttype,      // 20
+   mulle_sprintf_unsigned_char_argumenttype,              // 20
+   mulle_sprintf_unsigned_char_pointer_argumenttype,
    mulle_sprintf_unsigned_int_argumenttype,
    mulle_sprintf_unsigned_int_pointer_argumenttype,
-   mulle_sprintf_unsigned_long_argumenttype,
 
-   mulle_sprintf_unsigned_long_long_argumenttype,         // 24
+   mulle_sprintf_unsigned_long_argumenttype,              // 24
+   mulle_sprintf_unsigned_long_long_argumenttype,
    mulle_sprintf_unsigned_long_long_pointer_argumenttype,
    mulle_sprintf_unsigned_long_pointer_argumenttype,
-   mulle_sprintf_unsigned_ptrdiff_t_argumenttype,
 
-   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype, // 28
+   mulle_sprintf_unsigned_ptrdiff_t_argumenttype,         // 28
+   mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype,
    mulle_sprintf_unsigned_short_argumenttype,
    mulle_sprintf_unsigned_short_pointer_argumenttype,
-   mulle_sprintf_vector_argumenttype,
 
-   mulle_sprintf_void_argumenttype,                       // 32
+   mulle_sprintf_vector_argumenttype,                     // 32
+   mulle_sprintf_void_argumenttype,
    mulle_sprintf_void_pointer_argumenttype,
    mulle_sprintf_wchar_pointer_argumenttype,
-   mulle_sprintf_wint_t_argumenttype,
 
-   mulle_sprintf_uint16_t_pointer_argumenttype,          // 36
+   mulle_sprintf_wint_t_argumenttype,                     // 36
+   mulle_sprintf_uint16_t_pointer_argumenttype,
    mulle_sprintf_uint32_t_pointer_argumenttype,
 
    // ugliness ensues...
@@ -184,6 +185,9 @@ typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 #endif 
 
 
+// MEMO: if you change this you MUST also change
+//       unsigned char   mulle_sprintf_argumentsize[] =
+
 union mulle_sprintf_argumentvalue
 {
    int                 i;
@@ -201,6 +205,7 @@ union mulle_sprintf_argumentvalue
    ssize_t             sSt;
    size_t              St;
    size_t              *pSt;
+   int32_t             i32;
    uint64_t            Qt;
    uint64_t            *pQt;
    uintmax_t           Imt;
@@ -320,6 +325,12 @@ int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion 
 
 MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_default_modifiers_on_load( void);
+
+MULLE__SPRINTF_GLOBAL
+void  _mulle_sprintf_dump_available_conversion_characters( struct mulle_sprintf_conversion *table);
+
+MULLE__SPRINTF_GLOBAL
+void  _mulle_sprintf_dump_available_defaultconversion_characters( void);
 
 
 #endif

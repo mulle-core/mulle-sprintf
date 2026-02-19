@@ -6,6 +6,7 @@
    "license" : "BSD-3-Clause",
    "repo" : "mulle-core/mulle-sprintf",
    "src" : [
+      "asset/dox/TOC.md",
       "src/functions/mulle-sprintf-character.c",
       "src/functions/mulle-sprintf-character.h",
       "src/functions/mulle-sprintf-escape.c",
