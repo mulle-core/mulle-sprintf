@@ -101,32 +101,32 @@ static void   test( mulle_utf32_t *test_string)
 
    printf( "   |          1         2         3         4         |\n");
    printf( "   |01234567890123456789012345678901234567890123456789|\n");
-   mulle_sprintf( buf, "%lS", test_string);
+   mulle_sprintf( buf, "%S", test_string);
    printf( "p: |%s|\n", buf);
 
    len = mulle_utf32_strlen( test_string);
    for( i = 0; i <= len; i++)
    {
-      mulle_sprintf( buf, "%.*lS", i, test_string);
-      printf( "p: |%s|  # %%.%dlS\n", buf, i);
+      mulle_sprintf( buf, "%.*S", i, test_string);
+      printf( "p: |%s|  # %%.%dS\n", buf, i);
    }
 
-   mulle_sprintf( buf, "%.50lS", test_string);
+   mulle_sprintf( buf, "%.50S", test_string);
    printf( "p: |%s|\n", buf);
 
-   mulle_sprintf( buf, "%50lS", test_string);
+   mulle_sprintf( buf, "%50S", test_string);
    printf( "p: |%s|\n", buf);
 
-   mulle_sprintf( buf, "%50.50lS", test_string);
+   mulle_sprintf( buf, "%50.50S", test_string);
    printf( "p: |%s|\n", buf);
 
-   mulle_sprintf( buf, "%.*lS", 50, test_string);
+   mulle_sprintf( buf, "%.*S", 50, test_string);
    printf( "p: |%s|\n", buf);
 
-   mulle_sprintf( buf, "%*lS", 50, test_string);
+   mulle_sprintf( buf, "%*S", 50, test_string);
    printf( "p: |%s|\n", buf);
 
-   mulle_sprintf( buf, "%*.*lS", 50, 50, test_string);
+   mulle_sprintf( buf, "%*.*S", 50, 50, test_string);
    printf( "p: |%s|\n", buf);
 
    printf( "\n");

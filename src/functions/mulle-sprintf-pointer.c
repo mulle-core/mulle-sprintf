@@ -62,7 +62,7 @@ static int  _mulle_sprintf_pointer_conversion( struct mulle_buffer *buffer,
                                                int argc)
 {
    info->memory.hash_found = 1;
-   return( _mulle_sprintf_long_hex_conversion( buffer, info, arguments, argc));
+   return( _mulle_sprintf_int_hex_conversion( buffer, info, arguments, argc));
 }
 
 
