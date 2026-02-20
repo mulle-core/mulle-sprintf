@@ -455,6 +455,17 @@ static integer_converters  hex_converters =
 };
 
 
+
+int  _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
+                                        struct mulle_sprintf_formatconversioninfo *info,
+                                        struct mulle_sprintf_argumentarray *arguments,
+                                        int argc)
+{
+   return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
+}
+
+
+
 static char   *convert_hex_upper_unsigned_int( unsigned int value,
                                              char *s)
 {
@@ -497,16 +508,15 @@ static integer_converters  hex_upper_converters =
    .set_prefix                        = set_hex_prefix
 };
 
-
-
-static int
-   _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
-                                      struct mulle_sprintf_formatconversioninfo *info,
-                                      struct mulle_sprintf_argumentarray *arguments,
-                                      int argc)
+int
+   _mulle_sprintf_int_upper_hex_conversion( struct mulle_buffer *buffer,
+                                            struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_sprintf_argumentarray *arguments,
+                                            int argc)
 {
-   return( integer_conversion( info, buffer, arguments, argc, &hex_converters, 0));
+   return( integer_conversion( info, buffer, arguments, argc, &hex_upper_converters, 0));
 }
+
 
 
 #pragma mark - long conversions
@@ -545,16 +555,6 @@ static int
 }
 
 #endif
-
-
-int
-   _mulle_sprintf_long_hex_conversion( struct mulle_buffer *buffer,
-                                       struct mulle_sprintf_formatconversioninfo *info,
-                                       struct mulle_sprintf_argumentarray *arguments,
-                                       int argc)
-{
-   return( integer_conversion( info, buffer, arguments, argc, &hex_upper_converters, 0));
-}
 
 
 
@@ -671,14 +671,15 @@ static struct mulle_sprintf_function   mulle_sprintf_int_hex_functions =
 };
 
 
-static struct mulle_sprintf_function   mulle_sprintf_long_hex_functions =
+static struct mulle_sprintf_function   mulle_sprintf_int_upper_hex_functions =
 {
    mulle_sprintf_get_unsigned_int_argumenttype,
-   _mulle_sprintf_long_hex_conversion
+   _mulle_sprintf_int_upper_hex_conversion
 };
 
 
 #if HAVE_DEPRECATED_INT_LONG_CONVERSIONS
+
 
 static struct mulle_sprintf_function     mulle_sprintf_long_octal_functions =
 {
@@ -712,7 +713,7 @@ void   mulle_sprintf_register_integer_functions( struct mulle_sprintf_conversion
    mulle_sprintf_register_functions( tables, &mulle_sprintf_int_octal_functions, 'o');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_int_hex_functions, 'x');
 
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_long_hex_functions, 'X');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_int_upper_hex_functions, 'X');
 
 #if HAVE_DEPRECATED_INT_LONG_CONVERSIONS
    mulle_sprintf_register_functions( tables, &mulle_sprintf_long_decimal_functions, 'D');

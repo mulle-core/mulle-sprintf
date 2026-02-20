@@ -10,17 +10,19 @@ static void   simple_pointer_test()
    struct mulle_buffer   *buffer;
    void                  *pointer;
 
-   buffer = mulle_buffer_create( NULL);
+   mulle_buffer_do( buffer)
+   {
+      mulle_buffer_sprintf( buffer, "%p", (void *) 0x1234FEAD); // some pointer
+      sscanf( mulle_buffer_get_string( buffer), "%p", &pointer);
 
-   mulle_buffer_sprintf( buffer, "%p", (void *) 0x12345678); // some pointer
-   mulle_buffer_add_byte( buffer, 0);
-   sscanf( mulle_buffer_get_bytes( buffer), "%p", &pointer);
-   mulle_buffer_reset( buffer);
+      if( pointer != (void *) 0x1234FEAD)
+      {
+         fprintf( stderr, "pointer mismatch\n");
+         exit( 1);
+      }
 
-   if( pointer != (void *) 0x12345678)
-      printf( "pointer mismatch\n");
-
-   mulle_buffer_destroy( buffer);
+      printf( "%.*s\n", (int) mulle_buffer_get_length( buffer), mulle_buffer_get_string( buffer));
+   }
 }
 
 
