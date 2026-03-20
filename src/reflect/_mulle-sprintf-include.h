@@ -22,7 +22,7 @@
 //    remove #include: `mulle-sde dependency mark mulle-buffer no-header`
 //    rename              : `mulle-sde dependency|library set mulle-buffer include whatever.h`
 //    reorder             : `mulle-sde dependency move mulle-buffer <up|down>`
-//    toggle #include: `mulle-sde dependency mark mulle-buffer [no-]import`
+//    toggle objc         : `mulle-sde dependency mark mulle-buffer [no-]import`
 //    toggle public       : `mulle-sde dependency mark mulle-buffer [no-]public`
 //    toggle optional     : `mulle-sde dependency mark mulle-buffer [no-]require`
 //    remove for platform : `mulle-sde dependency mark mulle-buffer no-platform-<uname>`
@@ -37,7 +37,7 @@
 //    remove #include: `mulle-sde dependency mark mulle-utf no-header`
 //    rename              : `mulle-sde dependency|library set mulle-utf include whatever.h`
 //    reorder             : `mulle-sde dependency move mulle-utf <up|down>`
-//    toggle #include: `mulle-sde dependency mark mulle-utf [no-]import`
+//    toggle objc         : `mulle-sde dependency mark mulle-utf [no-]import`
 //    toggle public       : `mulle-sde dependency mark mulle-utf [no-]public`
 //    toggle optional     : `mulle-sde dependency mark mulle-utf [no-]require`
 //    remove for platform : `mulle-sde dependency mark mulle-utf no-platform-<uname>`
@@ -52,7 +52,7 @@
 //    remove #include: `mulle-sde dependency mark mulle-vararg no-header`
 //    rename              : `mulle-sde dependency|library set mulle-vararg include whatever.h`
 //    reorder             : `mulle-sde dependency move mulle-vararg <up|down>`
-//    toggle #include: `mulle-sde dependency mark mulle-vararg [no-]import`
+//    toggle objc         : `mulle-sde dependency mark mulle-vararg [no-]import`
 //    toggle public       : `mulle-sde dependency mark mulle-vararg [no-]public`
 //    toggle optional     : `mulle-sde dependency mark mulle-vararg [no-]require`
 //    remove for platform : `mulle-sde dependency mark mulle-vararg no-platform-<uname>`
@@ -67,7 +67,7 @@
 //    remove #include: `mulle-sde dependency mark mulle-thread no-header`
 //    rename              : `mulle-sde dependency|library set mulle-thread include whatever.h`
 //    reorder             : `mulle-sde dependency move mulle-thread <up|down>`
-//    toggle #include: `mulle-sde dependency mark mulle-thread [no-]import`
+//    toggle objc         : `mulle-sde dependency mark mulle-thread [no-]import`
 //    toggle public       : `mulle-sde dependency mark mulle-thread [no-]public`
 //    toggle optional     : `mulle-sde dependency mark mulle-thread [no-]require`
 //    remove for platform : `mulle-sde dependency mark mulle-thread no-platform-<uname>`
@@ -82,7 +82,7 @@
 //    remove #include: `mulle-sde dependency mark mulle-dtostr no-header`
 //    rename              : `mulle-sde dependency|library set mulle-dtostr include whatever.h`
 //    reorder             : `mulle-sde dependency move mulle-dtostr <up|down>`
-//    toggle #include: `mulle-sde dependency mark mulle-dtostr [no-]import`
+//    toggle objc         : `mulle-sde dependency mark mulle-dtostr [no-]import`
 //    toggle public       : `mulle-sde dependency mark mulle-dtostr [no-]public`
 //    toggle optional     : `mulle-sde dependency mark mulle-dtostr [no-]require`
 //    remove for platform : `mulle-sde dependency mark mulle-dtostr no-platform-<uname>`

@@ -237,6 +237,7 @@ static inline void    mulle_sprintf_free_storage( void)
 #include "mulle-sprintf-integer.h"
 #include "mulle-sprintf-pointer.h"
 #include "mulle-sprintf-return.h"
+#include "mulle-sscanf.h"
 #include "mulle-sprintf-string.h"
 
 #ifdef __has_include

@@ -59,5 +59,6 @@ src/functions/mulle-sprintf-return.h
 src/functions/mulle-sprintf-string.h
 src/mulle-sprintf-function.h
 src/mulle-sprintf.h
+src/mulle-sscanf.h
 )
 

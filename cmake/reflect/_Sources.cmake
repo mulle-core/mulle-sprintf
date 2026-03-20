@@ -20,6 +20,7 @@ src/functions/mulle-sprintf-return.c
 src/functions/mulle-sprintf-string.c
 src/mulle-sprintf.c
 src/mulle-sprintf-function.c
+src/mulle-sscanf.c
 )
 
 #

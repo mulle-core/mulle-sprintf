@@ -13,7 +13,7 @@ static void   simple_pointer_test()
    mulle_buffer_do( buffer)
    {
       mulle_buffer_sprintf( buffer, "%p", (void *) 0x1234FEAD); // some pointer
-      sscanf( mulle_buffer_get_string( buffer), "%p", &pointer);
+      mulle_sscanf( mulle_buffer_get_string( buffer), "%p", &pointer);
 
       if( pointer != (void *) 0x1234FEAD)
       {
