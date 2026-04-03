@@ -1,7 +1,7 @@
 The extensibility is used in **MulleObjCStandardFoundation** to add object
 conversion (%@) and to print BOOL values as 'YES', 'NO' (%bd).
 
-Supports non-standard UTF32 (%lS) and UTF16 (%hS) output. No more `wchar_t`
+Supports explicit UTF-32 (%S, %lS) and UTF-16 (%hS) output. No more `wchar_t`
 pain.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
