@@ -169,6 +169,9 @@ typedef unsigned char   mulle_sprintf_conversioncharacter_t;
 // https://github.com/vlm/asn1c/issues/159
 #ifndef SSIZE_T
 # ifdef _MSC_VER
+#  ifndef MULLE_BOOL_DEFINED
+#   error "you need to include <mulle-c11/mulle-c11-bool.h> before including <windows.h>"
+#  endif
 #  include <windows.h>
    typedef SSIZE_T ssize_t;
 # else

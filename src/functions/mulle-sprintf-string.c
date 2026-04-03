@@ -232,10 +232,10 @@ int   _mulle_sprintf_wcharstring_conversion( struct mulle_buffer *buffer,
 
 
 static int
-   _mulle_sprintf_widestring_conversion( struct mulle_buffer *buffer,
-                                         struct mulle_sprintf_formatconversioninfo *info,
-                                         struct mulle_sprintf_argumentarray *arguments,
-                                         int argc)
+   _mulle_sprintf_uppercase_S_conversion( struct mulle_buffer *buffer,
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          struct mulle_sprintf_argumentarray *arguments,
+                                          int argc)
 {
    union mulle_sprintf_argumentvalue  v;
 
@@ -247,15 +247,31 @@ static int
          return( _mulle_sprintf_utf8_conversion( buffer, info, (char *) v.pC));
       return( _mulle_sprintf_utf16_conversion( buffer, info, (mulle_utf16_t *) v.pu16));
    }
-   if( info->modifier[ 0] == 'l')
-      return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
 #endif
+   // %S and %lS both use UTF-32
    return( _mulle_sprintf_utf32_conversion( buffer, info, (mulle_utf32_t *) v.pu32));
 }
 
 
+static int
+   _mulle_sprintf_lowercase_s_conversion( struct mulle_buffer *buffer,
+                                          struct mulle_sprintf_formatconversioninfo *info,
+                                          struct mulle_sprintf_argumentarray *arguments,
+                                          int argc)
+{
+   union mulle_sprintf_argumentvalue  v;
+
+   v = arguments->values[ argc];
+#ifdef HAVE_MULLE_UTF
+   if( info->modifier[ 0] == 'l')
+      return( _mulle_sprintf_wcharstring_conversion( buffer, info, v.pwc));
+#endif
+   return( _mulle_sprintf_charstring_conversion( buffer, info, v.pc));
+}
+
+
 static mulle_sprintf_argumenttype_t
-   mulle_sprintf_get_widestring_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+   mulle_sprintf_get_uppercase_S_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
 #ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'h')
@@ -269,22 +285,24 @@ static mulle_sprintf_argumenttype_t
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_uint16_t_pointer_argumenttype);
    }
+#endif
+   // %S and %lS both use UTF-32
+   return( mulle_sprintf_uint32_t_pointer_argumenttype);
+}
+
+
+static mulle_sprintf_argumenttype_t
+   mulle_sprintf_get_lowercase_s_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+{
+#ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
    {
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_wchar_pointer_argumenttype);
    }
 #endif
-   assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_uint32_t_pointer_argumenttype);
+   return( mulle_sprintf_char_pointer_argumenttype);
 }
-
-
-static struct mulle_sprintf_function     mulle_widestring_functions =
-{
-   mulle_sprintf_get_widestring_argumenttype,
-   _mulle_sprintf_widestring_conversion
-};
 
 #endif
 
@@ -348,52 +366,24 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   _mulle_sprintf_string_conversion( struct mulle_buffer *buffer,
-                                               struct mulle_sprintf_formatconversioninfo *info,
-                                               struct mulle_sprintf_argumentarray *arguments,
-                                               int argc)
+static struct mulle_sprintf_function     mulle_lowercase_s_functions =
 {
-   union mulle_sprintf_argumentvalue  v;
-   mulle_sprintf_argumenttype_t       t;
+   mulle_sprintf_get_lowercase_s_argumenttype,
+   _mulle_sprintf_lowercase_s_conversion
+};
 
-#ifdef HAVE_MULLE_UTF
-   t = arguments->types[ argc];
-   if( t == mulle_sprintf_wchar_pointer_argumenttype)
-      return( _mulle_sprintf_widestring_conversion( buffer, info, arguments, argc));
-#endif
-
-   v = arguments->values[ argc];
-   return( _mulle_sprintf_charstring_conversion( buffer, info, v.pc));
-}
-
-
-static mulle_sprintf_argumenttype_t
-   _mulle_sprintf_get_string_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static struct mulle_sprintf_function     mulle_uppercase_S_functions =
 {
-#ifdef HAVE_MULLE_UTF
-   if( info->modifier[ 0] == 'l')
-   {
-      assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_wchar_pointer_argumenttype);
-   }
-#endif
-   assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_char_pointer_argumenttype);
-}
-
-
-static struct mulle_sprintf_function     mulle_string_functions =
-{
-   _mulle_sprintf_get_string_argumenttype,
-   _mulle_sprintf_string_conversion
+   mulle_sprintf_get_uppercase_S_argumenttype,
+   _mulle_sprintf_uppercase_S_conversion
 };
 
 
 void  mulle_sprintf_register_string_functions( struct mulle_sprintf_conversion *tables)
 {
-   mulle_sprintf_register_functions( tables, &mulle_string_functions, 's');
+   mulle_sprintf_register_functions( tables, &mulle_lowercase_s_functions, 's');
 #ifdef HAVE_MULLE_UTF
-   mulle_sprintf_register_functions( tables, &mulle_widestring_functions, 'S');
+   mulle_sprintf_register_functions( tables, &mulle_uppercase_S_functions, 'S');
    mulle_sprintf_register_modifiers( tables, "hl");
 #endif
 }

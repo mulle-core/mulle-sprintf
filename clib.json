@@ -28,6 +28,8 @@
       "src/mulle-sprintf-standalone.c",
       "src/mulle-sprintf.c",
       "src/mulle-sprintf.h",
+      "src/mulle-sscanf.c",
+      "src/mulle-sscanf.h",
       "src/reflect/_mulle-sprintf-include-private.h",
       "src/reflect/_mulle-sprintf-include.h",
       "src/reflect/_mulle-sprintf-versioncheck.h"

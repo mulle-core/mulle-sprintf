@@ -65,21 +65,10 @@ static inline int   _char_string_conversion( struct mulle_buffer *buffer,
 }
 
 
-static int   _mulle_sprintf_character_conversion( struct mulle_buffer *buffer,
-                                                  struct mulle_sprintf_formatconversioninfo *info,
-                                                  struct mulle_sprintf_argumentarray *arguments,
-                                                  int argc)
-{
-   union mulle_sprintf_argumentvalue  v;
-
-   assert( buffer);
-   assert( info);
-   assert( arguments);
-
-   v = arguments->values[ argc];
-   return( _char_string_conversion( buffer, info, v.c));
-}
-
+static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                                  struct mulle_buffer *buffer,
+                                                  int32_t c)
+   __attribute__((unused));
 
 static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                                   struct mulle_buffer *buffer,
@@ -88,6 +77,11 @@ static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatcon
    return( _utf32_char_conversion( info, buffer, c));
 }
 
+
+static inline int   _utf16_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
+                                            struct mulle_buffer *buffer,
+                                            unsigned int c)
+   __attribute__((unused));
 
 static inline int   _utf16_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                             struct mulle_buffer *buffer,
@@ -115,10 +109,10 @@ static inline int   _utf32_char_conversion( struct mulle_sprintf_formatconversio
 }
 
 
-static int   _mulle_sprintf_wide_character_conversion( struct mulle_buffer *buffer,
-                                                       struct mulle_sprintf_formatconversioninfo *info ,
-                                                       struct mulle_sprintf_argumentarray *arguments,
-                                                       int argc)
+static int   _mulle_sprintf_lowercase_c_conversion( struct mulle_buffer *buffer,
+                                                    struct mulle_sprintf_formatconversioninfo *info,
+                                                    struct mulle_sprintf_argumentarray *arguments,
+                                                    int argc)
 {
    union mulle_sprintf_argumentvalue  v;
 
@@ -127,62 +121,81 @@ static int   _mulle_sprintf_wide_character_conversion( struct mulle_buffer *buff
    assert( arguments);
 
    v = arguments->values[ argc];
-   if( info->modifier[ 0] == 'h')
-      return( _utf16_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
+#ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
-      return( _utf32_char_conversion( info, buffer, v.I));  // conversion to int from uint16_t
-   return( _wide_char_string_conversion( info, buffer, v.i32));
+      return( _wide_char_string_conversion( info, buffer, v.i32));
+#endif
+   return( _char_string_conversion( buffer, info, v.c));
 }
 
 
-static mulle_sprintf_argumenttype_t  mulle_sprintf_get_widecharacter_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static int   _mulle_sprintf_uppercase_C_conversion( struct mulle_buffer *buffer,
+                                                    struct mulle_sprintf_formatconversioninfo *info ,
+                                                    struct mulle_sprintf_argumentarray *arguments,
+                                                    int argc)
 {
+   union mulle_sprintf_argumentvalue  v;
+
+   assert( buffer);
+   assert( info);
+   assert( arguments);
+
+   v = arguments->values[ argc];
+#ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'h')
-   {
-      assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from uint16_t
-   }
-   if( info->modifier[ 0] == 'l')
-   {
-      assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_int_argumenttype);  // conversion to int from wint_t (platform)
-   }
-   assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_int32_t_argumenttype);
+      return( _utf16_char_conversion( info, buffer, v.I));
+#endif
+   // %C and %lC both use UTF-32
+   return( _utf32_char_conversion( info, buffer, v.I));
 }
 
 
-static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_character_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_uppercase_C_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+#ifdef HAVE_MULLE_UTF
+   if( info->modifier[ 0] == 'h')
+   {
+      assert( info->modifier[ 1] == '\0');
+      return( mulle_sprintf_unsigned_int_argumenttype);
+   }
+#endif
+   // %C and %lC both use UTF-32
+   return( mulle_sprintf_unsigned_int_argumenttype);
+}
+
+
+static mulle_sprintf_argumenttype_t  mulle_sprintf_get_lowercase_c_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
+{
+#ifdef HAVE_MULLE_UTF
    if( info->modifier[ 0] == 'l')
    {
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_wint_t_argumenttype);
    }
-   assert( info->modifier[ 0] == '\0');
+#endif
    return( mulle_sprintf_char_argumenttype);
 }
 
 
-struct mulle_sprintf_function     mulle_sprintf_character_functions =
+struct mulle_sprintf_function     mulle_sprintf_lowercase_c_functions =
 {
-   _mulle_sprintf_get_character_argumenttype,
-   _mulle_sprintf_character_conversion
+   mulle_sprintf_get_lowercase_c_argumenttype,
+   _mulle_sprintf_lowercase_c_conversion
 };
 
 
-struct mulle_sprintf_function     mulle_sprintf_widecharacter_functions =
+struct mulle_sprintf_function     mulle_sprintf_uppercase_C_functions =
 {
-   mulle_sprintf_get_widecharacter_argumenttype,
-   _mulle_sprintf_wide_character_conversion
+   mulle_sprintf_get_uppercase_C_argumenttype,
+   _mulle_sprintf_uppercase_C_conversion
 };
 
 
 
 void  mulle_sprintf_register_character_functions( struct mulle_sprintf_conversion *tables)
 {
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_character_functions, 'c');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_widecharacter_functions, 'C');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_lowercase_c_functions, 'c');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_uppercase_C_functions, 'C');
    mulle_sprintf_register_modifiers( tables, "hl");
 }
 
