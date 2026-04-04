@@ -1,291 +1,203 @@
 # mulle-sprintf Library Documentation for AI
-<!-- Keywords: sprintf, formatting -->
-
+<!-- Keywords: sprintf, formatting, vararg, buffer, asprintf, utf, extensible -->
 ## 1. Introduction & Purpose
 
-mulle-sprintf is an extensible sprintf implementation that supports both stdarg and mulle-vararg style variable arguments. It provides drop-in replacements for standard sprintf functions with the ability to add custom format conversion specifiers. The library supports standard C format specifiers plus non-standard extensions like UTF-32 (%lS), UTF-16 (%hS), and Objective-C specific formats (%@ for objects, %b for BOOL). Floating-point conversions are delegated to the system sprintf for portability.
+- mulle-sprintf is an extensible, stdlib-compatible sprintf replacement written in C. It supports both C varargs (va_list) and mulle_vararg style arguments, custom conversion registration, and UTF8/16/32 string handling.
+- Solves: portable, extensible formatting (including Objective-C style %@ / BOOL as YES/NO via registration) and safe allocation variants (asprintf, allocator-backed asprintf, buffer-based printing).
+- Key features: mulle_snprintf/mulle_sprintf/mulle_asprintf, buffer-oriented printing, conversion-table extensibility, optional mulle-dtoa for FP.
 
 ## 2. Key Concepts & Design Philosophy
 
-- **Extensibility**: Format conversion table allows runtime registration of custom format handlers, enabling libraries like MulleObjCStandardFoundation to add domain-specific format specifiers
-- **Dual Argument Support**: Works with both traditional C varargs (va_list) and mulle's optimized vararg list format
-- **Buffer-First Design**: Core functions operate on mulle_buffer, providing safe, resizable output handling without requiring fixed-size output buffers
-- **Unicode Support**: Native support for UTF-32 and UTF-16 string output via format specifiers, eliminating wchar_t pain
-- **BOOL Printing**: Custom %b flag for Objective-C BOOL values (prints "YES"/"NO")
-- **Safe Overflow Handling**: Fixed-size wrapper functions (mulle_snprintf) safely handle buffer overflow with proper error reporting
+- Extensible conversion table: conversion characters map to function vectors and modifier tables (struct mulle_sprintf_conversion).
+- Argument handling: parses format into mulle_sprintf_formatconversioninfo, then fills an argument array (union mulle_sprintf_argumentvalue) to decouple parsing from conversion.
+- Safety/allocators: fixed-buffer helpers use an internal mulle_buffer; asprintf variants let caller choose the allocator.
+- Thread-awareness: configuration holds a TSS key for per-thread storage; registration of global defaults happens via provided register-on-load helpers.
 
 ## 3. Core API & Data Structures
 
-### mulle-sprintf.h - Core Functions
+This section highlights the public headers and the main symbols an AI should reference.
 
-#### Buffer-Based Sprintf Functions (Primary API)
+### 3.1. src/mulle-sprintf.h
 
-- `mulle_buffer_sprintf(buffer, format, ...)` → `int`: Printf-style formatting into mulle_buffer with variadic args
-- `mulle_buffer_vsprintf(buffer, format, va)` → `int`: Printf-style formatting with va_list
-- `_mulle_buffer_vsprintf(buffer, format, va, table)` → `int`: Printf-style formatting with custom conversion table
-- `mulle_buffer_mvsprintf(buffer, format, arguments)` → `int`: Printf-style formatting with mulle_vararg_list
-- `_mulle_buffer_mvsprintf(buffer, format, arguments, table)` → `int`: Printf-style formatting with mulle_vararg and custom table
+#### Overview
+- Primary entry points: buffer-based printing, fixed-buffer convenience wrappers, asprintf/allocator-asprintf variants, and helper macros.
 
-#### Fixed-Buffer Sprintf Functions (Convenience API)
+#### Important symbols
+- Buffer APIs
+  - int mulle_buffer_sprintf(struct mulle_buffer *buffer, char *format, ...);
+  - int mulle_buffer_vsprintf(struct mulle_buffer *buffer, char *format, va_list va);
+  - int _mulle_buffer_vsprintf(struct mulle_buffer *buffer, char *format, va_list va, struct mulle_sprintf_conversion *table);
+  - int mulle_buffer_mvsprintf(struct mulle_buffer *buffer, char *format, mulle_vararg_list va);
+  - int _mulle_buffer_mvsprintf(..., struct mulle_sprintf_conversion *table);
 
-- `mulle_snprintf(buf, size, format, ...)` → `int`: Safe fixed-buffer sprintf (returns -1 on overflow, always null-terminates)
-- `mulle_vsnprintf(buf, size, format, va)` → `int`: Safe fixed-buffer vsprintf
-- `mulle_mvsnprintf(buf, size, format, arguments)` → `int`: Safe fixed-buffer sprintf with mulle_vararg
+- Fixed-buffer / snprintf family
+  - int mulle_snprintf(char *buf, size_t size, char *format, ...);
+  - int mulle_vsnprintf(...);
+  - int mulle_mvsnprintf(...);
+  - Note: these return -1 on overflow and always append a '\0'.
 
-### mulle-sprintf-function.h - Format Conversion
+- Unsafe convenience
+  - int mulle_sprintf(char *buf, char *format, ...);
+  - static inline int mulle_vsprintf(char *buf, char *format, va_list va);
 
-#### struct mulle_sprintf_formatconversionflags
-- **Purpose**: Bit flags parsed from format string to control output behavior
-- **Key Fields**:
-  - `zero_found`: Pad with zeros (0 flag)
-  - `minus_found`: Left-justify (- flag)
-  - `space_found`: Space before positive numbers
-  - `hash_found`: Alternate form (# flag)
-  - `plus_found`: Always show sign
-  - `bool_found`: BOOL formatting (b flag)
-  - `width_found`: Width specifier present
-  - `precision_found`: Precision specifier present
-  - `left_justify`: Computed justification mode
+- asprintf family
+  - int mulle_asprintf(char **strp, char *format, ...);
+  - int mulle_vasprintf(char **strp, char *format, va_list ap);
+  - int mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
+  - allocator variants: mulle_allocator_asprintf(...)
+  - Strings are allocated with the chosen allocator; default requires mulle_free to free.
 
-#### struct mulle_sprintf_formatconversioninfo
-- **Purpose**: Parsed format conversion specification with all extracted parameters
-- **Usage**: Intermediate representation used by conversion handlers
+- Configuration & helpers
+  - struct mulle_sprintf_config (tss key, storage callbacks, defaultconversion)
+  - mulle_sprintf_get_config(), mulle_sprintf_get_defaultconversion(), mulle_sprintf_free_storage()
+  - Macro: mulle_sprintf_do(string, format, ...) — creates a temporary buffer-scoped string for the enclosing block.
 
-#### struct mulle_sprintf_conversion
-- **Purpose**: Format conversion table entry for custom format handlers
-- **Fields**: Conversion character, handler function pointer, context
-- **Usage**: Registered in conversion table for custom format specifiers
+### 3.2. src/mulle-sprintf-function.h
 
-### Format Specifiers Supported
+#### Key data structures
+- struct mulle_sprintf_formatconversionflags
+  - Bitflags parsed from the format (zero_found, minus_found, space_found, plus_found, hash_found, bool_found, width_found, precision_found, etc.).
 
-#### Standard C Format Characters
-- `d`, `i`: Decimal integers
-- `u`: Unsigned decimal
-- `o`: Octal
-- `x`, `X`: Hexadecimal (lowercase/uppercase)
-- `f`, `F`: Floating-point
-- `e`, `E`: Scientific notation
-- `g`, `G`: General format
-- `s`: C strings (char *)
-- `c`: Single character
-- `p`: Pointer (void *)
-- `%`: Literal percent
+- struct mulle_sprintf_formatconversioninfo
+  - Parsed conversion: width, precision, argv_index[], modifier[], conversion char, separator, argument index info.
 
-#### Non-Standard Extensions
-- `@`: Object pointer (Objective-C), requires custom conversion table
-- `lS`: UTF-32 string output (long string)
-- `hS`: UTF-16 string output (short string)
-- `b`: BOOL output as "YES"/"NO" (Objective-C flag)
+- union mulle_sprintf_argumentvalue
+  - Union of all supported argument representations (int, char, char*, double, intmax_t, long, long double, ptrdiff_t, object pointer, size_t, pointers, wchar_t*, etc.).
 
-#### Flag Characters
-- ` ` (space): Blank before positive number
-- `0`: Zero padding
-- `#`: Alternate form (0x for hex, 0 for octal)
-- `-`: Left justify
-- `+`: Always show sign
-- `'`: Thousands grouping (currently unused)
-- `b`: BOOL formatting
+- struct mulle_sprintf_argumentarray
+  - values + types + size. Helpers fill these from va_list or mulle_vararg_list via:
+    - mulle_mvsprintf_set_values(..., mulle_vararg_list va)
+    - mulle_vsprintf_set_values(..., va_list va)
+
+- struct mulle_sprintf_function
+  - determine_argument_type(info) -> argument type
+  - convert_argument(buffer, info, arguments, i) -> performs conversion into buffer
+
+- struct mulle_sprintf_conversion
+  - jumps (vector indexed by printable ascii), modifiers table — the central conversion dispatch table.
+
+#### Registration API
+- mulle_sprintf_register_functions(table, functions, c)
+- mulle_sprintf_register_default_functions(functions, c)
+- mulle_sprintf_register_modifier(table, c)
+- mulle_sprintf_register_modifiers(table, s)
+- mulle_sprintf_register_default_modifier(c)
+- mulle_sprintf_register_default_modifiers(s)
+- mulle_sprintf_register_standardmodifiers(table)
+- Debug: _mulle_sprintf_dump_available_conversion_characters(table), _mulle_sprintf_dump_available_defaultconversion_characters()
+
+### 3.3. src/mulle-sscanf.h
+
+- int mulle_sscanf(char const *str, char const *format, ...);
+- int mulle_vsscanf(char const *str, char const *format, va_list args);
+- sscanf-like parsing implemented to match the library's formatting conventions.
 
 ## 4. Performance Characteristics
 
-- **O(n) for output generation**: Linear in the length of formatted output
-- **Format parsing**: O(m) where m is the length of format string
-- **Buffer growth**: mulle_buffer automatically resizes; amortized O(1) append
-- **Conversion table lookup**: O(1) hash or O(m) linear search depending on table implementation
-- **Thread-Safety**: All functions operate on local va_list or mulle_vararg_list; no global state modified
-- **Memory**: No internal allocations beyond mulle_buffer (if used); fixed-buffer versions allocate internally only on error
+- Output generation: O(n) in length of produced output.
+- Format parsing: O(m) in length of format string; parsing is done once per formatted call.
+- Dispatch: O(1) per conversion character via an indexed vector table.
+- Memory: buffer-based APIs minimize reallocs (amortized O(1) append); asprintf does O(n) allocation.
+- Thread-safety: per-thread storage exists (TSS), but registering/modifying global conversion tables at runtime is not inherently thread-safe — perform registration at startup.
 
 ## 5. AI Usage Recommendations & Patterns
 
-### Best Practices
+- Best practices
+  - Use mulle_buffer_sprintf for efficient, repeated or streaming formatting.
+  - Use mulle_snprintf for bounded, stack-allocated buffers; check for negative return value (overflow).
+  - Use mulle_asprintf when a heap-allocated string is needed; free with the matching allocator (mulle_free for default allocator).
+  - For custom format specifiers, register conversion functions at init time via mulle_sprintf_register_functions and modifiers via mulle_sprintf_register_modifier.
+  - Prefer the provided setter helpers (mulle_vsprintf_set_values / mulle_mvsprintf_set_values) to populate argument arrays.
 
-- **Use Buffer API for Performance**: mulle_buffer_sprintf is more efficient than repeated mulle_snprintf calls
-- **Provide Conversion Table**: If using custom format specifiers, pass conversion table to _mulle_buffer_vsprintf variants
-- **Buffer Hints**: Pre-allocate mulle_buffer with expected size to minimize reallocations
-- **Error Checking**: Buffer functions return character count; check for negative return values in snprintf variants
-- **Vararg Choice**: Use mulle-vararg for new code (more efficient); use va_list for C compatibility
-
-### Common Pitfalls
-
-- **Float Precision**: Floating-point conversions delegate to system sprintf; precision not guaranteed between platforms
-- **Custom Conversions**: Must register conversion table before use; passing NULL table disables custom specifiers
-- **Buffer Ownership**: mulle_buffer_sprintf does NOT null-terminate; use with mulle_buffer_append for safety
-- **snprintf Semantics**: mulle_snprintf returns -1 on overflow (not character count needed like system snprintf)
-- **Format String Validation**: No format string validation; invalid specifiers may produce undefined behavior
-
-### Idiomatic Usage
-
-```c
-// Pattern 1: Use buffer when building strings programmatically
-struct mulle_buffer buffer = mulle_buffer_make_with_size(NULL, 256);
-mulle_buffer_sprintf(&buffer, "Value: %d, Text: %s", 42, "hello");
-// Use buffer.bytes, buffer.length
-
-// Pattern 2: Use snprintf for simple, fixed-size outputs
-char buf[64];
-if (mulle_snprintf(buf, sizeof(buf), "x=%d, y=%d", x, y) < 0) {
-    // Handle overflow
-}
-
-// Pattern 3: Extend with custom conversions
-struct mulle_sprintf_conversion custom_table[] = { ... };
-_mulle_buffer_vsprintf(&buffer, format, va, custom_table);
-```
+- Common pitfalls
+  - Do not access internal union or conversion vectors directly; use public API.
+  - Beware that floating point formatting may use system sprintf unless mulle-dtoa is enabled; platform differences can appear in NaN/Inf formatting.
+  - mulle_buffer_sprintf does not append '\0' to the buffer — use buffer string helpers when a C-string is needed.
 
 ## 6. Integration Examples
 
-### Example 1: Basic sprintf with Buffer
+Style: 3-space indent, Allman braces, C89 var rules (one declaration per line), return( expr );
+
+### Example 1: Creating and using a fixed buffer
 
 ```c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-buffer/mulle-buffer.h>
-
-int main() {
-    struct mulle_buffer buffer = mulle_buffer_make_zero();
-    
-    mulle_buffer_sprintf(&buffer, "The answer is %d\n", 42);
-    mulle_buffer_sprintf(&buffer, "Pi is approximately %.2f\n", 3.14159);
-    
-    // Access result
-    printf("Buffer: %.*s", (int)buffer.length, (char *)buffer.bytes);
-    
-    mulle_buffer_done(&buffer);
-    return 0;
-}
-```
-
-### Example 2: Safe Fixed-Size Formatting
-
-```c
-#include <mulle-sprintf/mulle-sprintf.h>
+#include "mulle-sprintf.h"
 #include <stdio.h>
 
-int main() {
-    char buffer[32];
-    
-    int result = mulle_snprintf(buffer, sizeof(buffer), 
-                                "x=%d y=%d", 100, 200);
-    
-    if (result < 0) {
-        fprintf(stderr, "Output truncated (overflow)\n");
-    } else {
-        printf("Result: %s (length %d)\n", buffer, result);
-    }
-    
-    return 0;
+int
+main()
+{
+   char  buf[ 32];
+
+   mulle_snprintf( buf, sizeof( buf), "%s %d", "items:", 42);
+   puts( buf);
+   return( 0);
 }
 ```
 
-### Example 3: Custom Format Specifier
+### Example 2: Allocate formatted string and free with mulle_free
 
 ```c
-#include <mulle-sprintf/mulle-sprintf.h>
+#include "mulle-sprintf.h"
 
-// Custom handler for %T (time) format
-static int custom_time_handler(struct mulle_buffer *buffer, 
-                               const struct mulle_sprintf_formatconversioninfo *info,
-                               void *p) {
-    time_t t = (time_t)(intptr_t)p;
-    const char *time_str = ctime(&t);
-    return mulle_buffer_append_bytes(buffer, (void *)time_str, strlen(time_str));
-}
+int
+example_asprintf( void)
+{
+   char  *s;
 
-int main() {
-    struct mulle_sprintf_conversion table[] = {
-        { 'T', custom_time_handler, NULL },
-        { 0, NULL, NULL }
-    };
-    
-    struct mulle_buffer buffer = mulle_buffer_make_zero();
-    time_t now = time(NULL);
-    
-    _mulle_buffer_sprintf(&buffer, "Current time: %T", table, now);
-    
-    mulle_buffer_done(&buffer);
-    return 0;
+   if( mulle_asprintf( &s, "%s %d", "VfL", 1848) == 0)
+   {
+      puts( s);
+      mulle_free( s);
+      return( 0);
+   }
+   return( -1);
 }
 ```
 
-### Example 4: Hexadecimal and Alternate Forms
+### Example 3: Registering a custom conversion (skeleton)
 
 ```c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-buffer/mulle-buffer.h>
+#include "mulle-sprintf-function.h"
 
-int main() {
-    struct mulle_buffer buffer = mulle_buffer_make_zero();
-    
-    int value = 255;
-    
-    // Standard hex
-    mulle_buffer_sprintf(&buffer, "Hex: %x\n", value);
-    
-    // Hex with 0x prefix (alternate form)
-    mulle_buffer_sprintf(&buffer, "Hex alt: %#x\n", value);
-    
-    // Zero-padded hex to width 8
-    mulle_buffer_sprintf(&buffer, "Hex padded: %08x\n", value);
-    
-    printf("%.*s", (int)buffer.length, (char *)buffer.bytes);
-    mulle_buffer_done(&buffer);
-    return 0;
-}
-```
-
-### Example 5: UTF-32 and UTF-16 Strings
-
-```c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-buffer/mulle-buffer.h>
-
-int main() {
-    struct mulle_buffer buffer = mulle_buffer_make_zero();
-    
-    // UTF-32 string (%lS)
-    uint32_t utf32_str[] = { 0x41, 0x42, 0x43, 0 };  // "ABC" in UTF-32
-    mulle_buffer_sprintf(&buffer, "UTF-32: %lS\n", utf32_str);
-    
-    // UTF-16 string (%hS)
-    uint16_t utf16_str[] = { 0x41, 0x42, 0x43, 0 };  // "ABC" in UTF-16
-    mulle_buffer_sprintf(&buffer, "UTF-16: %hS\n", utf16_str);
-    
-    printf("%.*s", (int)buffer.length, (char *)buffer.bytes);
-    mulle_buffer_done(&buffer);
-    return 0;
-}
-```
-
-### Example 6: Printf-to-Buffer Stream
-
-```c
-#include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-buffer/mulle-buffer.h>
-
-void log_message(struct mulle_buffer *log_buffer, const char *format, ...) {
-    va_list va;
-    va_start(va, format);
-    
-    mulle_buffer_append_bytes(log_buffer, (void *)"[LOG] ", 6);
-    mulle_buffer_vsprintf(log_buffer, format, va);
-    mulle_buffer_append_bytes(log_buffer, (void *)"\n", 1);
-    
-    va_end(va);
+static mulle_sprintf_argumenttype_t
+my_determine_type( struct mulle_sprintf_formatconversioninfo *info)
+{
+   (void) info;
+   return( mulle_sprintf_void_pointer_argumenttype);
 }
 
-int main() {
-    struct mulle_buffer log = mulle_buffer_make_zero();
-    
-    log_message(&log, "Initialization complete");
-    log_message(&log, "Processing %d items", 42);
-    
-    printf("%.*s", (int)log.length, (char *)log.bytes);
-    mulle_buffer_done(&log);
-    return 0;
+static int
+my_convert( struct mulle_buffer *buffer,
+            struct mulle_sprintf_formatconversioninfo *info,
+            struct mulle_sprintf_argumentarray *arguments,
+            int i)
+{
+   (void) buffer; (void) info; (void) arguments; (void) i;
+   /* implement conversion, append to buffer */
+   return( 0);
+}
+
+void
+register_my_conversion( struct mulle_sprintf_conversion *table)
+{
+   struct mulle_sprintf_function  fns[ 1];
+
+   fns[ 0].determine_argument_type = my_determine_type;
+   fns[ 0].convert_argument       = my_convert;
+
+   mulle_sprintf_register_functions( table, fns, (mulle_sprintf_conversioncharacter_t) 'z');
 }
 ```
 
 ## 7. Dependencies
 
-- mulle-c11
 - mulle-buffer
-- mulle-vararg (for mulle_vararg support)
+- mulle-utf
+- mulle-vararg
+- mulle-allocator (for allocator-backed asprintf)
+- Optional: mulle-dtoa / mulle-dtostr for improved floating-point formatting
+
+---
+
+Notes for an AI assistant: prefer the headers in src/ as authoritative. Use test/ and asset/dox examples for usage patterns and edge cases. When generating code snippets, follow the style rules above and favour buffer or allocator variants for safer memory semantics.
