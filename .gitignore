@@ -57,3 +57,4 @@ build-*/
 *.new
 .roam
 .graveyard
+*.tmp.*

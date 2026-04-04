@@ -5,7 +5,7 @@
 The extensibility is used in **MulleObjCStandardFoundation** to add object
 conversion (%@) and to print BOOL values as 'YES', 'NO' (%bd).
 
-Supports non-standard UTF32 (%lS) and UTF16 (%hS) output. No more `wchar_t`
+Supports explicit UTF-32 (%S, %lS) and UTF-16 (%hS) output. No more `wchar_t`
 pain.
 
 mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
@@ -115,13 +115,70 @@ leading minus sign.
 | Character | Description
 |-----------|---------------
 | `c`       | single character
-| `C`       | wide character (utf16 with `h`, utf32 with `l`)
+| `C`       | wide character (utf16 with `h`, utf32 with `l` or no modifier)
 | `n`       | return conversion
 | `p`       | void * as hex with 0x prefix
 | `s`       | char * as utf8 (alternate form `#s`: escaped for C String)
-| `S`       | wide string (utf16 with  `h`, utf32 with `l`, utf8 with `hh`)
+| `S`       | wide string (utf16 with `h`, utf32 with `l` or no modifier, utf8 with `hh`)
 
 Used modifiers: `hl`
+
+### Character and String Format Specifiers
+
+mulle-sprintf provides two sets of character and string format specifiers:
+
+#### Lowercase (C Standard Compatible - Platform Dependent)
+
+These follow the C standard and use platform-dependent wide character types:
+
+**%c - Character:**
+- `%c`: `char` (single byte character)
+- `%lc`: `wint_t` (wide character, platform-dependent encoding)
+
+**%s - String:**
+- `%s`: `char *` (null-terminated UTF-8/ASCII string)
+- `%ls`: `wchar_t *` (wide string, platform-dependent encoding)
+  - Windows: UTF-16 (wchar_t is 16-bit)
+  - Linux/Unix: UTF-32 (wchar_t is 32-bit)
+
+Use these when working with C standard library functions or platform APIs that expect `wchar_t`.
+
+#### Uppercase (Explicit UTF Encoding - Platform Independent)
+
+These provide explicit UTF encoding control, avoiding platform-dependent `wchar_t`:
+
+**%C - Wide Character:**
+- `%C` or `%lC`: `uint32_t` (UTF-32 codepoint, explicit 32-bit)
+- `%hC`: `uint16_t` (UTF-16 code unit, explicit 16-bit)
+
+**%S - Wide String:**
+- `%S` or `%lS`: `uint32_t *` (UTF-32 string, explicit 32-bit per character)
+- `%hS`: `uint16_t *` (UTF-16 string, explicit 16-bit per character)
+- `%hhS`: `char *` (UTF-8 string, same as `%s`)
+
+Use these when you need guaranteed UTF encoding regardless of platform.
+
+**Key Differences:**
+
+| Format | Type | Encoding | Platform Dependent? |
+|--------|------|----------|---------------------|
+| `%ls` | `wchar_t *` | UTF-16 (Windows) / UTF-32 (Unix) | Yes |
+| `%lS` | `uint32_t *` | UTF-32 always | No |
+| `%lc` | `wint_t` | UTF-16 (Windows) / UTF-32 (Unix) | Yes |
+| `%lC` | `uint32_t` | UTF-32 always | No |
+
+**Example:**
+
+```c
+// Platform-dependent (C standard)
+wchar_t *wstr = L"Hello";
+mulle_sprintf(buf, "%ls", wstr);  // Uses wchar_t encoding
+
+// Platform-independent (explicit UTF-32)
+uint32_t utf32_str[] = {'H', 'e', 'l', 'l', 'o', 0};
+mulle_sprintf(buf, "%lS", utf32_str);  // Always UTF-32
+mulle_sprintf(buf, "%S", utf32_str);   // Same as %lS
+```
 
 ## Usage
 

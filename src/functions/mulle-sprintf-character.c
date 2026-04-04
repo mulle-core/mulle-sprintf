@@ -43,6 +43,14 @@
 
 #include <stddef.h>
 
+// MEMO: this was not enabled during pre-release 0.28 so its off, not sure
+//       if we want to turn this on.
+// #define HAVE_MULLE_UTF
+// #ifdef DONT_HAVE_MULLE_UTF
+// # undef HAVE_MULLE_UTF
+// #endif
+
+
 // Forward declaration
 static inline int   _utf32_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                             struct mulle_buffer *buffer,
@@ -158,6 +166,8 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_uppercase_C_argumenttype(
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_unsigned_int_argumenttype);
    }
+#else
+   MULLE_C_UNUSED( info);
 #endif
    // %C and %lC both use UTF-32
    return( mulle_sprintf_unsigned_int_argumenttype);
@@ -172,6 +182,8 @@ static mulle_sprintf_argumenttype_t  mulle_sprintf_get_lowercase_c_argumenttype(
       assert( info->modifier[ 1] == '\0');
       return( mulle_sprintf_wint_t_argumenttype);
    }
+#else
+   MULLE_C_UNUSED( info);
 #endif
    return( mulle_sprintf_char_argumenttype);
 }

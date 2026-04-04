@@ -1,0 +1,76 @@
+Testing: pointer
+  Format:  "%p"
+  Output:  "0x1234fead"
+  PASS
+
+Testing: decimal int
+  Format:  "%d"
+  Output:  "42"
+  PASS
+
+Testing: negative int
+  Format:  "%d"
+  Output:  "-1848"
+  PASS
+
+Testing: unsigned int
+  Format:  "%u"
+  Output:  "4294967295"
+  PASS
+
+Testing: hex lowercase
+  Format:  "%x"
+  Output:  "deadbeef"
+  PASS
+
+Testing: hex uppercase
+  Format:  "%X"
+  Output:  "CAFEBABE"
+  PASS
+
+Testing: octal
+  Format:  "%o"
+  Output:  "755"
+  PASS
+
+Testing: long
+  Format:  "%ld"
+  Output:  "123456789"
+  PASS
+
+Testing: long long
+  Format:  "%lld"
+  Output:  "9223372036854775807"
+  PASS
+
+Testing: unsigned long
+  Format:  "%lu"
+  Output:  "18446744073709551615"
+  PASS
+
+Testing: unsigned long long
+  Format:  "%llu"
+  Output:  "18446744073709551615"
+  PASS
+
+Testing: float
+  Format:  "%f"
+  Output:  "3.141590"
+  PASS
+
+Testing: scientific
+  Format:  "%e"
+  Output:  "1.230000e-04"
+  PASS
+
+Testing: general
+  Format:  "%g"
+  Output:  "123.456"
+  PASS
+
+Testing: string
+  Format:  "%s"
+  Output:  "hello"
+  PASS
+
+All tests passed!
