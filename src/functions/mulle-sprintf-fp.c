@@ -98,26 +98,26 @@ static void  produce_format_string( char format[ 64],
 
 static inline double   make_non_negative_zero_double_if_zero( double x)
 {
-    if( x != 0.0)
-      return( x);
+   if( x != 0.0)
+     return( x);
 
-    // Use union to access the bit representation of the double
-    union
-    {
-        double d;
-        uint64_t i;
-    } u = { .d = x };
+   // Use union to access the bit representation of the double
+   union
+   {
+       double d;
+       uint64_t i;
+   } u = { .d = x };
 
-    u.i = MASK_TOP_UINT64_BIT_ZERO( u.i);
-    return( u.d);
+   u.i = MASK_TOP_UINT64_BIT_ZERO( u.i);
+   return( u.d);
 }
 
 
 #ifdef NO_MULLE__DTOSTR
 static inline long double   make_non_negative_zero_long_double_if_zero( long double x)
 {
-    if( x != 0.0)
-      return( x);
+   if( x != 0.0)
+     return( x);
 
     // Use union to access the bytes of the long double
    union
@@ -140,25 +140,25 @@ static inline long double   make_non_negative_zero_long_double_if_zero( long dou
 
 static inline int   is_negative_nan_double( double x)
 {
-    if( ! isnan( x))
-      return( 0);
+   if( ! isnan( x))
+     return( 0);
 
-    // Use union to access the bit representation of the double
-    union
-    {
-        double d;
-        uint64_t i;
-    } u = { .d = x };
+   // Use union to access the bit representation of the double
+   union
+   {
+       double d;
+       uint64_t i;
+   } u = { .d = x };
 
-    // Check the sign bit (most significant bit)
-    return( (u.i >> 63) != 0);
+   // Check the sign bit (most significant bit)
+   return( (u.i >> 63) != 0);
 }
 
 
 static inline int   is_negative_nan_long_double( long double x)
 {
-    if( ! isnan( x))
-      return( 0);
+   if( ! isnan( x))
+     return( 0);
 
     // Use union to access the bytes of the long double
    union
@@ -241,10 +241,12 @@ static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *expone
    return( sig);
 }
 
+
 static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
-                                          int argc) {
+                                          int argc)
+{
    union mulle_sprintf_argumentvalue   v;
    struct mulle_dtostr_decimal         decimal;
    uint64_t                            significand;
@@ -318,12 +320,13 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    return( 0);
 }
 
+
 static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc) {
    union mulle_sprintf_argumentvalue   v;
-   struct mulle_dtostr_decimal           decimal;
+   struct mulle_dtostr_decimal         decimal;
    uint64_t                            significand;
    uint64_t                            divisor;
    int                                 exponent;
@@ -446,21 +449,22 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
    return( 0);
 }
 
+
 static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
                                           int argc) {
-   union mulle_sprintf_argumentvalue         v;
+   union mulle_sprintf_argumentvalue           v;
    struct mulle_dtostr_decimal                 decimal;
-   struct mulle_sprintf_formatconversioninfo info_copy;
-   int                                       precision;
-   int                                       exponent;
-   int                                       num_digits;
-   size_t                                    before;
-   char                                      *str;
-   char                                      *p;
-   char                                      *end;
-   char                                      *dot;
+   struct mulle_sprintf_formatconversioninfo   info_copy;
+   int                                         precision;
+   int                                         exponent;
+   int                                         num_digits;
+   size_t                                      before;
+   char                                        *str;
+   char                                        *p;
+   char                                        *end;
+   char                                        *dot;
 
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
@@ -488,9 +492,9 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    info_copy = *info;
    if( exponent < -4 || exponent >= precision)
    {
-      info_copy.precision               = precision - 1;
-      info_copy.memory.precision_found  = 1;
-      before                            = mulle_buffer_get_length( buffer);
+      info_copy.precision              = precision - 1;
+      info_copy.memory.precision_found = 1;
+      before                           = mulle_buffer_get_length( buffer);
       
       _mulle_sprintf_fp_e_conversion( buffer, &info_copy, arguments, argc);
       
@@ -518,9 +522,9 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    }
    else
    {
-      info_copy.precision               = precision - (exponent + 1);
-      info_copy.memory.precision_found  = 1;
-      before                            = mulle_buffer_get_length( buffer);
+      info_copy.precision              = precision - (exponent + 1);
+      info_copy.memory.precision_found = 1;
+      before                           = mulle_buffer_get_length( buffer);
       
       _mulle_sprintf_fp_f_conversion( buffer, &info_copy, arguments, argc);
       
@@ -542,10 +546,12 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    return( 0);
 }
 
+
 static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
-                                          int argc) {
+                                          int argc)
+{
    union mulle_sprintf_argumentvalue   v;
    union { double d; uint64_t u; }     bits;
    uint64_t                            mantissa;
@@ -621,7 +627,9 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
             for( i = 0; i < precision && i < 13; i++)
             {
                nibble = (mantissa >> (48 - i * 4)) & 0xF;
-               mulle_buffer_add_byte( buffer, nibble < 10 ? '0' + nibble : (info->conversion == 'A' ? 'A' : 'a') + nibble - 10);
+               mulle_buffer_add_byte( buffer, nibble < 10
+                                              ? '0' + nibble
+                                              : (info->conversion == 'A' ? 'A' : 'a') + nibble - 10);
             }
             for( ; i < precision; i++)
                mulle_buffer_add_byte( buffer, '0');
@@ -632,6 +640,7 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
          // No precision specified: output minimum digits (no trailing zeros)
          // Find last non-zero nibble
          int   last_nonzero = -1;
+
          for( i = 0; i < 13; i++)
          {
             nibble = (mantissa >> (48 - i * 4)) & 0xF;
@@ -668,22 +677,26 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
    return( 0);
 }
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_functions =
+{
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_e_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_f_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_f_functions =
+{
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_f_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_g_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_g_functions =
+{
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_g_conversion
 };
 
-static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_a_functions = {
+static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_a_functions =
+{
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_a_conversion
 };
