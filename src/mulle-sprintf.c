@@ -41,6 +41,8 @@
 
 #include "include-private.h"
 
+#include <errno.h>
+
 
 #ifndef HAVE_SPRINTF_BOOL
 # define HAVE_SPRINTF_BOOL  1
