@@ -58,6 +58,8 @@
 # error "mulle_utf is too old"
 #endif
 
+#include <errno.h>
+
 
 int
    _mulle_sprintf_utf8_conversion( struct mulle_buffer *buffer,

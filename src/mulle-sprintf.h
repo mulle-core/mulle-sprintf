@@ -203,15 +203,11 @@ static inline void    mulle_sprintf_free_storage( void)
 // mulle_sprintf_do( s, "VfL Bochum %d", 1848)
 // {
 //    puts( s);
-//    puts( s);
-//    puts( s);
-//    puts( s);
 // }
 //
 #define mulle_sprintf_do( string, format, ...)                                         \
    for( char  *string = NULL; ! string;)                                               \
       for( struct mulle_buffer name ## __storage = MULLE_BUFFER_DATA( NULL),           \
-                               *name = &name ## __storage,                             \
                                name ## __i = { 0 };                                    \
                                                                                        \
            string = ! (name ## __i._storage)                                           \
@@ -230,6 +226,26 @@ static inline void    mulle_sprintf_free_storage( void)
               name ## __j++)
 
 
+
+#define mulle_vsprintf_do( string, format, args)                                       \
+   for( char  *string = NULL; ! string;)                                               \
+      for( struct mulle_buffer name ## __storage = MULLE_BUFFER_DATA( NULL),           \
+                               name ## __i = { 0 };                                    \
+                                                                                       \
+           string = ! (name ## __i._storage)                                           \
+                    ? (mulle_buffer_vsprintf( &name ## __storage, format, args),       \
+                       mulle_buffer_get_string( &name ## __storage))                   \
+                    : string,                                                          \
+           ! name ## __i._storage;                                                     \
+                                                                                       \
+           (mulle_buffer_done( &name ## __storage),                                    \
+            name ## __i._storage = (void *) 0x1)                                       \
+         )                                                                             \
+                                                                                       \
+         MULLE_C_CONFINED_LOOP                                                         \
+         for( int  name ## __j = 0;    /* break protection */                          \
+              name ## __j < 1;                                                         \
+              name ## __j++)
 
 #include "mulle-sprintf-character.h"
 #include "mulle-sprintf-escape.h"
