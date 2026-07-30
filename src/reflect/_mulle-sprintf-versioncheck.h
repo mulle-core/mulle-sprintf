@@ -25,7 +25,7 @@
 #endif
 #if defined( MULLE__DTOSTR_VERSION)
 # ifndef MULLE__DTOSTR_VERSION_MIN
-#  define MULLE__DTOSTR_VERSION_MIN  ((0UL << 20) | (1 << 8) | 0)
+#  define MULLE__DTOSTR_VERSION_MIN  ((0UL << 20) | (1 << 8) | 2)
 # endif
 # ifndef MULLE__DTOSTR_VERSION_MAX
 #  define MULLE__DTOSTR_VERSION_MAX  ((0UL << 20) | (2 << 8) | 0)

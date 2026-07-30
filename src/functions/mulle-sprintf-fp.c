@@ -46,8 +46,6 @@
 #ifndef NO_MULLE__DTOSTR
 # include <mulle-dtostr/mulle-dtostr.h>
 #endif
-
-
 #ifdef NO_MULLE__DTOSTR
 //
 // first idea was to use dtostr or gcvt, but those use global variables
@@ -79,8 +77,6 @@ static void  produce_format_string( char format[ 64],
       snprintf( format, 64, "%%%s%c", prefix, info->conversion);
 }
 #endif
-
-
 // #include <float.h>
 //
 // static inline int isnan(double x) {
@@ -93,51 +89,27 @@ static void  produce_format_string( char format[ 64],
 //     return (u.u & 0x7FF0000000000000ULL) == 0x7FF0000000000000ULL;
 // }
 
-#define MASK_TOP_UINT64_BIT_ZERO(x) ((x) & (UINT64_MAX >> 1))
-
-
-static inline double   make_non_negative_zero_double_if_zero( double x)
-{
-   if( x != 0.0)
-     return( x);
-
-   // Use union to access the bit representation of the double
-   union
-   {
-       double d;
-       uint64_t i;
-   } u = { .d = x };
-
-   u.i = MASK_TOP_UINT64_BIT_ZERO( u.i);
-   return( u.d);
-}
-
-
+//
+// We used to normalize -0.0 to 0.0 here for "portability across platforms".
+// This was removed because:
+//
+// 1. The sign of -0.0 carries real information (1/-0.0 == -inf,
+//    atan2(-0.0,-1) == -pi). Suppressing it hides useful debugging data.
+//
+// 2. It doesn't actually help with test diffs. The common case that produces
+//    -0.0 in output is NOT IEEE negative zero but a tiny negative value like
+//    -4e-15 that rounds to "-0.0" at the given precision. Normalization of
+//    the exact bit pattern doesn't catch that case, so tests still break
+//    non-deterministically depending on libm/platform.
+//
+// 3. Every mainstream C library (glibc, musl, macOS, MSVC) prints -0.0 for
+//    negative zero. Deviating silently from the C standard is surprising for
+//    a "sprintf replacement".
+//
+// -nan is still normalized to nan because the sign of a NaN has no defined
+// semantics in IEEE 754 and platforms genuinely disagree on it.
+//
 #ifdef NO_MULLE__DTOSTR
-static inline long double   make_non_negative_zero_long_double_if_zero( long double x)
-{
-   if( x != 0.0)
-     return( x);
-
-    // Use union to access the bytes of the long double
-   union
-   {
-      long double     ld;
-      unsigned char   bytes[ sizeof( long double)];
-   } u;
-
-    memcpy( &u.ld, &x, sizeof( long double));
-
-#if __LITTLE_ENDIAN__
-        // For little-endian /first, check the last byte
-     u.bytes[ sizeof( long double) - 1] &= 0x7F;
-#else
-     u.bytes[ 0] &= 0x7F;
-#endif
-     return( u.ld);
-}
-
-
 static inline int   is_negative_nan_double( double x)
 {
    if( ! isnan( x))
@@ -153,8 +125,6 @@ static inline int   is_negative_nan_double( double x)
    // Check the sign bit (most significant bit)
    return( (u.i >> 63) != 0);
 }
-
-
 static inline int   is_negative_nan_long_double( long double x)
 {
    if( ! isnan( x))
@@ -177,8 +147,6 @@ static inline int   is_negative_nan_long_double( long double x)
 #endif
 }
 #endif
-
-
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
    assert( info->width < 64);
@@ -189,8 +157,6 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct 
    assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_double_argumenttype);
 }
-
-
 #ifndef NO_MULLE__DTOSTR
 
 static int   _count_decimal_digits( uint64_t n)
@@ -208,8 +174,6 @@ static int   _count_decimal_digits( uint64_t n)
    }
    return( count);
 }
-
-
 static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *exponent)
 {
    int        current_digits;
@@ -240,8 +204,6 @@ static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *expone
    }
    return( sig);
 }
-
-
 static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
@@ -259,8 +221,6 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
-
-   v.d     = make_non_negative_zero_double_if_zero( v.d);
    decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
@@ -319,8 +279,6 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    
    return( 0);
 }
-
-
 static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
@@ -339,8 +297,6 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
-
-   v.d     = make_non_negative_zero_double_if_zero( v.d);
    decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
@@ -448,8 +404,6 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
    }
    return( 0);
 }
-
-
 static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
@@ -469,8 +423,6 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
-
-   v.d     = make_non_negative_zero_double_if_zero( v.d);
    decimal = mulle_dtostr_decompose( v.d);
    
    if( decimal.special)
@@ -545,8 +497,6 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    }
    return( 0);
 }
-
-
 static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
@@ -563,8 +513,6 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
-
-   v.d      = make_non_negative_zero_double_if_zero( v.d);
    bits.d   = v.d;
    mantissa = bits.u & 0xFFFFFFFFFFFFFULL;
    exponent = (bits.u >> 52) & 0x7FF;
@@ -702,8 +650,6 @@ static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_a_functions =
 };
 
 #endif
-
-
 #ifdef NO_MULLE__DTOSTR
 static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
                                            struct mulle_sprintf_formatconversioninfo *info,
@@ -731,9 +677,6 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
       else
       {
          produce_format_string( format, info, 0);
-         // avoid negative -0.0 on BSDs which leads to test output that
-         // doesn't diff
-         v.d = make_non_negative_zero_double_if_zero( v.d);
          snprintf( result, sizeof( result), format, v.d);
       }
    }
@@ -744,7 +687,7 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
       else
       {
          produce_format_string( format, info, 1);
-         v.ld = make_non_negative_zero_long_double_if_zero( v.ld);
+
          snprintf( result, sizeof( result), format, v.ld);
       }
    }
@@ -752,16 +695,12 @@ static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
    return( 0);
 }
 
-
-
 static struct mulle_sprintf_function     mulle_sprintf_fp_functions =
 {
    _mulle_sprintf_get_fp_argumenttype,
    _mulle_sprintf_fp_conversion
 };
 #endif
-
-
 
 void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tables)
 {
@@ -789,8 +728,6 @@ void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tabl
 
    mulle_sprintf_register_modifier( tables, 'L');
 }
-
-
 // MULLE_C_CONSTRUCTOR( mulle_sprintf_register_default_fp_functions)
 // static void  mulle_sprintf_register_default_fp_functions()
 // {
