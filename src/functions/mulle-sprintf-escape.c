@@ -1,9 +1,8 @@
 //
-//  mulle_sprintf_escape.c
+//  mulle-sprintf-escape.c
 //  mulle-sprintf
 //
-//  Created by Nat!
-//  Copyright (c) 2011 Nat! - Mulle kybernetiK.
+//  Copyright (c) 2018 Nat! - Mulle kybernetiK.
 //  Copyright (c) 2011 Codeon GmbH.
 //  All rights reserved.
 //
@@ -34,7 +33,6 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-
 #include "mulle-sprintf-escape.h"
 
 #include "mulle-sprintf.h"

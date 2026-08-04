@@ -1,9 +1,8 @@
 //
-//  mulle_sprintf_return.h
+//  mulle-sprintf-return.h
 //  mulle-sprintf
 //
-//  Created by Nat!
-//  Copyright (c) 2011 Nat! - Mulle kybernetiK.
+//  Copyright (c) 2018 Nat! - Mulle kybernetiK.
 //  Copyright (c) 2011 Codeon GmbH.
 //  All rights reserved.
 //
@@ -34,7 +33,6 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-
 #ifndef mulle_sprintf_return_h__
 #define mulle_sprintf_return_h__
 
