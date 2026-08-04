@@ -180,6 +180,11 @@ mulle_sprintf(buf, "%lS", utf32_str);  // Always UTF-32
 mulle_sprintf(buf, "%S", utf32_str);   // Same as %lS
 ```
 
+
+## Documentation & Guides
+
+* [API Summary](asset/dox/api/toc)
+
 ## Usage
 
 mulle-sprintf provides stdlib-compatible functions that work out of the box:

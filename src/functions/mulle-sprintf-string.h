@@ -1,9 +1,8 @@
 //
-//  mulle_sprintf_string.h
+//  mulle-sprintf-string.h
 //  mulle-sprintf
 //
-//  Created by Nat!
-//  Copyright (c) 2011 Nat! - Mulle kybernetiK.
+//  Copyright (c) 2018 Nat! - Mulle kybernetiK.
 //  Copyright (c) 2011 Codeon GmbH.
 //  All rights reserved.
 //

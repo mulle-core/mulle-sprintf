@@ -1,8 +1,7 @@
 //
-//  mulle_sscanf.h
+//  mulle-sscanf.h
 //  mulle-sprintf
 //
-//  Created by Nat!
 //  Copyright (c) 2026 Nat! - Mulle kybernetiK.
 //  All rights reserved.
 //
@@ -33,7 +32,6 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-
 #ifndef mulle_sscanf_h__
 #define mulle_sscanf_h__
 
