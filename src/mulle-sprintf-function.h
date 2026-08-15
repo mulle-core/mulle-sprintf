@@ -74,9 +74,12 @@ struct mulle_sprintf_formatconversionflags
 
 
 
+struct mulle_sprintf_function;
+
 struct mulle_sprintf_formatconversioninfo
 {
    void    *mystery;       // used for return type conversion...
+   struct mulle_sprintf_function   *function;   // cached resolved conversion (perf)
 
    int     width;          // %100d = 100
    int     precision;      // %.3d  = 3
