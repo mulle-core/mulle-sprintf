@@ -63,10 +63,20 @@ static inline int   _char_string_conversion( struct mulle_buffer *buffer,
    assert( info);
    assert( buffer);
 
-   width_char = info->memory.zero_found ? '0' : ' ';
-   if( info->width > 1)
-      mulle_buffer_memset( buffer, width_char, info->width - 1);
-   mulle_buffer_add_byte( buffer, c);
+   // '0' is undefined for %c; glibc pads with spaces, so do the same
+   width_char = ' ';
+   if( info->memory.left_justify)
+   {
+      mulle_buffer_add_byte( buffer, c);
+      if( info->width > 1)
+         mulle_buffer_memset( buffer, width_char, info->width - 1);
+   }
+   else
+   {
+      if( info->width > 1)
+         mulle_buffer_memset( buffer, width_char, info->width - 1);
+      mulle_buffer_add_byte( buffer, c);
+   }
    return( 0);
 }
 

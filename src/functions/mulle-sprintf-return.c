@@ -68,6 +68,56 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
    //
    len = mulle_buffer_get_length( buffer) - before;
 
+   // the C standard says %n writes the number of characters produced so far
+   // through the (signed) pointed-to object, e.g. int *, long *, etc.
+   if( t == mulle_sprintf_int_pointer_argumenttype)
+   {
+      *v.pInt = (int) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_long_pointer_argumenttype)
+   {
+      *v.pLg = (long) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_long_long_pointer_argumenttype)
+   {
+      *v.pLLg = (long long) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_short_pointer_argumenttype)
+   {
+      *v.pSg = (short) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_char_pointer_argumenttype_signed)
+   {
+      *v.pSC = (signed char) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_intmax_t_pointer_argumenttype)
+   {
+      *v.pImtg = (intmax_t) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_ptrdiff_t_pointer_argumenttype)
+   {
+      *v.pDifs = (ptrdiff_t) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_signed_size_t_pointer_argumenttype)
+   {
+      *v.pSS = (ssize_t) len;
+      return( 0);
+   }
+   if( t == mulle_sprintf_int64_t_pointer_argumenttype)
+   {
+      *v.pQts = (int64_t) len;
+      return( 0);
+   }
+
+   // keep the legacy unsigned pointer types working (some callers may have
+   // used %n with unsigned targets)
    if( t == mulle_sprintf_unsigned_int_pointer_argumenttype)
    {
       *v.pI = (unsigned int) len;
@@ -119,45 +169,46 @@ static int   _mulle_sprintf_return_conversion( struct mulle_buffer *buffer,
 
 static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_return_argumenttype( struct mulle_sprintf_formatconversioninfo *info)
 {
+   // the C standard specifies signed pointer targets for %n
    switch( info->modifier[ 0])
    {
    case 'h' :
       if( info->modifier[ 1] == 'h')
       {
          assert( info->modifier[ 2] == '\0');
-         return( mulle_sprintf_unsigned_char_pointer_argumenttype);
+         return( mulle_sprintf_char_pointer_argumenttype_signed);
       }
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_short_pointer_argumenttype);
+      return( mulle_sprintf_short_pointer_argumenttype);
 
    case 'j' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_uintmax_t_pointer_argumenttype);
+      return( mulle_sprintf_intmax_t_pointer_argumenttype);
 
    case 'l' :
       if( info->modifier[ 1] == 'l')
       {
          assert( info->modifier[ 2] == '\0');
-         return( mulle_sprintf_unsigned_long_long_pointer_argumenttype);
+         return( mulle_sprintf_long_long_pointer_argumenttype);
       }
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_long_pointer_argumenttype);
+      return( mulle_sprintf_long_pointer_argumenttype);
 
    case 'q' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_uint64_t_pointer_argumenttype);
+      return( mulle_sprintf_int64_t_pointer_argumenttype);
 
    case 't' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype);
+      return( mulle_sprintf_ptrdiff_t_pointer_argumenttype);
 
    case 'z' :
       assert( info->modifier[ 1] == '\0');
-      return( mulle_sprintf_size_t_pointer_argumenttype);
+      return( mulle_sprintf_signed_size_t_pointer_argumenttype);
 
    }
    assert( info->modifier[ 0] == '\0');
-   return( mulle_sprintf_unsigned_int_pointer_argumenttype);
+   return( mulle_sprintf_int_pointer_argumenttype);
 }
 
 

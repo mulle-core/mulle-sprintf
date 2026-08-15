@@ -113,6 +113,7 @@ int
    mulle_utf32_t          tmp_stack[ 32];
    mulle_utf32_t          *tmp;
    mulle_utf32_t          *tmp_malloc;
+   mulle_utf32_t          *dst;
 
    assert( buffer);
    assert( info);
@@ -122,10 +123,7 @@ int
 
    // check if we have composed multi-chars, if yes convert to utf32 and go
    // there, because otherwise the length/width calculations get too involved
-   if( info->memory.precision_found)
-      o_length = mulle_utf16_strnlen( s, info->precision);
-   else
-      o_length = mulle_utf16_strlen( s);
+   o_length = mulle_utf16_strlen( s);
 
    if( ! mulle_utf16_is_utf15( s, o_length))
    {
@@ -134,12 +132,22 @@ int
       // mulle_flexarray_do( tmp, uint32_t, 32, o_length + 1)
       tmp_malloc = NULL;
       tmp        = tmp_stack;
-      if( o_length >= sizeof( tmp_stack) / sizeof( uint32_t))
+      if( o_length + 1 >= sizeof( tmp_stack) / sizeof( uint32_t))
       {
-         tmp_malloc = mulle_malloc( (o_length + 1) * sizeof( uint32_t));
+         tmp_malloc = mulle_malloc( (o_length + 2) * sizeof( uint32_t));
          tmp        = tmp_malloc;
       }
-      _mulle_utf16_convert_to_utf32( s, o_length + 1, tmp);
+      //
+      // MEMO: must terminate explicitly. Surrogate pairs collapse into a
+      //       single utf32 character, so the result is shorter than the
+      //       input. Without explicit termination, mulle_utf32_strnlen
+      //       reads uninitialized memory (found by valgrind).
+      //       Precision is applied on the utf32 side where 1 unit = 1
+      //       character (codepoint).
+      //
+      dst  = _mulle_utf16_convert_to_utf32( s, o_length + 1, tmp);
+      *dst = 0;
+
       rval = _mulle_sprintf_utf32_conversion( buffer, info, tmp);
       mulle_free( tmp_malloc);
       return( rval);

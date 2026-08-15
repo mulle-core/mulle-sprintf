@@ -143,7 +143,19 @@ enum
    mulle_sprintf_uint32_t_pointer_argumenttype,
 
    // ugliness ensues...
-   mulle_sprintf_NSDecimal_pointer_argumenttype
+   mulle_sprintf_NSDecimal_pointer_argumenttype,
+
+   // signed pointer types (for %n: standard says it writes through
+   // int *, long *, etc.)
+   mulle_sprintf_char_pointer_argumenttype_signed,        // signed char *
+   mulle_sprintf_short_pointer_argumenttype,              // short *
+   mulle_sprintf_int_pointer_argumenttype,                // int *
+   mulle_sprintf_long_pointer_argumenttype,               // long *
+   mulle_sprintf_long_long_pointer_argumenttype,          // long long *
+   mulle_sprintf_intmax_t_pointer_argumenttype,           // intmax_t *
+   mulle_sprintf_ptrdiff_t_pointer_argumenttype,          // ptrdiff_t *
+   mulle_sprintf_int64_t_pointer_argumenttype,            // int64_t *
+   mulle_sprintf_signed_size_t_pointer_argumenttype       // ssize_t *
 };
 
 typedef unsigned char   mulle_sprintf_argumenttype_t;
@@ -229,6 +241,15 @@ union mulle_sprintf_argumentvalue
    uint16_t            *pu16;
    uint32_t            *pu32;
    struct _NSDecimal   *pDecimal;
+   signed char         *pSC;
+   short               *pSg;
+   int                 *pInt;
+   long                *pLg;
+   long long           *pLLg;
+   intmax_t            *pImtg;
+   ptrdiff_t           *pDifs;
+   int64_t             *pQts;
+   ssize_t             *pSS;
 };
 
 

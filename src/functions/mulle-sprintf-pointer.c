@@ -38,6 +38,8 @@
 #include "mulle-sprintf-integer.h"
 #include "mulle-sprintf.h"
 
+#include <stdint.h>
+
 
 
 //static int   object_conversion( struct mulle_sprintf_formatconversioninfo *info,
@@ -54,13 +56,77 @@
 //}
 
 
+static int   set_pointer_prefix( char *s, int value_is_zero, int length, int precision)
+{
+   MULLE_C_UNUSED( value_is_zero);
+   MULLE_C_UNUSED( precision);
+
+   if( length)
+   {
+      s[ 0] = '0';
+      s[ 1] = 'x';
+      return( 2);
+   }
+   return( 0);
+}
+
+
 static int  _mulle_sprintf_pointer_conversion( struct mulle_buffer *buffer,
                                                struct mulle_sprintf_formatconversioninfo *info,
                                                struct mulle_sprintf_argumentarray *arguments,
                                                int argc)
 {
+   union mulle_sprintf_argumentvalue  v;
+   uintptr_t                          p;
+   char                               tmp[ sizeof( uintptr_t) * 2 + 1];
+   char                               *s;
+   char                               c;
+   int                                length;
+
+   v = arguments->values[ argc];
+
+   // %p has no defined # or 0 semantics; match glibc's "(nil)" for NULL
+   // (glibc pads with spaces, never '0', regardless of the 0 flag)
+   if( ! v.pv)
+   {
+      static char  nil[] = "(nil)";
+      int          zero  = info->memory.zero_found;
+
+      info->memory.zero_found = 0;
+      _mulle_sprintf_justified( buffer, info,
+                                nil,
+                                5,
+                                NULL,
+                                0,
+                                0,
+                                0);
+      info->memory.zero_found = zero;
+      return( 0);
+   }
+
+   // well-defined conversion: void * -> uintptr_t
+   p = (uintptr_t) v.pv;
+
+   s = &tmp[ sizeof( tmp)];
+   do
+   {
+      c     = p & 0xF;
+      *--s  = (c >= 10) ? ('a' - 10 + c) : '0' + c;
+      p  >>= 4;
+   }
+   while( p);
+
+   length = &tmp[ sizeof( tmp)] - s;
+
+   // make the shared justification machinery emit the 0x prefix
    info->memory.hash_found = 1;
-   return( _mulle_sprintf_int_hex_conversion( buffer, info, arguments, argc));
+   _mulle_sprintf_justified_and_prefixed( buffer, info,
+                                          s,
+                                          length,
+                                          0,
+                                          0,
+                                          set_pointer_prefix);
+   return( 0);
 }
 
 

@@ -99,7 +99,17 @@ unsigned char   mulle_sprintf_argumentsize[] =
    SIZEOF( uint16_t *),
    SIZEOF( uint32_t *),
    SIZEOF( wint_t),
-   SIZEOF( struct _NSDecimal *)  // mulle_sprintf_NSDecimal_pointer_argumenttype
+   SIZEOF( struct _NSDecimal *),  // mulle_sprintf_NSDecimal_pointer_argumenttype
+
+   SIZEOF( signed char *),        // mulle_sprintf_char_pointer_argumenttype_signed
+   SIZEOF( short *),              // mulle_sprintf_short_pointer_argumenttype
+   SIZEOF( int *),                // mulle_sprintf_int_pointer_argumenttype
+   SIZEOF( long *),               // mulle_sprintf_long_pointer_argumenttype
+   SIZEOF( long long *),          // mulle_sprintf_long_long_pointer_argumenttype
+   SIZEOF( intmax_t *),           // mulle_sprintf_intmax_t_pointer_argumenttype
+   SIZEOF( ptrdiff_t *),          // mulle_sprintf_ptrdiff_t_pointer_argumenttype
+   SIZEOF( int64_t *),            // mulle_sprintf_int64_t_pointer_argumenttype
+   SIZEOF( ssize_t *)             // mulle_sprintf_signed_size_t_pointer_argumenttype
 };
 
 
@@ -165,6 +175,15 @@ void  mulle_vsprintf_set_values( union mulle_sprintf_argumentvalue *p,
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = va_arg( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = va_arg( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE *); break;
+      case mulle_sprintf_char_pointer_argumenttype_signed        : p->pSC  = va_arg( va, signed char *); break;
+      case mulle_sprintf_short_pointer_argumenttype              : p->pSg  = va_arg( va, short *); break;
+      case mulle_sprintf_int_pointer_argumenttype                : p->pInt = va_arg( va, int *); break;
+      case mulle_sprintf_long_pointer_argumenttype               : p->pLg  = va_arg( va, long *); break;
+      case mulle_sprintf_long_long_pointer_argumenttype          : p->pLLg = va_arg( va, long long *); break;
+      case mulle_sprintf_intmax_t_pointer_argumenttype           : p->pImtg = va_arg( va, intmax_t *); break;
+      case mulle_sprintf_ptrdiff_t_pointer_argumenttype          : p->pDifs = va_arg( va, ptrdiff_t *); break;
+      case mulle_sprintf_int64_t_pointer_argumenttype            : p->pQts  = va_arg( va, int64_t *); break;
+      case mulle_sprintf_signed_size_t_pointer_argumenttype      : p->pSS   = va_arg( va, ssize_t *); break;
       }
       ++type;
       ++p;
@@ -230,6 +249,15 @@ void  mulle_mvsprintf_set_values( union mulle_sprintf_argumentvalue *p,
 
       case mulle_sprintf_unsigned_long_long_pointer_argumenttype : p->pLL  = mulle_vararg_next_pointer( va, unsigned long long *); break;
       case mulle_sprintf_unsigned_ptrdiff_t_pointer_argumenttype : p->pDif = mulle_vararg_next_pointer( va, unsigned MULLE_SPRINTF_PTRDIFF_TYPE *); break;
+      case mulle_sprintf_char_pointer_argumenttype_signed        : p->pSC  = mulle_vararg_next_pointer( va, signed char *); break;
+      case mulle_sprintf_short_pointer_argumenttype              : p->pSg  = mulle_vararg_next_pointer( va, short *); break;
+      case mulle_sprintf_int_pointer_argumenttype                : p->pInt = mulle_vararg_next_pointer( va, int *); break;
+      case mulle_sprintf_long_pointer_argumenttype               : p->pLg  = mulle_vararg_next_pointer( va, long *); break;
+      case mulle_sprintf_long_long_pointer_argumenttype          : p->pLLg = mulle_vararg_next_pointer( va, long long *); break;
+      case mulle_sprintf_intmax_t_pointer_argumenttype           : p->pImtg = mulle_vararg_next_pointer( va, intmax_t *); break;
+      case mulle_sprintf_ptrdiff_t_pointer_argumenttype          : p->pDifs = mulle_vararg_next_pointer( va, ptrdiff_t *); break;
+      case mulle_sprintf_int64_t_pointer_argumenttype            : p->pQts  = mulle_vararg_next_pointer( va, int64_t *); break;
+      case mulle_sprintf_signed_size_t_pointer_argumenttype      : p->pSS   = mulle_vararg_next_pointer( va, ssize_t *); break;
       }
       ++type;
       ++p;
@@ -429,9 +457,13 @@ int   mulle_sprintf_register_default_modifiers( mulle_sprintf_modifiercharacter 
 //
 // this not only contains length modifiers but also flag characters
 //
+// NOTE: '\'' (thousands grouping) is deliberately NOT registered: it is not
+//       implemented, and silently ignoring it would produce wrong output.
+//       Unregistered characters make the format spec an error (-1/EINVAL).
+//
 int   mulle_sprintf_register_standardmodifiers( struct mulle_sprintf_conversion *table)
 {
-   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +\'b*$"));
+   return( mulle_sprintf_register_modifiers( table, "0123456789.#- +b*$"));
 }
 
 

@@ -70,6 +70,32 @@ static int   set_decimal_prefix( char *s,
 static char  *convert_decimal_unsigned_int( unsigned int  value,
                                             char *s)
 {
+#if 0
+   static const char  digits[200] =
+      "00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899";
+   unsigned int        r;
+   unsigned long       q32;
+
+   while( value >= 100)
+   {
+      q32  = value / 100;
+      r    = value - q32 * 100;
+      s   -= 2;
+      s[ 0] = digits[ r * 2];
+      s[ 1] = digits[ r * 2 + 1];
+      value = q32;
+   }
+   if( value >= 10)
+   {
+      r = value % 10;
+      *--s = '0' + r;
+      value /= 10;
+      *--s = '0' + value;
+   }
+   else if( value)
+      *--s = '0' + value;
+#endif
+
    while( value)
    {
       *--s  = '0' + value % 10;
@@ -83,6 +109,32 @@ static char  *convert_decimal_unsigned_int( unsigned int  value,
 static char  *convert_decimal_unsigned_long_long( unsigned long long value,
                                                   char *s)
 {
+#if 0
+   static const char  digits[200] =
+      "00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899";
+   unsigned long long  q;
+   unsigned long long  r;
+
+   while( value >= 100)
+   {
+      q = value / 100;
+      r = value - q * 100;
+      s   -= 2;
+      s[ 0] = digits[ r * 2];
+      s[ 1] = digits[ r * 2 + 1];
+      value = q;
+   }
+   if( value >= 10)
+   {
+      r = value % 10;
+      *--s = '0' + r;
+      value /= 10;
+      *--s = '0' + value;
+   }
+   else if( value)
+      *--s = '0' + value;
+#endif
+
    while( value)
    {
       *--s  = '0' + value % 10;
@@ -124,6 +176,16 @@ void   _mulle_sprintf_justified( struct mulle_buffer *buffer,
    assert( info);
    assert( p);
    assert( ! q_length || q);
+
+   // fast path: no padding, no sign/hash prefix, no zero-fill from precision
+   if( q_length == 0 &&
+       prefix == 0 &&
+       info->width == 0 &&
+       precision <= p_length)
+   {
+      mulle_buffer_add_bytes( buffer, p, (size_t) p_length);
+      return;
+   }
 
    length         = p_length + q_length;
    precision_char = '0';

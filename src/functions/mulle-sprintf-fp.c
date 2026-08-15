@@ -155,6 +155,8 @@ static mulle_sprintf_argumenttype_t  _mulle_sprintf_get_fp_argumenttype( struct 
    assert( info->modifier[ 0] == '\0');
    return( mulle_sprintf_double_argumenttype);
 }
+
+
 #ifndef NO_MULLE__DTOSTR
 
 static int   _count_decimal_digits( uint64_t n)
@@ -172,10 +174,14 @@ static int   _count_decimal_digits( uint64_t n)
    }
    return( count);
 }
+
+
 static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *exponent)
 {
    int        current_digits;
    int        next_digit;
+   int        last_digit;
+   uint64_t   remainder;
    uint64_t   divisor;
    int        i;
 
@@ -188,10 +194,13 @@ static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *expone
       divisor *= 10;
    
    next_digit = (sig / divisor) % 10;
+   remainder  = sig % divisor;
+   last_digit = ((sig / divisor) / 10) % 10;
    divisor   *= 10;
    sig        = (sig / divisor) * divisor;
    
-   if( next_digit >= 5)
+   // round half to even (glibc behaviour)
+   if( next_digit > 5 || (next_digit == 5 && (remainder != 0 || (last_digit & 1))))
    {
       sig += divisor;
       if( _count_decimal_digits( sig) > keep_digits)
@@ -202,10 +211,72 @@ static uint64_t   _round_significand( uint64_t sig, int keep_digits, int *expone
    }
    return( sig);
 }
-static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
-                                          struct mulle_sprintf_formatconversioninfo *info,
-                                          struct mulle_sprintf_argumentarray *arguments,
-                                          int argc)
+
+
+static void   _mulle_sprintf_fp_justify( struct mulle_buffer *buffer,
+                                         struct mulle_sprintf_formatconversioninfo *info,
+                                         size_t before)
+{
+   size_t   used;
+   size_t   width;
+   size_t   pad;
+   size_t   insert;
+   char     width_char;
+   char     *bytes;
+   char     *s;
+   int      is_special;
+
+   used = mulle_buffer_get_length( buffer) - before;
+   width = info->width;
+   if( width <= used)
+      return;
+
+   pad = width - used;
+
+   if( info->memory.left_justify)
+   {
+      mulle_buffer_memset( buffer, ' ', pad);
+      return;
+   }
+
+   bytes = mulle_buffer_get_bytes( buffer) + before;
+   s     = bytes;
+   insert = 0;
+   if( *s == '-' || *s == '+' || *s == ' ')
+   {
+      insert = 1;
+      s++;
+   }
+
+   is_special = ! strncmp( s, "inf", 3) || ! strncmp( s, "nan", 3);
+   if( is_special)
+   {
+      width_char = ' ';
+      insert     = 0;
+   }
+   else
+   {
+      width_char = info->memory.zero_found ? '0' : ' ';
+      if( width_char == '0' &&
+          (info->conversion == 'a' || info->conversion == 'A') &&
+          s[ 0] == '0' && (s[ 1] == 'x' || s[ 1] == 'X'))
+         insert += 2;
+   }
+
+   if( width_char == ' ')
+      insert = 0;
+
+   mulle_buffer_set_length( buffer, mulle_buffer_get_length( buffer) + pad, 0);
+   bytes = mulle_buffer_get_bytes( buffer) + before;
+   memmove( bytes + insert + pad, bytes + insert, used - insert);
+   memset( bytes + insert, width_char, pad);
+}
+
+
+static int _mulle_sprintf_fp_e_conversion( struct mulle_buffer *buffer,
+                                           struct mulle_sprintf_formatconversioninfo *info,
+                                           struct mulle_sprintf_argumentarray *arguments,
+                                           int argc)
 {
    union mulle_sprintf_argumentvalue   v;
    struct mulle_dtostr_decimal         decimal;
@@ -215,18 +286,44 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    int                                 precision;
    int                                 num_digits;
    int                                 i;
+   size_t                              before;
 
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
    decimal = mulle_dtostr_decompose( v.d);
+   before  = mulle_buffer_get_length( buffer);
    
    if( decimal.special)
    {
-      const char *s = decimal.special == 1 ? (decimal.sign ? "-inf" : "inf") :
-                      decimal.special == 2 ? (decimal.sign ? "-nan" : "nan") :
-                      decimal.sign ? "-0" : "0";
-      mulle_buffer_add_string( buffer, (char *) s);
+      if( decimal.sign)
+         mulle_buffer_add_byte( buffer, '-');
+      else if( info->memory.plus_found)
+         mulle_buffer_add_byte( buffer, '+');
+      else if( info->memory.space_found)
+         mulle_buffer_add_byte( buffer, ' ');
+
+      if( decimal.special == 3)  // zero - format with precision
+      {
+         mulle_buffer_add_byte( buffer, '0');
+         precision = info->memory.precision_found ? info->precision : 6;
+         if( precision > 0 || info->memory.hash_found)
+         {
+            mulle_buffer_add_byte( buffer, '.');
+            for( i = 0; i < precision; i++)
+               mulle_buffer_add_byte( buffer, '0');
+         }
+         mulle_buffer_add_byte( buffer, (info->conversion == 'E' || info->conversion == 'G') ? 'E' : 'e');
+         mulle_buffer_add_byte( buffer, '+');
+         mulle_buffer_add_byte( buffer, '0');
+         mulle_buffer_add_byte( buffer, '0');
+      }
+      else
+      {
+         const char *s = decimal.special == 1 ? "inf" : "nan";
+         mulle_buffer_add_string( buffer, (char *) s);
+      }
+      _mulle_sprintf_fp_justify( buffer, info, before);
       return( 0);
    }
 
@@ -275,12 +372,16 @@ static int _mulle_sprintf_fp_e_conversion(struct mulle_buffer *buffer,
    mulle_buffer_add_byte( buffer, '0' + ((exponent / 10) % 10));
    mulle_buffer_add_byte( buffer, '0' + (exponent % 10));
    
+   _mulle_sprintf_fp_justify( buffer, info, before);
    return( 0);
 }
-static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
-                                          struct mulle_sprintf_formatconversioninfo *info,
-                                          struct mulle_sprintf_argumentarray *arguments,
-                                          int argc) {
+
+
+static int _mulle_sprintf_fp_f_conversion( struct mulle_buffer *buffer,
+                                           struct mulle_sprintf_formatconversioninfo *info,
+                                           struct mulle_sprintf_argumentarray *arguments,
+                                           int argc)
+{
    union mulle_sprintf_argumentvalue   v;
    struct mulle_dtostr_decimal         decimal;
    uint64_t                            significand;
@@ -291,11 +392,13 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
    int                                 int_digits;
    int                                 i;
    int                                 j;
+   size_t                              before;
 
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
    decimal = mulle_dtostr_decompose( v.d);
+   before  = mulle_buffer_get_length( buffer);
    
    if( decimal.special)
    {
@@ -316,12 +419,14 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
             for( i = 0; i < precision; i++)
                mulle_buffer_add_byte( buffer, '0');
          }
+         _mulle_sprintf_fp_justify( buffer, info, before);
          return( 0);
       }
       
       const char *s = decimal.special == 1 ? (decimal.sign ? "-inf" : "inf") :
                       decimal.sign ? "-nan" : "nan";
       mulle_buffer_add_string( buffer, (char *) s);
+      _mulle_sprintf_fp_justify( buffer, info, before);
       return( 0);
    }
 
@@ -400,18 +505,23 @@ static int _mulle_sprintf_fp_f_conversion(struct mulle_buffer *buffer,
             mulle_buffer_add_byte( buffer, '0');
       }
    }
+   _mulle_sprintf_fp_justify( buffer, info, before);
    return( 0);
 }
+
+
 static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
-                                          int argc) {
+                                          int argc)
+{
    union mulle_sprintf_argumentvalue           v;
    struct mulle_dtostr_decimal                 decimal;
    struct mulle_sprintf_formatconversioninfo   info_copy;
    int                                         precision;
    int                                         exponent;
    int                                         num_digits;
+   size_t                                      start;
    size_t                                      before;
    char                                        *str;
    char                                        *p;
@@ -422,13 +532,19 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
       v.d = (double) v.ld;
    decimal = mulle_dtostr_decompose( v.d);
+   start   = mulle_buffer_get_length( buffer);
    
-   if( decimal.special)
+   if( decimal.special == 1 || decimal.special == 2)
    {
-      const char *s = decimal.special == 1 ? (decimal.sign ? "-inf" : "inf") :
-                      decimal.special == 2 ? (decimal.sign ? "-nan" : "nan") :
-                      decimal.sign ? "-0" : "0";
-      mulle_buffer_add_string( buffer, (char *) s);
+      if( decimal.sign)
+         mulle_buffer_add_byte( buffer, '-');
+      else if( info->memory.plus_found)
+         mulle_buffer_add_byte( buffer, '+');
+      else if( info->memory.space_found)
+         mulle_buffer_add_byte( buffer, ' ');
+
+      mulle_buffer_add_string( buffer, (char *) (decimal.special == 1 ? "inf" : "nan"));
+      _mulle_sprintf_fp_justify( buffer, info, start);
       return( 0);
    }
 
@@ -440,6 +556,10 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
    exponent   = decimal.exponent + num_digits - 1;
    
    info_copy = *info;
+   info_copy.width                 = 0;
+   info_copy.memory.width_found    = 0;
+   info_copy.memory.left_justify   = 0;
+   info_copy.memory.zero_found     = 0;
    if( exponent < -4 || exponent >= precision)
    {
       info_copy.precision              = precision - 1;
@@ -483,18 +603,28 @@ static int _mulle_sprintf_fp_g_conversion(struct mulle_buffer *buffer,
          str = mulle_buffer_get_bytes( buffer);
          end = str + mulle_buffer_get_length( buffer);
          p   = end - 1;
-         
-         while( p > str + before && *p == '0')
-            p--;
-         if( *p == '.')
-            p--;
-         
-         if( p + 1 < end)
-            mulle_buffer_set_length( buffer, before + (p + 1 - (str + before)), 0);
+
+         dot = str + before;
+         while( dot < end && *dot != '.')
+            dot++;
+
+         if( dot < end)
+         {
+            while( p > dot && *p == '0')
+               p--;
+            if( p == dot)
+               p--;
+
+            if( p + 1 < end)
+               mulle_buffer_set_length( buffer, before + (p + 1 - (str + before)), 0);
+         }
       }
    }
+   _mulle_sprintf_fp_justify( buffer, info, start);
    return( 0);
 }
+
+
 static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
                                           struct mulle_sprintf_formatconversioninfo *info,
                                           struct mulle_sprintf_argumentarray *arguments,
@@ -506,7 +636,13 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
    int                                 exponent;
    int                                 precision;
    int                                 nibble;
+   int                                 leading;
+   int                                 out_digits;
+   int                                 round_up;
    int                                 i;
+   size_t                              before;
+   char                                digits[ 13];
+   char                                hex_char;
 
    v = arguments->values[ argc];
    if( arguments->types[ argc] != mulle_sprintf_double_argumenttype)
@@ -514,6 +650,8 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
    bits.d   = v.d;
    mantissa = bits.u & 0xFFFFFFFFFFFFFULL;
    exponent = (bits.u >> 52) & 0x7FF;
+   before   = mulle_buffer_get_length( buffer);
+   hex_char = info->conversion == 'A' ? 'A' : 'a';
    
    if( bits.u >> 63)
       mulle_buffer_add_byte( buffer, '-');
@@ -528,11 +666,12 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
          mulle_buffer_add_string( buffer, "nan");
       else
          mulle_buffer_add_string( buffer, bits.u >> 63 ? "-inf" : "inf");
+      _mulle_sprintf_fp_justify( buffer, info, before);
       return( 0);
    }
    
    mulle_buffer_add_byte( buffer, '0');
-   mulle_buffer_add_byte( buffer, info->conversion == 'A' ? 'X' : 'x');
+   mulle_buffer_add_byte( buffer, hex_char == 'A' ? 'X' : 'x');
    
    if( exponent == 0 && mantissa == 0)
    {
@@ -547,65 +686,114 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
                mulle_buffer_add_byte( buffer, '0');
          }
       }
-      mulle_buffer_add_byte( buffer, 'p');
+      mulle_buffer_add_byte( buffer, hex_char == 'A' ? 'P' : 'p');
       mulle_buffer_add_byte( buffer, '+');
       mulle_buffer_add_byte( buffer, '0');
    }
    else
    {
+      leading = 1;
       if( exponent == 0)
       {
-         mulle_buffer_add_byte( buffer, '0');
+         leading  = 0;
          exponent = 1;
       }
       else
-      {
-         mulle_buffer_add_byte( buffer, '1');
          mantissa |= 0x10000000000000ULL;
-      }
-      
+
+      for( i = 0; i < 13; i++)
+         digits[ i] = (mantissa >> (48 - i * 4)) & 0xF;
+
+      round_up = 0;
       if( info->memory.precision_found)
       {
-         precision = info->precision;
-         if( precision > 0 || info->memory.hash_found)
+         precision  = info->precision;
+         out_digits = precision < 13 ? precision : 13;
+         // round to nearest, ties to even, using the first dropped nibble
+         if( precision < 13)
          {
-            mulle_buffer_add_byte( buffer, '.');
-            for( i = 0; i < precision && i < 13; i++)
+            nibble = digits[ precision];
+            if( nibble > 8)
+               round_up = 1;
+            else if( nibble == 8)
             {
-               nibble = (mantissa >> (48 - i * 4)) & 0xF;
-               mulle_buffer_add_byte( buffer, nibble < 10
-                                              ? '0' + nibble
-                                              : (info->conversion == 'A' ? 'A' : 'a') + nibble - 10);
+               for( i = precision + 1; i < 13; i++)
+               {
+                  if( digits[ i])
+                  {
+                     round_up = 1;
+                     break;
+                  }
+               }
+               if( ! round_up)   // exact tie: keep last retained digit even
+               {
+                  if( precision == 0)
+                  {
+                     if( leading & 1)
+                        round_up = 1;
+                  }
+                  else if( digits[ precision - 1] & 1)
+                     round_up = 1;
+               }
             }
-            for( ; i < precision; i++)
-               mulle_buffer_add_byte( buffer, '0');
          }
       }
       else
       {
          // No precision specified: output minimum digits (no trailing zeros)
-         // Find last non-zero nibble
-         int   last_nonzero = -1;
-
-         for( i = 0; i < 13; i++)
+         out_digits = 0;
+         for( i = 12; i >= 0; i--)
          {
-            nibble = (mantissa >> (48 - i * 4)) & 0xF;
-            if( nibble != 0)
-               last_nonzero = i;
-         }
-         
-         if( last_nonzero >= 0 || info->memory.hash_found)
-         {
-            mulle_buffer_add_byte( buffer, '.');
-            for( i = 0; i <= last_nonzero; i++)
+            if( digits[ i])
             {
-               nibble = (mantissa >> (48 - i * 4)) & 0xF;
-               mulle_buffer_add_byte( buffer, nibble < 10 ? '0' + nibble : (info->conversion == 'A' ? 'A' : 'a') + nibble - 10);
+               out_digits = i + 1;
+               break;
             }
          }
       }
+
+      if( round_up)
+      {
+         // increment the last retained digit, carrying into the leading digit
+         for( i = out_digits - 1; i >= 0; i--)
+         {
+            if( ++digits[ i] < 16)
+            {
+               round_up = 0;
+               break;
+            }
+            digits[ i] = 0;
+         }
+         if( round_up)
+            leading += 1;
+      }
+
+      mulle_buffer_add_byte( buffer, '0' + leading);
+
+      if( info->memory.precision_found)
+      {
+         precision  = info->precision;
+         if( precision > 0 || info->memory.hash_found)
+         {
+            mulle_buffer_add_byte( buffer, '.');
+            for( i = 0; i < precision; i++)
+            {
+               nibble = i < out_digits ? digits[ i] : 0;
+               mulle_buffer_add_byte( buffer, nibble < 10 ? '0' + nibble : hex_char + nibble - 10);
+            }
+         }
+      }
+      else if( out_digits > 0 || info->memory.hash_found)
+      {
+         mulle_buffer_add_byte( buffer, '.');
+         for( i = 0; i < out_digits; i++)
+         {
+            nibble = digits[ i];
+            mulle_buffer_add_byte( buffer, nibble < 10 ? '0' + nibble : hex_char + nibble - 10);
+         }
+      }
       
-      mulle_buffer_add_byte( buffer, 'p');
+      mulle_buffer_add_byte( buffer, hex_char == 'A' ? 'P' : 'p');
       exponent -= 1023;
       mulle_buffer_add_byte( buffer, exponent >= 0 ? '+' : '-');
       
@@ -620,6 +808,7 @@ static int _mulle_sprintf_fp_a_conversion(struct mulle_buffer *buffer,
          mulle_buffer_add_byte( buffer, '0' + ((exponent / 10) % 10));
       mulle_buffer_add_byte( buffer, '0' + (exponent % 10));
    }
+   _mulle_sprintf_fp_justify( buffer, info, before);
    return( 0);
 }
 
@@ -648,6 +837,8 @@ static struct mulle_sprintf_function mulle_sprintf_fp_dtostr_a_functions =
 };
 
 #endif
+
+
 #ifdef NO_MULLE__DTOSTR
 static int   _mulle_sprintf_fp_conversion( struct mulle_buffer *buffer,
                                            struct mulle_sprintf_formatconversioninfo *info,
@@ -704,12 +895,12 @@ void  mulle_sprintf_register_fp_functions( struct mulle_sprintf_conversion *tabl
 {
 #ifndef NO_MULLE__DTOSTR
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_a_functions, 'a');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions, 'e');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions,   'e');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_f_functions, 'f');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_g_functions, 'g');
 
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_a_functions, 'A');
-   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions, 'E');
+   mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_functions,   'E');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_f_functions, 'F');
    mulle_sprintf_register_functions( tables, &mulle_sprintf_fp_dtostr_g_functions, 'G');
 #else
