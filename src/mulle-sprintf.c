@@ -865,6 +865,11 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
    int      escape_ok;
 #endif
 
+   // Conversion-first formats have no static prefix. Avoid the scan and
+   // enter the normal parser directly; retain the special handling for %%.
+   if( format[ 0] == '%' && format[ 1] != '%')
+      return( format);
+
 #if 1
    escape_ok = (functions_for_conversion( table->jumps, '%') ==
                 &mulle_sprintf_escape_functions);
