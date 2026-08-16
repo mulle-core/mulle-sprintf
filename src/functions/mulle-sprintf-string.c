@@ -326,6 +326,14 @@ int   _mulle_sprintf_charstring_conversion( struct mulle_buffer *buffer,
    if( ! s)
       s = "(null)";  // TODO: make this a global variable ?
 
+   // fast path: a "pure" %s has nothing to justify or truncate, append it
+   // directly (add_string does its own strlen, no length need be measured)
+   if( info->memory.pure)
+   {
+      mulle_buffer_add_string( buffer, s);
+      return( 0);
+   }
+
    // alternate (quoted) ignores all other info (as output will vary in length)
    // but precision
    if( info->memory.precision_found)

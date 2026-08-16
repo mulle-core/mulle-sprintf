@@ -38,6 +38,11 @@
 
 #include "mulle-sprintf-function.h"
 
+// exposed so the literal-prefix fast path in mulle-sprintf.c can check that
+// '%' is still registered as the standard escape function (identity compare)
+MULLE__SPRINTF_GLOBAL
+struct mulle_sprintf_function   mulle_sprintf_escape_functions;
+
 MULLE__SPRINTF_GLOBAL
 void  mulle_sprintf_register_escape_functions( struct mulle_sprintf_conversion *tables);
 

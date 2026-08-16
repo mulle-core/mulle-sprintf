@@ -69,7 +69,7 @@ struct mulle_sprintf_formatconversionflags
 
    unsigned int   left_justify:1;         // not filled during parse
 
-   unsigned int   unused:1;
+   unsigned int   pure:1;                 // no flags, width, precision or modifier
 };
 
 
@@ -85,6 +85,11 @@ struct mulle_sprintf_formatconversioninfo
    int     precision;      // %.3d  = 3
    int     argv_index[ 3];
    int     length;         // width of conversion format: e.g.%%=2, %20d = 4
+
+   int     value_argument;     // effective argument index for the value
+   int     width_argument;     // effective argument index (0 = constant)
+   int     precision_argument; // effective argument index (0 = constant)
+   unsigned char   value_type; // determined argument type
 
    struct mulle_sprintf_formatconversionflags   memory;
 
