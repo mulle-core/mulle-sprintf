@@ -36,17 +36,31 @@
 #include "mulle-sprintf-integer.h"
 
 #include "mulle-sprintf.h"
+#include "mulle-sprintf-decimal-jeaiii.h"
+
+// Set to 0 for an A/B comparison with the simple temporary-buffer
+// conversion. Set to 1 for jeaiii and the direct-to-buffer fast path.
+#ifndef MULLE_SPRINTF_INTEGER_OPTIMIZED
+# define MULLE_SPRINTF_INTEGER_OPTIMIZED 1
+#endif
 
 #ifndef HAVE_DEPRECATED_INT_LONG_CONVERSIONS
 # define HAVE_DEPRECATED_INT_LONG_CONVERSIONS 0
 #endif
 
+//
+// p points at the front of the digit area, *length is i/o: the available
+// capacity on entry, the digit count on exit. The start pointer of the
+// digits is returned; it may lie inside the area (backward-writing
+// converters right-align their digits at the end of the capacity).
+//
 typedef struct
 {
-   char  *(*convert_unsigned_int)( unsigned int value, char *s);
-   char  *(*convert_locale_unsigned_int)( unsigned int value, char *s);
-   char  *(*convert_unsigned_long_long)( unsigned long long value, char *s);
-   char  *(*convert_locale_unsigned_long_long)( unsigned long long value, char *s);
+   char  *(*convert_unsigned_int)( unsigned int value, char *p, size_t *length);
+   char  *(*convert_locale_unsigned_int)( unsigned int value, char *p, size_t *length);
+   char  *(*convert_unsigned_long_long)( unsigned long long value, char *p, size_t *length);
+   char  *(*convert_locale_unsigned_long_long)( unsigned long long value, char *p, size_t *length);
+   int   writes_forward;                 // direct buffer write is possible
    int   (*set_prefix)( char *s, int value_is_zero, int length, int precision);
 } integer_converters;
 
@@ -67,81 +81,55 @@ static int   set_decimal_prefix( char *s,
 }
 
 
-static char  *convert_decimal_unsigned_int( unsigned int  value,
-                                            char *s)
+static char  *convert_decimal_unsigned_int( unsigned int value,
+                                            char *p,
+                                            size_t *length)
 {
-#if 0
-   static const char  digits[200] =
-      "00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899";
-   unsigned int        r;
-   unsigned long       q32;
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   return( mulle_jeaiii_convert_unsigned_int( value, p, length));
+#else
+   // reference: the naive backward loop, kept for comparison
+   size_t   capacity;
+   char     *end;
+   char     *s;
 
-   while( value >= 100)
-   {
-      q32  = value / 100;
-      r    = value - q32 * 100;
-      s   -= 2;
-      s[ 0] = digits[ r * 2];
-      s[ 1] = digits[ r * 2 + 1];
-      value = q32;
-   }
-   if( value >= 10)
-   {
-      r = value % 10;
-      *--s = '0' + r;
-      value /= 10;
-      *--s = '0' + value;
-   }
-   else if( value)
-      *--s = '0' + value;
-#endif
-
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       *--s  = '0' + value % 10;
       value /= 10;
    }
-
+   *length = (size_t)( end - s);
    return( s);
+#endif
 }
 
 
 static char  *convert_decimal_unsigned_long_long( unsigned long long value,
-                                                  char *s)
+                                                  char *p,
+                                                  size_t *length)
 {
-#if 0
-   static const char  digits[200] =
-      "00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899";
-   unsigned long long  q;
-   unsigned long long  r;
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   return( mulle_jeaiii_convert_unsigned_long_long( value, p, length));
+#else
+   // reference: the naive backward loop, kept for comparison
+   size_t   capacity;
+   char     *end;
+   char     *s;
 
-   while( value >= 100)
-   {
-      q = value / 100;
-      r = value - q * 100;
-      s   -= 2;
-      s[ 0] = digits[ r * 2];
-      s[ 1] = digits[ r * 2 + 1];
-      value = q;
-   }
-   if( value >= 10)
-   {
-      r = value % 10;
-      *--s = '0' + r;
-      value /= 10;
-      *--s = '0' + value;
-   }
-   else if( value)
-      *--s = '0' + value;
-#endif
-
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       *--s  = '0' + value % 10;
       value /= 10;
    }
-
+   *length = (size_t)( end - s);
    return( s);
+#endif
 }
 
 
@@ -152,6 +140,11 @@ static integer_converters  decimal_converters =
    .convert_locale_unsigned_int       = convert_decimal_unsigned_int,
    .convert_unsigned_long_long        = convert_decimal_unsigned_long_long,
    .convert_locale_unsigned_long_long = convert_decimal_unsigned_long_long,
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   .writes_forward                    = 1,
+#else
+   .writes_forward                    = 0,
+#endif
    .set_prefix                        = set_decimal_prefix
 };
 
@@ -279,10 +272,16 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    union mulle_sprintf_argumentvalue   v;
    mulle_sprintf_argumenttype_t        t;
    size_t                              s;
+   size_t                              length;
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   size_t                              capacity;
+#endif
    char                                prefix;
    char                                tmp[ sizeof( long long) * 4];
    char                                *p;
-   ptrdiff_t                           p_length;
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   void                                *space;
+#endif
    unsigned long long                  vLL;
    long long                           vll;
 
@@ -290,25 +289,47 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    t = arguments->types[ argc];
    s = mulle_sprintf_argumentsize[ t];
 
-   if( s >= sizeof( long))
+   vll = 0;  // only the signed cases below set it (the is_signed block uses it)
+
+   // Read signed values through the old size-based path. Unsigned values
+   // need the type-specific path to avoid sign extension (e.g. %hu 65535).
+   if( is_signed)
    {
-      if( s == sizeof( long))
-         vll = v.l;
+      if( s >= sizeof( long))
+      {
+         if( s == sizeof( long))
+            vll = v.l;
+         else
+            vll = v.ll;
+      }
       else
-         vll = v.ll;
+      {
+         if( s == sizeof( int))
+            vll = v.i;
+         else
+            if( s == sizeof( short))
+               vll = v.s;
+            else
+               vll = v.c;
+      }
+      vLL = (unsigned long long) vll;
    }
    else
    {
-      if( s == sizeof( int))
-         vll = v.i;
-      else
-         if( s == sizeof( short))
-            vll = v.s;
-         else
-            vll = v.c;
+      switch( t)
+      {
+      case mulle_sprintf_unsigned_char_argumenttype      : vLL = v.C;   break;
+      case mulle_sprintf_unsigned_short_argumenttype     : vLL = v.S;   break;
+      case mulle_sprintf_unsigned_int_argumenttype       : vLL = v.I;   break;
+      case mulle_sprintf_unsigned_long_argumenttype      : vLL = v.L;   break;
+      case mulle_sprintf_unsigned_long_long_argumenttype : vLL = v.LL;  break;
+      case mulle_sprintf_uintmax_t_argumenttype          : vLL = v.Imt; break;
+      case mulle_sprintf_uint64_t_argumenttype           : vLL = v.Qt;  break;
+      case mulle_sprintf_size_t_argumenttype             : vLL = v.St;  break;
+      case mulle_sprintf_unsigned_ptrdiff_t_argumenttype : vLL = v.Dif; break;
+      default                                            : vLL = (unsigned long long) v.i; break;
+      }
    }
-
-   vLL = (unsigned long long) vll;
 
    // bool output shortcut
    if( info->memory.bool_found)
@@ -338,32 +359,67 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
                prefix  = ' ';
    }
 
-   p = &tmp[ sizeof( tmp)];
+#if MULLE_SPRINTF_INTEGER_OPTIMIZED
+   // A pure conversion can reserve the complete temporary digit area and
+   // let the forward converter write directly into the buffer. No digit
+   // count is needed; advance only by the bytes actually written.
+   if( info->memory.pure && converters->writes_forward)
+   {
+      capacity = mulle_buffer_get_capacity( buffer);
+      if( ! mulle_buffer_is_inflexible( buffer) ||
+          capacity - mulle_buffer_get_length( buffer) >= sizeof( tmp))
+         space = mulle_buffer_guarantee( buffer, sizeof( tmp));
+      else
+         space = NULL;
+      if( space)
+      {
+         p = space;
+         if( prefix)
+            *p++ = prefix;
+
+         if( ! vLL)
+            *p++ = '0';
+         else
+         {
+            length = sizeof( tmp) - (prefix != 0);
+            if( s == sizeof( int))
+               (*converters->convert_unsigned_int)( (unsigned int) vLL, p, &length);
+            else
+               (*converters->convert_unsigned_long_long)( vLL, p, &length);
+            p += length;
+         }
+
+         mulle_buffer_advance( buffer, (size_t)( p - (char *) space));
+         return( 0);
+      }
+   }
+#endif
+
+   p      = tmp;
+   length = sizeof( tmp);   // capacity, becomes the digit count
 
    // place ',' appropriately
    if( info->memory.quote_found)
    {
       if( s == sizeof( int))
-         p = (*converters->convert_locale_unsigned_int)( (unsigned int) vLL, p);
+         p = (*converters->convert_locale_unsigned_int)( (unsigned int) vLL, p, &length);
       else
-         p = (*converters->convert_locale_unsigned_long_long)( vLL, p);
+         p = (*converters->convert_locale_unsigned_long_long)( vLL, p, &length);
    }
    else
       if( s == sizeof( int))
-         p = (*converters->convert_unsigned_int)( (unsigned int) vLL, p);
+         p = (*converters->convert_unsigned_int)( (unsigned int) vLL, p, &length);
       else
-         p = (*converters->convert_unsigned_long_long)( vLL, p);
+         p = (*converters->convert_unsigned_long_long)( vLL, p, &length);
 
    // ok we gotz da digit, now build it up, from the front
-   p_length = &tmp[ sizeof( tmp)] - p;
-
-   // p is a the front now
+   // p points at the first digit (may be inside tmp), length is the count
    _mulle_sprintf_justified_and_prefixed( buffer, info,
-                                                  p,
-                                                  (int) p_length,
-                                                  prefix,
-                                                  vLL == 0,
-                                                  converters->set_prefix);
+                                          p,
+                                          (int) length,
+                                          prefix,
+                                          vLL == 0,
+                                          converters->set_prefix);
 
    return( 0);
 }
@@ -393,27 +449,45 @@ static int
 
 
 static char  *convert_octal_unsigned_int( unsigned int value,
-                                          char *s)
+                                          char *p,
+                                          size_t *length)
 {
+   size_t   capacity;
+   char     *end;
+   char     *s;
+
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       *--s  = '0' + (value & 0x7);
       value >>= 3;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 
 
 static char  *convert_octal_unsigned_long_long( unsigned long long value,
-                                                char *s)
+                                                char *p,
+                                                size_t *length)
 {
+   size_t   capacity;
+   char     *end;
+   char     *s;
+
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       *--s  = '0' + (value & 0x7);
       value >>= 3;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 
@@ -455,10 +529,17 @@ static int
 
 
 static char   *convert_hex_unsigned_int( unsigned int value,
-                                         char *s)
+                                         char *p,
+                                         size_t *length)
 {
-   char   v;
+   size_t   capacity;
+   char     *end;
+   char     *s;
+   char     v;
 
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       v     = (value & 0xF);
@@ -466,15 +547,23 @@ static char   *convert_hex_unsigned_int( unsigned int value,
       value >>= 4;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 
 
 static char   *convert_hex_unsigned_long_long( unsigned long long value,
-                                               char *s)
+                                               char *p,
+                                               size_t *length)
 {
-   unsigned char   v;
+   size_t         capacity;
+   char           *end;
+   char           *s;
+   unsigned char  v;
 
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       v     = (unsigned char) value & 0xF;
@@ -482,6 +571,7 @@ static char   *convert_hex_unsigned_long_long( unsigned long long value,
       value >>= 4;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 
@@ -527,10 +617,17 @@ int  _mulle_sprintf_int_hex_conversion( struct mulle_buffer *buffer,
 
 
 static char   *convert_hex_upper_unsigned_int( unsigned int value,
-                                             char *s)
+                                             char *p,
+                                             size_t *length)
 {
-   char   v;
+   size_t   capacity;
+   char     *end;
+   char     *s;
+   char     v;
 
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       v     = (value & 0xF);
@@ -538,15 +635,23 @@ static char   *convert_hex_upper_unsigned_int( unsigned int value,
       value >>= 4;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 
 
 static char   *convert_hex_upper_unsigned_long_long( unsigned long long value,
-                                                     char *s)
+                                                     char *p,
+                                                     size_t *length)
 {
-   unsigned char   v;
+   size_t         capacity;
+   char           *end;
+   char           *s;
+   unsigned char  v;
 
+   capacity = *length;
+   end      = p + capacity;
+   s        = end;
    while( value)
    {
       v     = (unsigned char) value & 0xF;
@@ -554,6 +659,7 @@ static char   *convert_hex_upper_unsigned_long_long( unsigned long long value,
       value >>= 4;
    }
 
+   *length = (size_t)( end - s);
    return( s);
 }
 

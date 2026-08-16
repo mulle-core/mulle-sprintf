@@ -158,15 +158,197 @@ static size_t   gf_strm( char *buf, size_t size, int v)
 }
 
 
-static struct benchcase   cases[ 7] =
+static size_t   mf_int24( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+      v, v + 1, v + 2, v + 3, v + 4, v + 5, v + 6, v + 7,
+      v + 8, v + 9, v + 10, v + 11, v + 12, v + 13, v + 14, v + 15,
+      v + 16, v + 17, v + 18, v + 19, v + 20, v + 21, v + 22, v + 23));
+}
+
+
+static size_t   gf_int24( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+      v, v + 1, v + 2, v + 3, v + 4, v + 5, v + 6, v + 7,
+      v + 8, v + 9, v + 10, v + 11, v + 12, v + 13, v + 14, v + 15,
+      v + 16, v + 17, v + 18, v + 19, v + 20, v + 21, v + 22, v + 23));
+}
+
+
+static size_t   mf_str24( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+      "one", "two", "three", "four", "five", "six", "seven", "eight",
+      "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+      "seventeen", "eighteen", "nineteen", "twenty", "twentyone", "twentytwo", "twentythree", "twentyfour"));
+}
+
+
+static size_t   gf_str24( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+      "one", "two", "three", "four", "five", "six", "seven", "eight",
+      "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+      "seventeen", "eighteen", "nineteen", "twenty", "twentyone", "twentytwo", "twentythree", "twentyfour"));
+}
+
+
+static size_t   mf_float16( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f",
+      v / 1000.0, 1.25, v / 7.0, 3.1415926535, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0, 1.25, v / 7.0, 3.1415926535, v / 999.0, 0.01, v / 3.0, 123.456));
+}
+
+
+static size_t   gf_float16( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f",
+      v / 1000.0,  1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0,  1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456));
+}
+
+
+static size_t   mf_float24( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f",
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456));
+}
+
+
+static size_t   gf_float24( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f %.6f",
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456,
+      v / 1000.0, 1.25, v / 7.0, 3.141592653589, v / 999.0, 0.01, v / 3.0, 123.456));
+}
+
+
+static size_t   mf_pad( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%10d %-5d %08d %.2f %-12.3f %12s %-12s %.4e %8x %5ld %c %s",
+      v, v, v, v / 2.5, v / 7.0, "hello", "world", v / 3.0,
+            v, (long) v, 'K', "end"));
+}
+
+
+static size_t   gf_pad( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%10d %-5d %08d %.2f %-12.3f %12s %-12s %.4e %8x %5ld %c %s",
+      v, v, v, v / 2.5, v / 7.0, "hello", "world", v / 3.0,
+            v, (long) v, 'K', "end"));
+}
+
+
+static size_t   mf_hex( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size, "%x", (unsigned) v));
+}
+
+
+static size_t   gf_hex( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size, "%x", (unsigned) v));
+}
+
+
+static size_t   mf_hex8( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%x %x %x %x %x %x %x %x",
+      (unsigned) v, (unsigned) v + 1, (unsigned) v + 2, (unsigned) v + 3,
+      (unsigned) v + 4, (unsigned) v + 5, (unsigned) v + 6, (unsigned) v + 7));
+}
+
+
+static size_t   gf_hex8( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%x %x %x %x %x %x %x %x",
+      (unsigned) v, (unsigned) v + 1, (unsigned) v + 2, (unsigned) v + 3,
+      (unsigned) v + 4, (unsigned) v + 5, (unsigned) v + 6, (unsigned) v + 7));
+}
+
+
+static size_t   mf_oct( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size, "%o", (unsigned) v));
+}
+
+
+static size_t   gf_oct( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size, "%o", (unsigned) v));
+}
+
+
+static size_t   mf_oct8( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size,
+      "%o %o %o %o %o %o %o %o",
+      (unsigned) v, (unsigned) v + 1, (unsigned) v + 2, (unsigned) v + 3,
+      (unsigned) v + 4, (unsigned) v + 5, (unsigned) v + 6, (unsigned) v + 7));
+}
+
+
+static size_t   gf_oct8( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size,
+      "%o %o %o %o %o %o %o %o",
+      (unsigned) v, (unsigned) v + 1, (unsigned) v + 2, (unsigned) v + 3,
+      (unsigned) v + 4, (unsigned) v + 5, (unsigned) v + 6, (unsigned) v + 7));
+}
+
+
+#define LONG_TEXT \
+   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+
+
+static size_t   mf_longlit( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size, LONG_TEXT "%%d", v));
+}
+
+
+static size_t   gf_longlit( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size, LONG_TEXT "%%d", v));
+}
+
+
+static struct benchcase   cases[] =
 {
    { "int %%d",               1, mf_int,  gf_int},
    { "int %%d x3",            3, mf_int3, gf_int3},
    { "int %%d x16",          16, mf_intm, gf_intm},
+   { "int %%d x24",          24, mf_int24,gf_int24},
+   { "long lit + %%d",        1, mf_longlit,gf_longlit},
+   { "hex %%x",               1, mf_hex,  gf_hex},
+   { "hex %%x x8",            8, mf_hex8, gf_hex8},
+   { "oct %%o",               1, mf_oct,  gf_oct},
+   { "oct %%o x8",            8, mf_oct8, gf_oct8},
    { "mixed 8 convs",         8, mf_mix,  gf_mix},
    { "float %.6f x3",         3, mf_float,gf_float},
+   { "float %.6f x16",       16, mf_float16,gf_float16},
+   { "float %.6f x24",       24, mf_float24,gf_float24},
    { "string %%s + int x2",   2, mf_str1, gf_str1},
-   { "string %%s x8",         8, mf_strm, gf_strm}
+   { "string %%s x8",         8, mf_strm, gf_strm},
+   { "string %%s x24",       24, mf_str24,gf_str24},
+   { "pad mix (12 convs)",   12, mf_pad,  gf_pad}
 };
 
 
@@ -189,7 +371,7 @@ int  main( int argc, char *argv[])
    if( first < 0)
    {
       first = 0;
-      n     = 7;
+      n     = (int) (sizeof( cases) / sizeof( cases[ 0]));
    }
    else
    {

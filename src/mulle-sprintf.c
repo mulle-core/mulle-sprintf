@@ -41,7 +41,15 @@
 #include "include-private.h"
 
 #include <errno.h>
+#include <stdint.h>
+#include <string.h>
 
+// Set to 0 for a baseline that sends the complete format directly through
+// setup_context/parse_context. Set to 1 for the static-prefix scanner and
+// bounded SWAR fast path.
+#ifndef MULLE_SPRINTF_PREFIX_OPTIMIZED
+# define MULLE_SPRINTF_PREFIX_OPTIMIZED 1
+#endif
 
 #ifndef HAVE_SPRINTF_BOOL
 # define HAVE_SPRINTF_BOOL  1
@@ -295,12 +303,9 @@ static int
 
 
 static inline mulle_sprintf_argumenttype_t
-   jump_determine_argument_type( mulle_sprintf_vector_t  jumptable,
-                                 struct mulle_sprintf_formatconversioninfo *info)
+   jump_determine_argument_type( struct mulle_sprintf_formatconversioninfo *info)
 {
    struct mulle_sprintf_function  *functions;
-
-   MULLE_C_UNUSED( jumptable);
 
    // callers must have resolved the conversion already (see parse_all_conversions)
    assert( info->function);
@@ -311,15 +316,12 @@ static inline mulle_sprintf_argumenttype_t
 
 
 static inline int
-   jump_convert_argument( mulle_sprintf_vector_t  jumptable,
-                          struct mulle_buffer *buffer,
+   jump_convert_argument( struct mulle_buffer *buffer,
                           struct mulle_sprintf_formatconversioninfo *info,
                           struct mulle_sprintf_argumentarray *arguments,
                           int i)
 {
    struct mulle_sprintf_function  *functions;
-
-   MULLE_C_UNUSED( jumptable);
 
    // callers must have resolved the conversion already (see parse_all_conversions)
    assert( info->function);
@@ -330,8 +332,7 @@ static inline int
 
 
 static inline mulle_sprintf_argumenttype_t
-   determine_argument_type( mulle_sprintf_vector_t  jumptable,
-                            struct mulle_sprintf_formatconversioninfo *info)
+   determine_argument_type( struct mulle_sprintf_formatconversioninfo *info)
 {
    // need to code this (possibly :))
    if( info->modifier[ 0] == 'v' ||
@@ -339,23 +340,28 @@ static inline mulle_sprintf_argumenttype_t
        info->modifier[ 2] == 'v')
       return( mulle_sprintf_vector_argumenttype);
 
-   return( jump_determine_argument_type( jumptable, info));
+   return( jump_determine_argument_type( info));
 }
 
 
-static inline void
-   update_width_and_precision( struct mulle_sprintf_formatconversioninfo *info,
-                               struct mulle_sprintf_argumentarray *arguments,
-                               int *argc)
+static inline int
+   convert_argument( struct mulle_buffer *buffer,
+                     struct mulle_sprintf_formatconversioninfo *info,
+                     struct mulle_sprintf_argumentarray *arguments,
+                     int before)
 {
-   if( info->memory.width_is_argument)
+   if( info->modifier[ 0] == 'v' ||
+       info->modifier[ 1] == 'v' ||
+       info->modifier[ 2] == 'v')
    {
-      if( info->memory.width_is_indexed_argument)
-         *argc = info->argv_index[ 1];
-      else
-         ++*argc;
+      mulle_buffer_add_string( buffer, "<vector unsupported>");
+      return( -1);
+   }
 
-      info->width = arguments->values[ *argc].i;
+   // width / precision from '*' use their (pre-resolved) argument indices
+   if( info->width_argument)
+   {
+      info->width = arguments->values[ info->width_argument].i;
       if( info->width < 0)
       {
          info->memory.minus_found = 1;
@@ -369,53 +375,18 @@ static inline void
       info->memory.zero_found   = 0;
    }
 
-   if( info->memory.precision_is_argument)
+   if( info->precision_argument)
    {
-      if( info->memory.precision_is_indexed_argument)
-         *argc = info->argv_index[ 2];
-      else
-         ++*argc;
-
-      info->precision = arguments->values[ *argc].i;
+      info->precision = arguments->values[ info->precision_argument].i;
       if( info->precision < 0)
          info->precision = - info->precision;
    }
-}
 
-
-static inline int
-   convert_argument( mulle_sprintf_vector_t jumptable,
-                     struct mulle_buffer *buffer,
-                     struct mulle_sprintf_formatconversioninfo *info,
-                     struct mulle_sprintf_argumentarray *arguments,
-                     int *arg,
-                     int before)
-{
-   if( info->modifier[ 0] == 'v' ||
-       info->modifier[ 1] == 'v' ||
-       info->modifier[ 2] == 'v')
-   {
-      mulle_buffer_add_string( buffer, "<vector unsupported>");
-      return( -1);
-   }
-
-   if( info->memory.argument_index_found)
-      *arg = info->argv_index[ 0];
-
-   update_width_and_precision( info, arguments, arg);
-
-   if( info->memory.argument_index_found)
-      *arg = info->argv_index[ 0];
-   else
-      ++*arg;
-
-   //
-   // to do, extract by type here and then omit arguments and i from
-   // conversion call
-   // there's just two things we can't vector
-   //
    info->mystery = (void *) (intptr_t) before;  // for return conversion
-   return( jump_convert_argument( jumptable, buffer, info, arguments, *arg));
+   return( jump_convert_argument( buffer,
+                                  info,
+                                  arguments,
+                                  info->value_argument));
 }
 
 
@@ -597,6 +568,7 @@ state_width_entry:
                   return( -1);
 
                info->argv_index[ 1]                   = value;
+               info->width_argument                   = value;
                info->memory.width_is_indexed_argument = 1;
                parser.memo                            = NULL;
                parser.state                           = state_precision;
@@ -620,6 +592,7 @@ state_width_entry:
                   return( -1);
                if( arg > *max_arg)
                   *max_arg = arg;
+               info->width_argument = arg;
                ++arg;  // dial up for conversion
             }
          }
@@ -662,6 +635,7 @@ state_width_entry:
 
                info->memory.precision_is_indexed_argument = 1;
                info->argv_index[ 2]                       = value;
+               info->precision_argument                   = value;
                parser.state                               = state_modifier;
                arg                                        = value;
                if( arg > *max_arg)
@@ -685,6 +659,7 @@ state_width_entry:
                   return( -1);
                if( arg > *max_arg)
                   *max_arg = arg;
+               info->precision_argument = arg;
                ++arg;  // dial up for conversion
             }
                // parser.memo = NULL;
@@ -706,6 +681,24 @@ state_width_entry:
       case state_conversion :
          info->conversion = c;
          info->length     = (int) ((parser.curr - format) + 1);
+         info->memory.pure = ( info->memory.argument_index_found == 0 &&
+                               info->memory.zero_found == 0 &&
+                               info->memory.minus_found == 0 &&
+                               info->memory.space_found == 0 &&
+                               info->memory.hash_found == 0 &&
+                               info->memory.plus_found == 0 &&
+                               info->memory.quote_found == 0 &&
+                               info->memory.bool_found == 0 &&
+                               info->memory.width_found == 0 &&
+                               info->memory.precision_found == 0 &&
+                               info->separator == 0 &&
+                               info->modifier[ 0] == 0 &&
+                               info->modifier[ 1] == 0 &&
+                               info->modifier[ 2] == 0);
+         if( info->memory.argument_index_found)
+            info->value_argument = info->argv_index[ 0];
+         else
+            info->value_argument = arg;
          if( arg > *max_arg)
             *max_arg = arg;
          return( arg + 1);
@@ -713,6 +706,8 @@ state_width_entry:
    }
    return( -1);
 }
+
+
 
 
 
@@ -735,7 +730,6 @@ struct mulle_sprintf_context
    struct mulle_sprintf_formatconversioninfo   conversionBuf[ STACKABLE_N];  // this is the biggy
    union mulle_sprintf_argumentvalue           valueBuf[ STACKABLE_ARGUMENTS];
    unsigned char                               typesBuf[ STACKABLE_ARGUMENTS];
-   int                                         before;
    int                                         n;
 };
 
@@ -746,45 +740,169 @@ static int
 {
    struct mulle_sprintf_formatconversioninfo   *info;
    int                                         i;
-   int                                         arg;
 
-   arg = 0;
-
-   // positional parameters will have been preset to int already
-   // ctxt->arguments->types[ arg] all to int (for positional arguments)
-
+   // argument indices and types were resolved during parsing, so this is
+   // now a pure scatter. All slots were preset to Int already, except the
+   // width/precision '*' arguments which are integers anyway.
    for( i = 0; i < ctxt->n; i++)
    {
       info = &ctxt->infos[ i];
-
-      if( info->memory.argument_index_found)
-         arg = info->argv_index[ 0];
-      else
-      {
-         if( info->memory.width_is_argument && ! info->memory.width_is_indexed_argument)
-            ++arg;
-
-         if( info->memory.precision_is_argument && ! info->memory.precision_is_indexed_argument)
-            ++arg;
-
-         ++arg;
-      }
-
-      ctxt->arguments->types[ arg] = determine_argument_type( table->jumps, info);
-      if( ctxt->arguments->types[ arg] == (mulle_sprintf_argumenttype_t) - 1)
+      ctxt->arguments->types[ info->value_argument] = info->value_type;
+      if( info->value_type == (unsigned char) (mulle_sprintf_argumenttype_t) - 1)
          return( -4);
-
-      // looks so wrong, but is sprintf compatible
-      if( info->memory.width_is_indexed_argument)
-         arg = info->argv_index[ 1] + 1;
-
-      if( info->memory.precision_is_indexed_argument)
-         arg = info->argv_index[ 2] + 1;
    }
 
    return( 0);
 }
 
+
+
+#if MULLE_SPRINTF_PREFIX_OPTIMIZED
+
+//
+// SWAR (SIMD-within-a-register) helper to find a byte in a word. Used by
+// scan_static_prefix_bounded, where the known remaining length guarantees
+// that full words are only read while they are entirely within the string
+// (no read past the NUL). A candidate hit is verified byte-wise, so the
+// word check may only be conservative, never wrong.
+//
+static inline uint64_t   has_zero_byte_swar( uint64_t v)
+{
+   return( (v - 0x0101010101010101ULL) & ~v & 0x8080808080808080ULL);
+}
+
+
+static inline int   contains_byte_swar( uint64_t word, unsigned char c)
+{
+   return( has_zero_byte_swar( word ^ (0x0101010101010101ULL * c)) != 0);
+}
+
+
+//
+// scans a format from its start for the static prefix: all bytes before
+// the first '%' (or the whole string, if there is none). This is a pure
+// function, it does not touch the buffer. Returns the prefix length and
+// stores the full string length (up to the NUL) in *total.
+//
+// The first scan is byte-wise on purpose: no length is known yet, and a
+// word-at-a-time scan of an unknown-length string would read past the NUL
+// (not valgrind-clean). Once *total is known, follow-up scans of the
+// remainder can use scan_static_prefix_bounded below.
+//
+static size_t   scan_static_prefix( char *format, size_t *total)
+{
+   char   *p;
+   char   *prefix;
+
+   p      = format;
+   prefix = NULL;
+
+   while( *p)
+   {
+      if( ! prefix && *p == '%')
+         prefix = p;
+      ++p;
+   }
+   *total = (size_t)( p - format);
+
+   return( prefix ? (size_t)( prefix - format) : (size_t)( p - format));
+}
+
+
+//
+// scans for the static prefix within [p, p + remaining): all bytes before
+// the first '%', or everything if there is none. The known length makes
+// 8-byte word-at-a-time reads safe: no read ever passes p + remaining, so
+// nothing past the NUL is touched (valgrind-clean).
+//
+static size_t   scan_static_prefix_bounded( char *p, size_t remaining)
+{
+   size_t     i;
+   uint64_t   word;
+
+   i = 0;
+   while( remaining - i >= 8)
+   {
+      memcpy( &word, p + i, sizeof( word));
+      if( contains_byte_swar( word, '%'))
+      {
+         while( p[ i] != '%')
+            ++i;
+         break;
+      }
+      i += 8;
+   }
+   while( i < remaining && p[ i] != '%')
+      ++i;
+
+   return( i);
+}
+
+
+//
+// copies a static prefix of the format (literal text and, optionally,
+// "%%" escapes) directly into the buffer. Only the remainder (starting at
+// the first real conversion) needs the full conversion treatment. Formats
+// with a large literal prefix avoid the parse/argument machinery entirely
+// for that part; when the whole format is static, no conversion machinery
+// runs at all.
+//
+// the "%%" shortcut can be gated on '%' still being the standard escape
+// function (a custom '%' function must see the conversion): flip the #if
+// to compare both variants
+//
+// returns: pointer to the first character of the remainder (a '%' or NUL)
+//
+static char  *copy_static_prefix( struct mulle_buffer *buffer,
+                                  char *format,
+                                  struct mulle_sprintf_conversion *table)
+{
+   char     *p;
+   size_t   prefix;
+   size_t   remaining;
+   size_t   total;
+#if 1
+   int      escape_ok;
+#endif
+
+#if 1
+   escape_ok = (functions_for_conversion( table->jumps, '%') ==
+                &mulle_sprintf_escape_functions);
+#else
+   MULLE_C_UNUSED( table);
+#endif
+
+   prefix    = scan_static_prefix( format, &total);
+   remaining = total;
+   p         = format;
+
+   for(;;)
+   {
+      if( prefix)
+         mulle_buffer_add_bytes( buffer, p, prefix);
+
+      p         += prefix;
+      remaining -= prefix;
+      if( ! remaining)
+         return( p);   // whole format was static
+
+#if 1
+      if( ! escape_ok)
+         return( p);
+#endif
+      if( remaining < 2 || p[ 1] != '%')
+         return( p);   // a real conversion (or a stray '%') starts here
+
+      // static escape "%%": emit a single '%' and continue with the
+      // remainder, whose length is now known (so SWAR can be used safely)
+      mulle_buffer_add_byte( buffer, '%');
+      p         += 2;
+      remaining -= 2;
+      prefix     = scan_static_prefix_bounded( p, remaining);
+   }
+}
+
+#endif
 
 
 //
@@ -872,6 +990,7 @@ static int   parse_all_conversions( struct mulle_sprintf_context *ctxt,
 
       infos[ n].function = functions_for_conversion( table->jumps,
                                                      infos[ n].conversion);
+      infos[ n].value_type = (unsigned char) determine_argument_type( &infos[ n]);
 
       starts[ n] = p;
       format     = p + infos[ n].length;
@@ -892,7 +1011,6 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    struct mulle_allocator   *allocator;
 
    allocator    = &mulle_stdlib_allocator;
-   ctxt->before = (int) mulle_buffer_get_length( buffer);
 
    //
    // parse all conversions of the format in a single forward pass,
@@ -940,10 +1058,9 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
 static int  context_print( struct mulle_sprintf_context *ctxt,
                            struct mulle_buffer *buffer,
                            char *format,
-                           struct mulle_sprintf_conversion *table)
+                           int before)
 {
    char                                        *s;
-   int                                         arg;
    int                                         fail;
    int                                         i;
    ptrdiff_t                                   length;
@@ -952,9 +1069,10 @@ static int  context_print( struct mulle_sprintf_context *ctxt,
    // finally, finally oh so finally
    // print stuff
 
+   // `before` is the buffer length captured before any static prefix was
+   // copied, so %n and the return value count the prefix bytes too
    fail = 0;
    s    = format;
-   arg  = 0;
    for( i = 0; i < ctxt->n; i++)
    {
       // copy characters between conversions e.g. %d<characters>%d
@@ -966,12 +1084,7 @@ static int  context_print( struct mulle_sprintf_context *ctxt,
       }
 
       info = &ctxt->infos[ i];
-      if( convert_argument( table->jumps,
-                            buffer,
-                            info,
-                            ctxt->arguments,
-                            &arg,
-                            ctxt->before))
+      if( convert_argument( buffer, info, ctxt->arguments, before))
       {
          fail = 1;
       }
@@ -988,7 +1101,7 @@ static int  context_print( struct mulle_sprintf_context *ctxt,
    length = ctxt->format_end - s;
    if( length)
       mulle_buffer_add_bytes( buffer, s, length);
-   length = mulle_buffer_get_length( buffer) - ctxt->before;
+   length = mulle_buffer_get_length( buffer) - before;
 
    if( mulle_buffer_has_overflown( buffer))
    {
@@ -1017,7 +1130,19 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 {
    struct mulle_sprintf_context   ctxt;
    int                            argc;
+   int                            before;
    size_t                         len;
+
+   //
+   // copy a static prefix (literal text, maybe "%%" escapes) directly into
+   // the buffer; only the remainder needs the full conversion treatment.
+   // `before` is captured before the copy so that %n and the return value
+   // still count the prefix bytes
+   //
+   before = (int) mulle_buffer_get_length( buffer);
+#if MULLE_SPRINTF_PREFIX_OPTIMIZED
+   format = copy_static_prefix( buffer, format, table);
+#endif
 
    // now grab values from all arguments
    // there is no arg #0
@@ -1035,12 +1160,12 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
          errno = ENOMEM;
          return( -1);
       }
-      return( (int) len);
+      return( (int) mulle_buffer_get_length( buffer) - before);
    }
 
    mulle_mvsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
 
-   return( context_print( &ctxt, buffer, format, table));
+   return( context_print( &ctxt, buffer, format, before));
 }
 
 
@@ -1072,7 +1197,19 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
 {
    struct mulle_sprintf_context   ctxt;
    int                            argc;
+   int                            before;
    size_t                         len;
+
+   //
+   // copy a static prefix (literal text, maybe "%%" escapes) directly into
+   // the buffer; only the remainder needs the full conversion treatment.
+   // `before` is captured before the copy so that %n and the return value
+   // still count the prefix bytes
+   //
+   before = (int) mulle_buffer_get_length( buffer);
+#if MULLE_SPRINTF_PREFIX_OPTIMIZED
+   format = copy_static_prefix( buffer, format, table);
+#endif
 
    // now grab values from all arguments
    // there is no arg #0
@@ -1091,12 +1228,12 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
          return( -1);
       }
       // we don't add a null byte (because this makes multiple vsprintfs painful)
-      return( (int) len);
+      return( (int) mulle_buffer_get_length( buffer) - before);
    }
 
    mulle_vsprintf_set_values( ctxt.arguments->values, ctxt.arguments->types, argc, va);
 
-   return( context_print( &ctxt, buffer, format, table));
+   return( context_print( &ctxt, buffer, format, before));
 }
 
 

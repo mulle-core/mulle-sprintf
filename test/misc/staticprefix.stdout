@@ -1,0 +1,16 @@
+just literal               -> 'just literal' len 12
+a longer literal that has no conversions at all -> 'a longer literal that has no conversions at all' len 47
+percent %% only            -> 'percent % only' len 14
+100%%                      -> '100%' len 4
+%%                         -> '%' len 1
+%%d                        -> '%d' len 2
+a%%%%b                     -> 'a%%b' len 4
+a%%%d                      -> 'a%42' len 4
+hello world %d %s          -> 'hello world 42 y'all' len 20
+x%%%%y %x                  -> 'x%%y 1f' len 7
+trailing %                 -> 'trailing %' len 10
+%%%                        -> '%%' len 2
+hello %n%d                 -> 'hello 42' len 8 n 6
+a%%b %n%s                  -> 'a%b x' len 5 n 4
+lit %d %n%s                -> 'lit 7 tail' len 10 n 6
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. %n%d -> 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. 42' len 59 n 57
