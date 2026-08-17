@@ -51,28 +51,28 @@ struct mulle_sprintf_conversion;
 // will not append '\0' !
 MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_sprintf( struct mulle_buffer *buffer,
-                            char *format,
+                            const char *format,
                             ...);
 
 MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_vsprintf( struct mulle_buffer *buffer,
-                             char *format,
+                             const char *format,
                              va_list va);
 
 MULLE__SPRINTF_GLOBAL
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
-                              char *format,
+                              const char *format,
                               va_list va,
                               struct mulle_sprintf_conversion *table);
 
 MULLE__SPRINTF_GLOBAL
 int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
-                              char *format,
+                              const char *format,
                               mulle_vararg_list va);
 
 MULLE__SPRINTF_GLOBAL
 int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
-                               char *format,
+                               const char *format,
                                mulle_vararg_list arguments,
                                struct mulle_sprintf_conversion *table);
 
@@ -89,29 +89,29 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 // the buffer has overflown. Overflow will return -1, with errno set to ENOMEM.
 //
 MULLE__SPRINTF_GLOBAL
-int   mulle_snprintf( char *buf, size_t size, char *format, ...);
+int   mulle_snprintf( char *buf, size_t size, const char *format, ...);
 
 MULLE__SPRINTF_GLOBAL
-int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va);
+int   mulle_vsnprintf( char *buf, size_t size, const char *format, va_list va);
 
 MULLE__SPRINTF_GLOBAL
-int   mulle_mvsnprintf( char *buf, size_t size, char *format, mulle_vararg_list arguments);
+int   mulle_mvsnprintf( char *buf, size_t size, const char *format, mulle_vararg_list arguments);
 
 //
 // Or use these unsafer sprintf versions. Preferably use the buffer versions,
 // though.
 //
 MULLE__SPRINTF_GLOBAL
-int   mulle_sprintf( char *buf, char *format, ...);
+int   mulle_sprintf( char *buf, const char *format, ...);
 
 
-static inline int   mulle_vsprintf( char *buf, char *format, va_list va)
+static inline int   mulle_vsprintf( char *buf, const char *format, va_list va)
 {
    return( mulle_vsnprintf( buf, INT_MAX, format, va));
 }
 
 
-static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list arguments)
+static inline int   mulle_mvsprintf( char *buf, const char *format, mulle_vararg_list arguments)
 {
    return( mulle_mvsnprintf( buf, INT_MAX, format, arguments));
 }
@@ -126,13 +126,13 @@ static inline int   mulle_mvsprintf( char *buf, char *format, mulle_vararg_list 
 // free is odd.
 //
 MULLE__SPRINTF_GLOBAL
-int   mulle_asprintf( char **strp, char *format, ...);
+int   mulle_asprintf( char **strp, const char *format, ...);
 
 MULLE__SPRINTF_GLOBAL
-int   mulle_vasprintf( char **strp, char *format, va_list ap);
+int   mulle_vasprintf( char **strp, const char *format, va_list ap);
 
 MULLE__SPRINTF_GLOBAL
-int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments);
+int   mulle_mvasprintf( char **strp, const char *format, mulle_vararg_list arguments);
 
 //
 // You can specify the allocator with these asprintf functions.
@@ -141,18 +141,18 @@ int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments);
 MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
                                 char **strp,
-                                char *format, ...);
+                                const char *format, ...);
 
 MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
                                  char **strp,
-                                 char *format,
+                                 const char *format,
                                  va_list ap);
 
 MULLE__SPRINTF_GLOBAL
 int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
                                   char **strp,
-                                  char *format,
+                                  const char *format,
                                   mulle_vararg_list arguments);
 
 

@@ -99,7 +99,7 @@ typedef enum
 //       maybe ?
 struct mulle_sprintf_malloc_storage
 {
-   char                                        **starts;
+   const char                                  **starts;
    size_t                                      s_starts;
    struct mulle_sprintf_argumentarray          arguments;
    struct mulle_sprintf_formatconversioninfo   *infos;
@@ -122,7 +122,7 @@ static struct mulle_sprintf_malloc_storage
 static void
    mulle_sprintf_malloc_storage_done( struct mulle_sprintf_malloc_storage *storage)
 {
-   mulle_allocator_free( storage->allocator, storage->starts);
+   mulle_allocator_free( storage->allocator, (void *) storage->starts);
    mulle_allocator_free( storage->allocator, storage->infos);
    mulle_allocator_free( storage->allocator, storage->arguments.types);
    mulle_allocator_free( storage->allocator, storage->arguments.values);
@@ -224,10 +224,10 @@ static void   *space_for_starts( unsigned int n, struct mulle_allocator *allocat
    size = n * sizeof( char *);
    if( size > storage->s_starts)
    {
-      storage->starts   = mulle_allocator_realloc( allocator, storage->starts, size);
+      storage->starts   = mulle_allocator_realloc( allocator, (void *) storage->starts, size);
       storage->s_starts = size;
    }
-   return( storage->starts);
+   return( (void *) storage->starts);
 }
 
 
@@ -402,10 +402,10 @@ static inline int
 
 typedef struct
 {
-   char    *start;
-   char    *curr;
-   char    *memo;
-   char    *sentinel;
+   const char    *start;
+   const char    *curr;
+   const char    *memo;
+   const char    *sentinel;
 
    parser_state   state;
 
@@ -422,7 +422,7 @@ static inline int
                                  struct mulle_sprintf_formatconversioninfo *info)
 
 {
-   char   *p;
+   const char   *p;
    int    digit;
    int    value;
 
@@ -456,7 +456,7 @@ static inline int
 //          and max used argument (for indexes maybe in max_arg)
 //
 static inline int
-   parse_conversion_info( char *format,
+   parse_conversion_info( const char *format,
                           struct mulle_sprintf_formatconversioninfo *info,
                           int arg,
                           int *max_arg,
@@ -731,9 +731,9 @@ state_width_entry:
 
 struct mulle_sprintf_context
 {
-   char                                        **starts;
-   char                                        *startsBuf[ STACKABLE_N];
-   char                                        *format_end;
+   const char                                  **starts;
+   const char                                  *startsBuf[ STACKABLE_N];
+   const char                                  *format_end;
    struct mulle_sprintf_argumentarray          *arguments;
    struct mulle_sprintf_argumentarray          argumentBuf;
    struct mulle_sprintf_formatconversioninfo   *infos;
@@ -801,10 +801,10 @@ static inline int   contains_byte_swar( uint64_t word, unsigned char c)
 // (not valgrind-clean). Once *total is known, follow-up scans of the
 // remainder can use scan_static_prefix_bounded below.
 //
-static size_t   scan_static_prefix( char *format, size_t *total)
+static size_t   scan_static_prefix( const char *format, size_t *total)
 {
-   char   *p;
-   char   *prefix;
+   const char   *p;
+   const char   *prefix;
 
    p      = format;
    prefix = NULL;
@@ -827,7 +827,7 @@ static size_t   scan_static_prefix( char *format, size_t *total)
 // 8-byte word-at-a-time reads safe: no read ever passes p + remaining, so
 // nothing past the NUL is touched (valgrind-clean).
 //
-static size_t   scan_static_prefix_bounded( char *p, size_t remaining)
+static size_t   scan_static_prefix_bounded( const char *p, size_t remaining)
 {
    size_t     i;
 #if MULLE_SPRINTF_PREFIX_SWAR
@@ -860,9 +860,9 @@ static size_t   scan_static_prefix_bounded( char *p, size_t remaining)
 // scans only until the next '%' or the terminating NUL. Unlike the
 // full-length variant, this does not inspect the format after the prefix.
 //
-static size_t   scan_static_prefix( char *format)
+static size_t   scan_static_prefix( const char *format)
 {
-   char   *p;
+   const char   *p;
 
    p = format;
    while( *p && *p != '%')
@@ -887,11 +887,11 @@ static size_t   scan_static_prefix( char *format)
 //
 // returns: pointer to the first character of the remainder (a '%' or NUL)
 //
-static char  *copy_static_prefix( struct mulle_buffer *buffer,
-                                  char *format,
+static const char  *copy_static_prefix( struct mulle_buffer *buffer,
+                                  const char *format,
                                   struct mulle_sprintf_conversion *table)
 {
-   char     *p;
+   const char     *p;
    size_t   prefix;
    int      escape_ok;
 #if MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH
@@ -968,13 +968,13 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
 //          -1  : an unsupported conversion character (errno=EINVAL)
 //
 static int   parse_all_conversions( struct mulle_sprintf_context *ctxt,
-                                    char *format,
+                                    const char *format,
                                     struct mulle_sprintf_conversion *table,
                                     int *max_arg)
 {
    struct mulle_sprintf_formatconversioninfo   *infos;
-   char                                        **starts;
-   char                                        *p;
+   const char                                  **starts;
+   const char                                  *p;
    int                                         arg;
    int                                         cap;
    int                                         grow;
@@ -1001,7 +1001,7 @@ static int   parse_all_conversions( struct mulle_sprintf_context *ctxt,
 
       if( n == cap)
       {
-         char   **os = starts;
+         const char   **os = starts;
          struct mulle_sprintf_formatconversioninfo   *oi = infos;
 
          grow = cap * 2;
@@ -1012,7 +1012,7 @@ static int   parse_all_conversions( struct mulle_sprintf_context *ctxt,
          infos  = space_for_infos( grow, &mulle_stdlib_allocator);
          if( os == ctxt->startsBuf)
          {  // migrate from the stack buffers
-            memcpy( starts, os, n * sizeof( char *));
+            memcpy( (void *) starts, os, n * sizeof( char *));
             memcpy( infos,  oi,  n * sizeof( struct mulle_sprintf_formatconversioninfo));
          }
          ctxt->starts = starts;
@@ -1054,7 +1054,7 @@ static int   parse_all_conversions( struct mulle_sprintf_context *ctxt,
 
 static int  setup_context( struct mulle_sprintf_context *ctxt,
                             struct mulle_buffer *buffer,
-                            char *format,
+                            const char *format,
                             struct mulle_sprintf_conversion *table)
 {
    int                      argc;
@@ -1108,10 +1108,10 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
 
 static int  context_print( struct mulle_sprintf_context *ctxt,
                            struct mulle_buffer *buffer,
-                           char *format,
+                           const char *format,
                            int before)
 {
-   char                                        *s;
+   const char                                  *s;
    int                                         fail;
    int                                         i;
    ptrdiff_t                                   length;
@@ -1175,7 +1175,7 @@ static int  context_print( struct mulle_sprintf_context *ctxt,
 // may raise an exception if memory is full
 //
 int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
-                               char *format,
+                               const char *format,
                                mulle_vararg_list va,
                                struct mulle_sprintf_conversion *table)
 {
@@ -1222,7 +1222,7 @@ int   _mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 
 
 int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
-                              char *format,
+                              const char *format,
                               mulle_vararg_list arguments)
 {
    if( ! buffer || ! format)
@@ -1242,7 +1242,7 @@ int   mulle_buffer_mvsprintf( struct mulle_buffer *buffer,
 
 
 int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
-                              char *format,
+                              const char *format,
                               va_list va,
                               struct mulle_sprintf_conversion *table)
 {
@@ -1289,7 +1289,7 @@ int   _mulle_buffer_vsprintf( struct mulle_buffer *buffer,
 
 
 
-int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, char *format, va_list args)
+int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, const char *format, va_list args)
 {
    if( ! buffer || ! format)
    {
@@ -1305,7 +1305,7 @@ int   mulle_buffer_vsprintf( struct mulle_buffer *buffer, char *format, va_list 
 
 #pragma mark - stream print
 
-int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
+int   mulle_buffer_sprintf( struct mulle_buffer *buffer, const char *format, ...)
 {
    va_list   args;
    int       rval;
@@ -1331,7 +1331,7 @@ int   mulle_buffer_sprintf( struct mulle_buffer *buffer, char *format, ...)
 
 // these guarantee zero termination of the string
 
-int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
+int   mulle_vsnprintf( char *buf, size_t size, const char *format, va_list va)
 {
    struct mulle_buffer   buffer;
    int                   truncated;
@@ -1364,7 +1364,7 @@ int   mulle_vsnprintf( char *buf, size_t size, char *format, va_list va)
 
 int   mulle_mvsnprintf( char *buf,
                         size_t size,
-                        char *format,
+                        const char *format,
                         mulle_vararg_list arguments)
 {
    struct mulle_buffer   buffer;
@@ -1396,7 +1396,7 @@ int   mulle_mvsnprintf( char *buf,
 }
 
 
-int   mulle_snprintf( char *buf, size_t size, char *format, ...)
+int   mulle_snprintf( char *buf, size_t size, const char *format, ...)
 {
    va_list   args;
    int       rval;
@@ -1409,7 +1409,7 @@ int   mulle_snprintf( char *buf, size_t size, char *format, ...)
 }
 
 
-int   mulle_sprintf( char *buf, char *format, ...)
+int   mulle_sprintf( char *buf, const char *format, ...)
 {
    va_list   args;
    int       rval;
@@ -1422,7 +1422,7 @@ int   mulle_sprintf( char *buf, char *format, ...)
 }
 
 
-int   mulle_vasprintf( char **strp, char *format, va_list va)
+int   mulle_vasprintf( char **strp, const char *format, va_list va)
 {
    int    rval;
    char   *s;
@@ -1446,7 +1446,7 @@ int   mulle_vasprintf( char **strp, char *format, va_list va)
 }
 
 
-int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
+int   mulle_mvasprintf( char **strp, const char *format, mulle_vararg_list arguments)
 {
    int    rval;
    char   *s;
@@ -1470,7 +1470,7 @@ int   mulle_mvasprintf( char **strp, char *format, mulle_vararg_list arguments)
 }
 
 
-int   mulle_asprintf( char **strp, char *format, ...)
+int   mulle_asprintf( char **strp, const char *format, ...)
 {
    va_list   args;
    int       rval;
@@ -1485,7 +1485,7 @@ int   mulle_asprintf( char **strp, char *format, ...)
 
 int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
                                  char **strp,
-                                 char *format,
+                                 const char *format,
                                  va_list va)
 {
    int    rval;
@@ -1512,7 +1512,7 @@ int   mulle_allocator_vasprintf( struct mulle_allocator *allocator,
 
 int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
                                   char **strp,
-                                  char *format,
+                                  const char *format,
                                   mulle_vararg_list arguments)
 {
    int    rval;
@@ -1539,7 +1539,7 @@ int   mulle_allocator_mvasprintf( struct mulle_allocator *allocator,
 
 int   mulle_allocator_asprintf( struct mulle_allocator *allocator,
                                 char **strp,
-                                char *format, ...)
+                                const char *format, ...)
 {
    va_list   args;
    int       rval;
