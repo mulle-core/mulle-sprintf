@@ -330,6 +330,22 @@ static size_t   gf_longlit( char *buf, size_t size, int v)
 }
 
 
+#define SWAR_TAIL \
+   "0123456789abcdef0123456789abcdef"
+
+
+static size_t   mf_swar( char *buf, size_t size, int v)
+{
+   return( mulle_snprintf( buf, size, LONG_TEXT "%%" SWAR_TAIL "%d", v));
+}
+
+
+static size_t   gf_swar( char *buf, size_t size, int v)
+{
+   return( (size_t) snprintf( buf, size, LONG_TEXT "%%" SWAR_TAIL "%d", v));
+}
+
+
 static struct benchcase   cases[] =
 {
    { "int %%d",               1, mf_int,  gf_int},
@@ -337,6 +353,7 @@ static struct benchcase   cases[] =
    { "int %%d x16",          16, mf_intm, gf_intm},
    { "int %%d x24",          24, mf_int24,gf_int24},
    { "long lit + %%d",        1, mf_longlit,gf_longlit},
+   { "literal %% + SWAR + %%d", 1, mf_swar, gf_swar},
    { "hex %%x",               1, mf_hex,  gf_hex},
    { "hex %%x x8",            8, mf_hex8, gf_hex8},
    { "oct %%o",               1, mf_oct,  gf_oct},

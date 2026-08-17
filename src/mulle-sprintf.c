@@ -55,6 +55,16 @@
 # define HAVE_SPRINTF_BOOL  1
 #endif
 
+#ifndef MULLE_SPRINTF_PREFIX_SWAR
+# define MULLE_SPRINTF_PREFIX_SWAR 1
+#endif
+
+// Set to 0 to scan only through the static prefix. Set to 1 to retain
+// the full-length scan required by the bounded SWAR follow-up scan.
+#ifndef MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH
+# define MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH 0
+#endif
+
 #define STACKABLE_N             16
 #define STACKABLE_ARGUMENTS     (STACKABLE_N + 1)   // leave a dummy argument #0
 
@@ -759,6 +769,8 @@ static int
 
 #if MULLE_SPRINTF_PREFIX_OPTIMIZED
 
+#if MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH
+
 //
 // SWAR (SIMD-within-a-register) helper to find a byte in a word. Used by
 // scan_static_prefix_bounded, where the known remaining length guarantees
@@ -818,9 +830,12 @@ static size_t   scan_static_prefix( char *format, size_t *total)
 static size_t   scan_static_prefix_bounded( char *p, size_t remaining)
 {
    size_t     i;
+#if MULLE_SPRINTF_PREFIX_SWAR
    uint64_t   word;
+#endif
 
    i = 0;
+#if MULLE_SPRINTF_PREFIX_SWAR
    while( remaining - i >= 8)
    {
       memcpy( &word, p + i, sizeof( word));
@@ -832,11 +847,30 @@ static size_t   scan_static_prefix_bounded( char *p, size_t remaining)
       }
       i += 8;
    }
+#endif
    while( i < remaining && p[ i] != '%')
       ++i;
 
    return( i);
 }
+
+#else
+
+//
+// scans only until the next '%' or the terminating NUL. Unlike the
+// full-length variant, this does not inspect the format after the prefix.
+//
+static size_t   scan_static_prefix( char *format)
+{
+   char   *p;
+
+   p = format;
+   while( *p && *p != '%')
+      ++p;
+   return( (size_t)( p - format));
+}
+
+#endif
 
 
 //
@@ -859,10 +893,10 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
 {
    char     *p;
    size_t   prefix;
+   int      escape_ok;
+#if MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH
    size_t   remaining;
    size_t   total;
-#if 1
-   int      escape_ok;
 #endif
 
    // Conversion-first formats have no static prefix. Avoid the scan and
@@ -870,13 +904,10 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
    if( format[ 0] == '%' && format[ 1] != '%')
       return( format);
 
-#if 1
    escape_ok = (functions_for_conversion( table->jumps, '%') ==
                 &mulle_sprintf_escape_functions);
-#else
-   MULLE_C_UNUSED( table);
-#endif
 
+#if MULLE_SPRINTF_PREFIX_SCAN_FULL_LENGTH
    prefix    = scan_static_prefix( format, &total);
    remaining = total;
    p         = format;
@@ -891,11 +922,7 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
       if( ! remaining)
          return( p);   // whole format was static
 
-#if 1
-      if( ! escape_ok)
-         return( p);
-#endif
-      if( remaining < 2 || p[ 1] != '%')
+      if( ! escape_ok || remaining < 2 || p[ 1] != '%')
          return( p);   // a real conversion (or a stray '%') starts here
 
       // static escape "%%": emit a single '%' and continue with the
@@ -905,6 +932,25 @@ static char  *copy_static_prefix( struct mulle_buffer *buffer,
       remaining -= 2;
       prefix     = scan_static_prefix_bounded( p, remaining);
    }
+#else
+   p = format;
+   for(;;)
+   {
+      prefix = scan_static_prefix( p);
+      if( prefix)
+         mulle_buffer_add_bytes( buffer, p, prefix);
+      p += prefix;
+
+      if( ! *p)
+         return( p);   // whole format was static
+      if( ! escape_ok || p[ 1] != '%')
+         return( p);   // a real conversion (or a stray '%') starts here
+
+      // static escape "%%": emit a single '%' and scan the next chunk.
+      mulle_buffer_add_byte( buffer, '%');
+      p += 2;
+   }
+#endif
 }
 
 #endif
