@@ -59,3 +59,6 @@ build-*/
 .graveyard
 *.tmp.*
 .idea
+.kiro/
+TODO.md
+REVIEW.md

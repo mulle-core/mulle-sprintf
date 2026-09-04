@@ -51,6 +51,7 @@ src/generic/include.h
 #
 set( PUBLIC_HEADERS
 src/functions/mulle-sprintf-character.h
+src/functions/mulle-sprintf-decimal-jeaiii.h
 src/functions/mulle-sprintf-escape.h
 src/functions/mulle-sprintf-fp.h
 src/functions/mulle-sprintf-integer.h

@@ -1,3 +1,10 @@
+### 4.1.0
+
+* const-qualify input-only pointer parameters
+* add SWAR prefix scan tuning knobs and SPRINTF-TUNING notes
+* various performance tuning and improvements
+* add missing copyright and license headers to source files
+
 ### 4.0.1
 
 

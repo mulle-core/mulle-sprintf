@@ -320,13 +320,13 @@ static size_t   gf_oct8( char *buf, size_t size, int v)
 
 static size_t   mf_longlit( char *buf, size_t size, int v)
 {
-   return( mulle_snprintf( buf, size, LONG_TEXT "%%d", v));
+   return( mulle_snprintf( buf, size, LONG_TEXT "%d", v));
 }
 
 
 static size_t   gf_longlit( char *buf, size_t size, int v)
 {
-   return( (size_t) snprintf( buf, size, LONG_TEXT "%%d", v));
+   return( (size_t) snprintf( buf, size, LONG_TEXT "%d", v));
 }
 
 
@@ -404,6 +404,9 @@ int  main( int argc, char *argv[])
       iterations = atoi( argv[ 1]);
    else
       iterations = 100000;
+#ifdef MULLE_TEST_VALGRIND
+   iterations = 100;
+#endif
 
    for(;;)
    {
