@@ -51,7 +51,7 @@ static void   check( char *format, ...)
 // %n cases need the count visible, so they get explicit checks instead of
 // going through check() (which cannot see the %n target). Callers pass
 // &n as `np` and again at the position of %n in the varargs.
-static void   check_n( char *format, int *np, int expected_len, int expected_n, ...)
+static void   check_n( int *np, int expected_len, int expected_n, char *format, ...)
 {
    va_list   args;
    char      m[ 512];
@@ -119,11 +119,12 @@ int  main( void)
    }
 
    // %n must count the copied prefix
-   check_n( "hello %n%d", &n, 8, 6, &n, 42);
-   check_n( "a%%b %n%s", &n, 5, 4, &n, "x");
-   check_n( "lit %d %n%s", &n, 10, 6, 7, &n, "tail");
-   check_n( "Lorem ipsum dolor sit amet, consectetur adipiscing elit. %n%d",
-            &n, 59, 57, &n, 42);
+   check_n( &n, 8, 6, "hello %n%d", &n, 42);
+   check_n( &n, 5, 4, "a%%b %n%s", &n, "x");
+   check_n( &n, 10, 6, "lit %d %n%s", 7, &n, "tail");
+   check_n( &n, 59, 57,
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. %n%d",
+            &n, 42);
 
    if( failures)
    {

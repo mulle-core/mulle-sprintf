@@ -1,11 +1,9 @@
-#define _POSIX_C_SOURCE  200809L
-
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <mulle-time/mulle-time.h>
 
 
 #define DATASET_N   4096
@@ -396,14 +394,10 @@ static void   fill_values( int dataset)
 
 static uint64_t   nanoseconds_now( void)
 {
-   struct timespec   ts;
+   mulle_timeinterval_t   now;
 
-   if( clock_gettime( CLOCK_MONOTONIC, &ts))
-   {
-      perror( "clock_gettime");
-      exit( 1);
-   }
-   return( (uint64_t) ts.tv_sec * UINT64_C( 1000000000) + (uint64_t) ts.tv_nsec);
+   now = mulle_timeinterval_now_monotonic();
+   return( (uint64_t) (now * 1000000000.0));
 }
 
 
@@ -528,6 +522,9 @@ int   main( int argc, char *argv[])
    size_t   n;
 
    iterations = 5000000;
+#ifdef MULLE_TEST_VALGRIND
+   iterations = 1000;
+#endif
    if( argc > 1)
    {
       iterations = (size_t) strtoull( argv[ 1], &endptr, 10);
