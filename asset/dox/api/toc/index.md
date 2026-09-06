@@ -4,7 +4,7 @@
 
 - mulle-sprintf is an extensible, stdlib-compatible sprintf replacement written in C. It supports both C varargs (va_list) and mulle_vararg style arguments, custom conversion registration, and UTF8/16/32 string handling.
 - Solves: portable, extensible formatting (including Objective-C style %@ / BOOL as YES/NO via registration) and safe allocation variants (asprintf, allocator-backed asprintf, buffer-based printing).
-- Key features: mulle_snprintf/mulle_sprintf/mulle_asprintf, buffer-oriented printing, conversion-table extensibility, optional mulle-dtoa for FP.
+- Key features: mulle_snprintf/mulle_sprintf/mulle_asprintf, buffer-oriented printing, conversion-table extensibility, optional mulle-dtostr for FP, and a `%n`/`%ln` write-through that honors the C standard's signed pointer types.
 
 ## 2. Key Concepts & Design Philosophy
 
@@ -20,31 +20,32 @@ This section highlights the public headers and the main symbols an AI should ref
 ### 3.1. src/mulle-sprintf.h
 
 #### Overview
-- Primary entry points: buffer-based printing, fixed-buffer convenience wrappers, asprintf/allocator-asprintf variants, and helper macros.
+- Primary entry points: buffer-based printing, fixed-buffer convenience wrappers, asprintf/allocator-asprintf variants, and helper macros. Current library version: `MULLE__SPRINTF_VERSION` 4.1.0. All format strings are `const char *` (since 4.1.0, input-only pointers were const-qualified).
 
 #### Important symbols
-- Buffer APIs
-  - int mulle_buffer_sprintf(struct mulle_buffer *buffer, char *format, ...);
-  - int mulle_buffer_vsprintf(struct mulle_buffer *buffer, char *format, va_list va);
-  - int _mulle_buffer_vsprintf(struct mulle_buffer *buffer, char *format, va_list va, struct mulle_sprintf_conversion *table);
-  - int mulle_buffer_mvsprintf(struct mulle_buffer *buffer, char *format, mulle_vararg_list va);
-  - int _mulle_buffer_mvsprintf(..., struct mulle_sprintf_conversion *table);
+- Buffer APIs (do **not** append `'\0'`)
+  - int mulle_buffer_sprintf(struct mulle_buffer *buffer, const char *format, ...);
+  - int mulle_buffer_vsprintf(struct mulle_buffer *buffer, const char *format, va_list va);
+  - int _mulle_buffer_vsprintf(struct mulle_buffer *buffer, const char *format, va_list va, struct mulle_sprintf_conversion *table);
+  - int mulle_buffer_mvsprintf(struct mulle_buffer *buffer, const char *format, mulle_vararg_list va);
+  - int _mulle_buffer_mvsprintf(..., const char *format, mulle_vararg_list arguments, struct mulle_sprintf_conversion *table);
 
 - Fixed-buffer / snprintf family
-  - int mulle_snprintf(char *buf, size_t size, char *format, ...);
-  - int mulle_vsnprintf(...);
-  - int mulle_mvsnprintf(...);
+  - int mulle_snprintf(char *buf, size_t size, const char *format, ...);
+  - int mulle_vsnprintf(char *buf, size_t size, const char *format, va_list va);
+  - int mulle_mvsnprintf(char *buf, size_t size, const char *format, mulle_vararg_list arguments);
   - Note: these return -1 on overflow and always append a '\0'.
 
 - Unsafe convenience
-  - int mulle_sprintf(char *buf, char *format, ...);
-  - static inline int mulle_vsprintf(char *buf, char *format, va_list va);
+  - int mulle_sprintf(char *buf, const char *format, ...);
+  - static inline int mulle_vsprintf(char *buf, const char *format, va_list va);
+  - static inline int mulle_mvsprintf(char *buf, const char *format, mulle_vararg_list arguments);
 
 - asprintf family
-  - int mulle_asprintf(char **strp, char *format, ...);
-  - int mulle_vasprintf(char **strp, char *format, va_list ap);
-  - int mulle_mvasprintf(char **strp, char *format, mulle_vararg_list arguments);
-  - allocator variants: mulle_allocator_asprintf(...)
+  - int mulle_asprintf(char **strp, const char *format, ...);
+  - int mulle_vasprintf(char **strp, const char *format, va_list ap);
+  - int mulle_mvasprintf(char **strp, const char *format, mulle_vararg_list arguments);
+  - allocator variants: mulle_allocator_asprintf(struct mulle_allocator *allocator, char **strp, const char *format, ...), mulle_allocator_vasprintf(...), mulle_allocator_mvasprintf(...)
   - Strings are allocated with the chosen allocator; default requires mulle_free to free.
 
 - Configuration & helpers
@@ -57,12 +58,21 @@ This section highlights the public headers and the main symbols an AI should ref
 #### Key data structures
 - struct mulle_sprintf_formatconversionflags
   - Bitflags parsed from the format (zero_found, minus_found, space_found, plus_found, hash_found, bool_found, width_found, precision_found, etc.).
+  - `pure:1` (since 4.1.0): set when the conversion has no flags, width, precision or modifier (an important fast-path indicator; replaced the old `unused` bit).
 
 - struct mulle_sprintf_formatconversioninfo
   - Parsed conversion: width, precision, argv_index[], modifier[], conversion char, separator, argument index info.
+  - Since 4.1.0 the struct additionally caches resolved state for speed:
+    - `struct mulle_sprintf_function *function` — the resolved conversion function (perf cache)
+    - `int value_argument` — effective argument index for the value
+    - `int width_argument` — effective argument index (0 = constant)
+    - `int precision_argument` — effective argument index (0 = constant)
+    - `unsigned char value_type` — determined argument type
+  - `mulle_sprintf_argumenttype_t` enum was extended with signed pointer types used by `%n`: mulle_sprintf_char_pointer_argumenttype_signed (signed char *), mulle_sprintf_short_pointer_argumenttype (short *), mulle_sprintf_int_pointer_argumenttype (int *), mulle_sprintf_long_pointer_argumenttype (long *), mulle_sprintf_long_long_pointer_argumenttype (long long *), mulle_sprintf_intmax_t_pointer_argumenttype (intmax_t *), mulle_sprintf_ptrdiff_t_pointer_argumenttype (ptrdiff_t *), mulle_sprintf_int64_t_pointer_argumenttype (int64_t *), mulle_sprintf_signed_size_t_pointer_argumenttype (ssize_t *).
 
 - union mulle_sprintf_argumentvalue
-  - Union of all supported argument representations (int, char, char*, double, intmax_t, long, long double, ptrdiff_t, object pointer, size_t, pointers, wchar_t*, etc.).
+  - Union of all supported argument representations (int, char, char*, double, intmax_t, long, long double, ptrdiff_t, object pointer, size_t, pointers, wchar_t*, uint16_t*/uint32_t* strings, NSDecimal*).
+  - Since 4.1.0 it also carries write-through pointers for `%n`: pSC (signed char *), pSg (short *), pInt (int *), pLg (long *), pLLg (long long *), pImtg (intmax_t *), pDifs (ptrdiff_t *), pQts (int64_t *), pSS (ssize_t *).
 
 - struct mulle_sprintf_argumentarray
   - values + types + size. Helpers fill these from va_list or mulle_vararg_list via:
@@ -76,6 +86,15 @@ This section highlights the public headers and the main symbols an AI should ref
 - struct mulle_sprintf_conversion
   - jumps (vector indexed by printable ascii), modifiers table — the central conversion dispatch table.
 
+### 3.3. src/functions/mulle-sprintf-decimal-jeaiii.h (since 4.1.0)
+
+- Internal C adaptation of the jeaiii integer-to-string algorithm (front-to-back digit writing).
+- Purpose: fast decimal conversion used by the integer converters; handles zero via the caller (emits no digits for 0).
+- Key functions (static inline, internal — do not call directly):
+  - char *mulle_jeaiii_convert_unsigned_int( unsigned int value, char *p, size_t *length)
+  - char *mulle_jeaiii_convert_unsigned_long_long( unsigned long long value, char *p, size_t *length)
+  - Working convention: `p` points at the front of the digit area; `*length` is i/o (capacity on entry, digit count on exit); start pointer is returned.
+
 #### Registration API
 - mulle_sprintf_register_functions(table, functions, c)
 - mulle_sprintf_register_default_functions(functions, c)
@@ -86,7 +105,7 @@ This section highlights the public headers and the main symbols an AI should ref
 - mulle_sprintf_register_standardmodifiers(table)
 - Debug: _mulle_sprintf_dump_available_conversion_characters(table), _mulle_sprintf_dump_available_defaultconversion_characters()
 
-### 3.3. src/mulle-sscanf.h
+### 3.4. src/mulle-sscanf.h
 
 - int mulle_sscanf(char const *str, char const *format, ...);
 - int mulle_vsscanf(char const *str, char const *format, va_list args);
@@ -97,6 +116,11 @@ This section highlights the public headers and the main symbols an AI should ref
 - Output generation: O(n) in length of produced output.
 - Format parsing: O(m) in length of format string; parsing is done once per formatted call.
 - Dispatch: O(1) per conversion character via an indexed vector table.
+- Since 4.1.0 a series of performance fast paths were added (see `dox/SPRINTF-TUNING.md` for details):
+  - Static-prefix fast path: leading literal text and `%%` escapes are copied to the buffer directly; only the remainder gets full conversion treatment (output-identical, covered by test/misc/staticprefix.c).
+  - SWAR prefix scan: SIMD-within-a-register digit-length detection with a bounded follow-up scan for the remainder; controlled by the build knob `MULLE_SPRINTF_PREFIX_SWAR` (default 1, see src/mulle-sprintf.c).
+  - jeaiii integer-to-decimal conversion (see section 3.3) for digit-boundary-correct fast decimal output.
+  - `struct mulle_sprintf_formatconversioninfo` caches the resolved conversion function and effective argument indexes so hot calls avoid re-resolving.
 - Memory: buffer-based APIs minimize reallocs (amortized O(1) append); asprintf does O(n) allocation.
 - Thread-safety: per-thread storage exists (TSS), but registering/modifying global conversion tables at runtime is not inherently thread-safe — perform registration at startup.
 
@@ -111,8 +135,10 @@ This section highlights the public headers and the main symbols an AI should ref
 
 - Common pitfalls
   - Do not access internal union or conversion vectors directly; use public API.
-  - Beware that floating point formatting may use system sprintf unless mulle-dtoa is enabled; platform differences can appear in NaN/Inf formatting.
+  - Beware that floating point formatting may use system sprintf unless mulle-dtostr is enabled; platform differences can appear in NaN/Inf formatting. `long double` arguments are cast to `double` before formatting (since 4.1.0).
+  - `%n` writes through a pointer whose type must match the modifier (e.g. `%ln` -> long *, `%jn` -> intmax_t *, `%zn` -> ssize_t *); the union now distinguishes the signed pointer types so `mulle_vsprintf_set_values`/`mulle_mvsprintf_set_values` can fetch them correctly.
   - mulle_buffer_sprintf does not append '\0' to the buffer — use buffer string helpers when a C-string is needed.
+  - The 4.1.0 fast paths (static prefix, SWAR prefix scan, jeaiii) must be output-identical; if you suspect a regression, verify against glibc `vsnprintf` (as test/misc/staticprefix.c does) and see `dox/SPRINTF-TUNING.md`.
 
 ## 6. Integration Examples
 
@@ -196,7 +222,8 @@ register_my_conversion( struct mulle_sprintf_conversion *table)
 - mulle-utf
 - mulle-vararg
 - mulle-allocator (for allocator-backed asprintf)
-- Optional: mulle-dtoa / mulle-dtostr for improved floating-point formatting
+- mulle-thread (TSS for per-thread config storage)
+- mulle-dtostr for improved floating-point formatting (compile-time fallback to C library FP via `NO_MULLE__DTOSTR`; project depends on mulle-dtostr, not mulle-dtoa)
 
 ---
 
