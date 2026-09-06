@@ -751,6 +751,8 @@ static int
    struct mulle_sprintf_formatconversioninfo   *info;
    int                                         i;
 
+   MULLE_C_UNUSED( table);
+
    // argument indices and types were resolved during parsing, so this is
    // now a pure scatter. All slots were preset to Int already, except the
    // width/precision '*' arguments which are integers anyway.
@@ -1060,6 +1062,8 @@ static int  setup_context( struct mulle_sprintf_context *ctxt,
    int                      argc;
    int                      max_arg;
    struct mulle_allocator   *allocator;
+
+   MULLE_C_UNUSED( buffer);
 
    allocator    = &mulle_stdlib_allocator;
 
