@@ -2,18 +2,46 @@
 
 #### 🔢 An extensible sprintf function supporting stdarg and mulle-vararg
 
+mulle-sprintf is a fast, extensible C formatting library for projects that
+need more than a basic  sprintf . It supports standard  stdarg  and
+mulle_vararg  calls, custom conversion handlers, UTF-8/UTF-16/UTF-32 strings,
+allocator-aware buffers, integer and floating-point formatting, and convenient
+sprintf / snprintf / asprintf -style APIs. Designed for the Mulle ecosystem
+but useful on its own, it combines familiar C formatting with a modular
+architecture, focused performance optimizations, and clear extension points
+for application-specific types and output formats.
+
 The extensibility is used in **MulleObjCStandardFoundation** to add object
 conversion (%@) and to print BOOL values as 'YES', 'NO' (%bd).
-
-Supports explicit UTF-32 (%S, %lS) and UTF-16 (%hS) output. No more `wchar_t`
-pain.
-
-mulle-sprintf can handle **varargs** and **mulle_vararg** style variable
-arguments.
 
 Floating point conversion is done by [mulle-dtostr](https://github.com/mulle-core/mulle-dtostr),
 but fallback to C library FP can be used with `NO_MULLE__DTOSTR`.
 `long double` arguments are cast to `double` before formatting.
+
+## Performance
+
+Release benchmark, 100,000 iterations on linux:
+
+| Case | mulle | glibc | Ratio |
+|------|------:|------:|------:|
+| `int %d` | 6.438 ms | 4.211 ms | 1.53x |
+| `int %d x3` | 12.698 ms | 10.798 ms | 1.18x |
+| `int %d x16` | 59.206 ms | 51.998 ms | 1.14x |
+| `int %d x24` | 88.304 ms | 76.374 ms | 1.16x |
+| `long lit + %d` | 9.549 ms | 3.038 ms | 3.14x |
+| `literal %% + long tail + %d` | 14.429 ms | 6.441 ms | 2.24x |
+| `hex %x` | 6.635 ms | 4.354 ms | 1.52x |
+| `hex %x x8` | 32.187 ms | 27.136 ms | 1.19x |
+| `oct %o` | 6.714 ms | 4.399 ms | 1.53x |
+| `oct %o x8` | 33.519 ms | 26.976 ms | 1.24x |
+| `mixed 8 conversions` | 53.597 ms | 51.750 ms | 1.04x |
+| `float %.6f x3` | 46.727 ms | 52.136 ms | 0.90x |
+| `float %.6f x16` | 226.419 ms | 286.144 ms | 0.79x |
+| `float %.6f x24` | 349.513 ms | 424.260 ms | 0.82x |
+| `string %s + int x2` | 9.919 ms | 7.170 ms | 1.38x |
+| `string %s x8` | 23.267 ms | 18.597 ms | 1.25x |
+| `string %s x24` | 71.808 ms | 52.602 ms | 1.37x |
+| `pad mix (12 conversions)` | 88.649 ms | 101.189 ms | 0.88x |
 
 
 
