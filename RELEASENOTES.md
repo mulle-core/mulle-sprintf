@@ -1,14 +1,22 @@
-### 4.1.0
-
-* const-qualify input-only pointer parameters
-* add SWAR prefix scan tuning knobs and SPRINTF-TUNING notes
-* various performance tuning and improvements
-* add missing copyright and license headers to source files
-
-### 4.0.1
+## 4.1.0
 
 
 
-* -0.0 is no longer normalized to 0.0 in %e, %f, %g, %a conversions
-* output now matches C standard library convention for negative zero
-* -nan sign bit continues to be normalized per IEEE 754 semantics
+
+
+* benchmarks time with ``mulle_timeinterval_now_monotonic()`` instead of ``clock_gettime``
+* fix escaped `%%d` format strings so benchmark tests actually interpolate the value
+* add a ``MULLE_TEST_VALGRIND`` build flag that lowers benchmark iterations for valgrind runs
+* make `%n` static-prefix tests pass the format string as a fixed argument, fixing portability of the variadic call
+
+
+feature: add SWAR prefix scan tuning knobs and SPRINTF-TUNING notes
+
+
+
+
+
+
+* standardized BSD-3-Clause license header across all .c and .h files
+* corrected copyright year from 2011 to 2018 in existing headers
+* added API documentation link to README

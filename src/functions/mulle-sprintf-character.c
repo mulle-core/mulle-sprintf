@@ -84,7 +84,7 @@ static inline int   _char_string_conversion( struct mulle_buffer *buffer,
 static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                                   struct mulle_buffer *buffer,
                                                   int32_t c)
-   __attribute__((unused));
+   MULLE_C_UNUSED_FUNCTION;
 
 static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                                   struct mulle_buffer *buffer,
@@ -97,7 +97,7 @@ static inline int   _wide_char_string_conversion( struct mulle_sprintf_formatcon
 static inline int   _utf16_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                             struct mulle_buffer *buffer,
                                             unsigned int c)
-   __attribute__((unused));
+   MULLE_C_UNUSED_FUNCTION;
 
 static inline int   _utf16_char_conversion( struct mulle_sprintf_formatconversioninfo *info,
                                             struct mulle_buffer *buffer,

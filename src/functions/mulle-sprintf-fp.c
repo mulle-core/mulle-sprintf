@@ -239,7 +239,7 @@ static void   _mulle_sprintf_fp_justify( struct mulle_buffer *buffer,
       return;
    }
 
-   bytes = mulle_buffer_get_bytes( buffer) + before;
+   bytes = (char *) mulle_buffer_get_bytes( buffer) + before;
    s     = bytes;
    insert = 0;
    if( *s == '-' || *s == '+' || *s == ' ')
@@ -267,7 +267,7 @@ static void   _mulle_sprintf_fp_justify( struct mulle_buffer *buffer,
       insert = 0;
 
    mulle_buffer_set_length( buffer, mulle_buffer_get_length( buffer) + pad, 0);
-   bytes = mulle_buffer_get_bytes( buffer) + before;
+   bytes = (char *) mulle_buffer_get_bytes( buffer) + before;
    memmove( bytes + insert + pad, bytes + insert, used - insert);
    memset( bytes + insert, width_char, pad);
 }
