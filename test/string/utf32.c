@@ -1,6 +1,5 @@
 #include <mulle-sprintf/mulle-sprintf.h>
 #include <mulle-utf/mulle-utf.h>
-#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 
@@ -136,9 +135,6 @@ static void   test( mulle_utf32_t *test_string)
 
 int  main()
 {
-   mulle_testallocator_set_tracelevel( 1);
-   mulle_testallocator_initialize();
-   mulle_default_allocator = mulle_testallocator;
 
    test( empty);
    test( plain);
@@ -147,7 +143,6 @@ int  main()
    test( NULL);
 
    mulle_sprintf_free_storage();
-   mulle_testallocator_reset();
 
    return( 0);
 }

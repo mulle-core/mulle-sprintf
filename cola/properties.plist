@@ -6,7 +6,7 @@
       language="c";
       dialect="c";
       name="mulle-sprintf";
-      version="4.1.0";
+      version="4.1.1";
       user="mulle-core";
       repo="mulle-sprintf";
       homepage="https://github.com/mulle-core/mulle-sprintf";

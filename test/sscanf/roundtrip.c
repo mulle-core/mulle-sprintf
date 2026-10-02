@@ -1,5 +1,4 @@
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -7,7 +6,6 @@
 
 static void   test_roundtrip( char *format, char *description, ...)
 {
-   struct mulle_buffer   *buffer;
    va_list               args;
    va_list               args2;
    char                  scan_format[ 256];
@@ -251,9 +249,6 @@ static void   test_roundtrip( char *format, char *description, ...)
 
 int   main( void)
 {
-   mulle_testallocator_set_tracelevel( 1);
-   mulle_testallocator_initialize();
-   mulle_default_allocator = mulle_testallocator;
 
    test_roundtrip( "%p", "pointer", (void *) 0x1234FEAD);
    test_roundtrip( "%d", "decimal int", 42);
@@ -274,7 +269,6 @@ int   main( void)
    printf( "All tests passed!\n");
 
    mulle_sprintf_free_storage();
-   mulle_testallocator_reset();
 
    return( 0);
 }

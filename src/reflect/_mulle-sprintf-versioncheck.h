@@ -7,7 +7,7 @@
 
 #if defined( MULLE__BUFFER_VERSION)
 # ifndef MULLE__BUFFER_VERSION_MIN
-#  define MULLE__BUFFER_VERSION_MIN  ((5UL << 20) | (2 << 8) | 0)
+#  define MULLE__BUFFER_VERSION_MIN  ((5UL << 20) | (2 << 8) | 1)
 # endif
 # ifndef MULLE__BUFFER_VERSION_MAX
 #  define MULLE__BUFFER_VERSION_MAX  ((6UL << 20) | (0 << 8) | 0)
@@ -25,7 +25,7 @@
 #endif
 #if defined( MULLE__DTOSTR_VERSION)
 # ifndef MULLE__DTOSTR_VERSION_MIN
-#  define MULLE__DTOSTR_VERSION_MIN  ((0UL << 20) | (2 << 8) | 0)
+#  define MULLE__DTOSTR_VERSION_MIN  ((0UL << 20) | (2 << 8) | 1)
 # endif
 # ifndef MULLE__DTOSTR_VERSION_MAX
 #  define MULLE__DTOSTR_VERSION_MAX  ((0UL << 20) | (3 << 8) | 0)
@@ -43,7 +43,7 @@
 #endif
 #if defined( MULLE__THREAD_VERSION)
 # ifndef MULLE__THREAD_VERSION_MIN
-#  define MULLE__THREAD_VERSION_MIN  ((4UL << 20) | (10 << 8) | 0)
+#  define MULLE__THREAD_VERSION_MIN  ((4UL << 20) | (11 << 8) | 0)
 # endif
 # ifndef MULLE__THREAD_VERSION_MAX
 #  define MULLE__THREAD_VERSION_MAX  ((5UL << 20) | (0 << 8) | 0)
@@ -61,7 +61,7 @@
 #endif
 #if defined( MULLE__UTF_VERSION)
 # ifndef MULLE__UTF_VERSION_MIN
-#  define MULLE__UTF_VERSION_MIN  ((6UL << 20) | (0 << 8) | 0)
+#  define MULLE__UTF_VERSION_MIN  ((6UL << 20) | (0 << 8) | 1)
 # endif
 # ifndef MULLE__UTF_VERSION_MAX
 #  define MULLE__UTF_VERSION_MAX  ((7UL << 20) | (0 << 8) | 0)
@@ -79,7 +79,7 @@
 #endif
 #if defined( MULLE__VARARG_VERSION)
 # ifndef MULLE__VARARG_VERSION_MIN
-#  define MULLE__VARARG_VERSION_MIN  ((1UL << 20) | (2 << 8) | 2)
+#  define MULLE__VARARG_VERSION_MIN  ((1UL << 20) | (2 << 8) | 3)
 # endif
 # ifndef MULLE__VARARG_VERSION_MAX
 #  define MULLE__VARARG_VERSION_MAX  ((2UL << 20) | (0 << 8) | 0)

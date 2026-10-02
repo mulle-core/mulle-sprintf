@@ -348,7 +348,7 @@ static int   integer_conversion( struct mulle_sprintf_formatconversioninfo *info
    {
       if( vll < 0)
       {
-         vLL     = -vll;
+         vLL     = -(unsigned long long) vll;
          prefix  = '-';
       }
       else

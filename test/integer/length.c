@@ -1,5 +1,4 @@
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -51,17 +50,12 @@ static void   length_modifier_test()
 
 int  main()
 {
-   mulle_testallocator_set_tracelevel( 1);
-   mulle_testallocator_initialize();
-   mulle_default_allocator = mulle_testallocator;
 
    mulle_sprintf_free_storage();
-   mulle_testallocator_reset();
 
    length_modifier_test();
 
    mulle_sprintf_free_storage();
-   mulle_testallocator_reset();
 
    return( 0);
 }

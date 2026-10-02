@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.13...99.99)
 
-project( mulle-sprintf VERSION 4.1.0 LANGUAGES C)
+project( mulle-sprintf VERSION 4.1.1 LANGUAGES C)
 
 
 ### mulle-sde environment
@@ -48,8 +48,8 @@ endif()
 include( InstallLibrary)
 
 if( LINK_PHASE)
-   include( InstallCMakeInclude)
-   include( InstallCMakePackage)
+   include( AddSubdirectorySupport)
+   include( FindPackageSupport)
 endif() 
 
 include( FinalOutput OPTIONAL)

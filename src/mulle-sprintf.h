@@ -41,7 +41,7 @@
 #include "mulle-sprintf-function.h"
 
 
-#define MULLE__SPRINTF_VERSION  ((4UL << 20) | (1 << 8) | 0)
+#define MULLE__SPRINTF_VERSION  ((4UL << 20) | (1 << 8) | 1)
 
 
 struct mulle_buffer;
@@ -208,14 +208,14 @@ static inline void    mulle_sprintf_free_storage( void)
       for( struct mulle_buffer name ## __storage = MULLE_BUFFER_DATA( NULL),           \
                                name ## __i = { 0 };                                    \
                                                                                        \
-           string = ! (name ## __i._storage)                                           \
+           string = ! (name ## __i.base._storage)                                           \
                     ? (mulle_buffer_sprintf( &name ## __storage, format, __VA_ARGS__), \
                        mulle_buffer_get_string( &name ## __storage))                   \
                     : string,                                                          \
-           ! name ## __i._storage;                                                     \
+           ! name ## __i.base._storage;                                                     \
                                                                                        \
            (mulle_buffer_done( &name ## __storage),                                    \
-            name ## __i._storage = (void *) 0x1)                                       \
+            name ## __i.base._storage = (void *) 0x1)                                       \
          )                                                                             \
                                                                                        \
          MULLE_C_CONFINED_LOOP                                                         \
@@ -230,14 +230,14 @@ static inline void    mulle_sprintf_free_storage( void)
       for( struct mulle_buffer name ## __storage = MULLE_BUFFER_DATA( NULL),           \
                                name ## __i = { 0 };                                    \
                                                                                        \
-           string = ! (name ## __i._storage)                                           \
+           string = ! (name ## __i.base._storage)                                           \
                     ? (mulle_buffer_vsprintf( &name ## __storage, format, args),       \
                        mulle_buffer_get_string( &name ## __storage))                   \
                     : string,                                                          \
-           ! name ## __i._storage;                                                     \
+           ! name ## __i.base._storage;                                                     \
                                                                                        \
            (mulle_buffer_done( &name ## __storage),                                    \
-            name ## __i._storage = (void *) 0x1)                                       \
+            name ## __i.base._storage = (void *) 0x1)                                       \
          )                                                                             \
                                                                                        \
          MULLE_C_CONFINED_LOOP                                                         \

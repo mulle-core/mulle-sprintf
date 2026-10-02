@@ -1,5 +1,4 @@
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 
@@ -49,7 +48,7 @@ static void   test()
                                (mulle_flushablebuffer_flusher_t *) fwrite,
                                stdout);
 
-   mulle_buffer_sprintf( (struct mulle_buffer *) &buffer, "%B %B %B\n", 1, 0, -1);
+   mulle_buffer_sprintf( &buffer.base, "%B %B %B\n", 1, 0, -1);
 
    mulle_flushablebuffer_done( &buffer);
 }
@@ -59,15 +58,11 @@ static void   test()
 
 int  main()
 {
-   mulle_testallocator_set_tracelevel( 1);
-   mulle_testallocator_initialize();
-   mulle_default_allocator = mulle_testallocator;
 
    register_bool_sprintf_functions();
    test();
 
    mulle_sprintf_free_storage();
-   mulle_testallocator_reset();
 
    return( 0);
 }

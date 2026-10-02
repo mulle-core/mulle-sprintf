@@ -10,7 +10,6 @@
 //  All rights reserved.
 //
 #include <mulle-sprintf/mulle-sprintf.h>
-#include <mulle-testallocator/mulle-testallocator.h>
 
 #include <stdio.h>
 #include <string.h>
