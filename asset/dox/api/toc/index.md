@@ -20,7 +20,7 @@ This section highlights the public headers and the main symbols an AI should ref
 ### 3.1. src/mulle-sprintf.h
 
 #### Overview
-- Primary entry points: buffer-based printing, fixed-buffer convenience wrappers, asprintf/allocator-asprintf variants, and helper macros. Current library version: `MULLE__SPRINTF_VERSION` 4.1.0. All format strings are `const char *` (since 4.1.0, input-only pointers were const-qualified).
+- Primary entry points: buffer-based printing, fixed-buffer convenience wrappers, asprintf/allocator-asprintf variants, and helper macros. Current library version: `MULLE__SPRINTF_VERSION` 4.1.1. All format strings are `const char *` (since 4.1.0, input-only pointers were const-qualified).
 
 #### Important symbols
 - Buffer APIs (do **not** append `'\0'`)
