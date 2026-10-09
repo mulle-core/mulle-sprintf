@@ -2,6 +2,7 @@
 #include <mulle-utf/mulle-utf.h>
 
 #include <stdio.h>
+#include <string.h>
 
 
 //
@@ -92,58 +93,74 @@ static mulle_utf32_t   longish[] =
 
 
 
-static void   test( mulle_utf32_t *test_string)
+static int   test( mulle_utf32_t *test_string)
 {
    auto char   buf[ 1024];
+   auto char   full[ 1024];
+   auto char   expected[ 1024];
    int         i;
    int         len;
+   size_t      n;
 
-   printf( "   |          1         2         3         4         |\n");
-   printf( "   |01234567890123456789012345678901234567890123456789|\n");
-   mulle_sprintf( buf, "%S", test_string);
-   printf( "p: |%s|\n", buf);
-
+   mulle_sprintf( full, "%S", test_string);
    len = mulle_utf32_strlen( test_string);
+
+   // "%.*S" must yield a truncation of the full string
    for( i = 0; i <= len; i++)
    {
       mulle_sprintf( buf, "%.*S", i, test_string);
-      printf( "p: |%s|  # %%.%dS\n", buf, i);
+
+      n = strlen( buf);
+      if( n > strlen( full) || strncmp( buf, full, n))
+      {
+         fprintf( stderr, "\"%%.%dS\" is not a prefix of \"%%S\"\n", i);
+         return( 1);
+      }
    }
 
+   // the '*' variations must agree with the literal ones
    mulle_sprintf( buf, "%.50S", test_string);
-   printf( "p: |%s|\n", buf);
+   mulle_sprintf( expected, "%.*S", 50, test_string);
+   if( strcmp( buf, expected))
+   {
+      fprintf( stderr, "\"%%.50S\" differs from \"%%.*S\" with 50\n");
+      return( 1);
+   }
 
    mulle_sprintf( buf, "%50S", test_string);
-   printf( "p: |%s|\n", buf);
+   mulle_sprintf( expected, "%*S", 50, test_string);
+   if( strcmp( buf, expected))
+   {
+      fprintf( stderr, "\"%%50S\" differs from \"%%*S\" with 50\n");
+      return( 1);
+   }
 
    mulle_sprintf( buf, "%50.50S", test_string);
-   printf( "p: |%s|\n", buf);
+   mulle_sprintf( expected, "%*.*S", 50, 50, test_string);
+   if( strcmp( buf, expected))
+   {
+      fprintf( stderr, "\"%%50.50S\" differs from \"%%*.*S\" with 50,50\n");
+      return( 1);
+   }
 
-   mulle_sprintf( buf, "%.*S", 50, test_string);
-   printf( "p: |%s|\n", buf);
-
-   mulle_sprintf( buf, "%*S", 50, test_string);
-   printf( "p: |%s|\n", buf);
-
-   mulle_sprintf( buf, "%*.*S", 50, 50, test_string);
-   printf( "p: |%s|\n", buf);
-
-   printf( "\n");
+   return( 0);
 }
 
 
 
 int  main()
 {
+   int   rval;
 
-   test( empty);
-   test( plain);
-   test( emojimix);
-   test( longish);
-   test( NULL);
+   rval = 0;
+   rval |= test( empty);
+   rval |= test( plain);
+   rval |= test( emojimix);
+   rval |= test( longish);
+   rval |= test( NULL);
 
    mulle_sprintf_free_storage();
 
-   return( 0);
+   return( rval ? 1 : 0);
 }
 
