@@ -9,6 +9,7 @@
 
 
 
+
 * format the most negative value of signed types (e.g. ``LLONG_MIN`,` ``INT64_MIN`)` correctly instead of relying on signed integer overflow
 * update the ``mulle_sprintf_do`` / ``mulle_vsprintf_do`` macros for the updated mulle-buffer struct layout
 
