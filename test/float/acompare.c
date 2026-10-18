@@ -5,6 +5,19 @@
 #include <float.h>
 #include <string.h>
 
+//
+// DBL_TRUE_MIN is C11. TinyCC's <float.h> does not declare it in any mode
+// (-std=c11 included), so supply it here. tcc's float.h is otherwise the same
+// as gcc's (DBL_MANT_DIG 53, DBL_MIN_EXP -1021, DBL_MAX_EXP 1024), and
+// 0x1p-1074 is exactly the smallest denormal: verified equal to
+// DBL_MIN * DBL_EPSILON and to nextafter( 0.0, 1.0) under both compilers.
+//
+#ifndef DBL_TRUE_MIN
+# if DBL_MANT_DIG == 53 && DBL_MIN_EXP == -1021 && DBL_MAX_EXP == 1024
+#  define DBL_TRUE_MIN   0x1p-1074
+# endif
+#endif
+
 // Informational test: compares mulle-sprintf %a output against the C library
 // and prints any differences to stderr. Does not write to stdout, so there is
 // no golden .stdout file that could fail.

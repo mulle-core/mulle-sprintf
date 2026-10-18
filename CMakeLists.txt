@@ -2,6 +2,33 @@ cmake_minimum_required( VERSION 3.13...99.99)
 
 project( mulle-sprintf VERSION 4.1.1 LANGUAGES C)
 
+#
+# The library advertises C11 (see the "std" badge) and POSIX.1-2008 (see the
+# "apis: posix/windows" badge). Compile it as C11 with extensions off and ask
+# for exactly that namespace: _POSIX_C_SOURCE=200809L gives POSIX.1-2008 and
+# hides X/Open, BSD/SVID and GNU extensions, so anything beyond the badge is a
+# compile error rather than a silent ratchet.
+#
+#
+# On Apple, _DARWIN_C_SOURCE is the counterpart of glibc's _DEFAULT_SOURCE:
+# strict C mode hides the POSIX and BSD declarations there, including the
+# SO_NOSIGPIPE socket option this library sets on macOS.
+#
+# A standard given on the command line wins, so other dialects remain testable
+# with e.g. -DCMAKE_C_STANDARD=23 or CFLAGS=-std=c23.
+#
+if( NOT CMAKE_C_STANDARD
+    AND NOT CMAKE_C_FLAGS MATCHES "(^| )-std="
+    AND NOT "$ENV{CFLAGS}" MATCHES "(^| )-std=")
+   set( CMAKE_C_STANDARD 11)
+   set( CMAKE_C_EXTENSIONS OFF)
+   if( APPLE)
+      add_compile_definitions( _DARWIN_C_SOURCE)
+   elseif( NOT WIN32)
+      add_compile_definitions( _POSIX_C_SOURCE=200809L)
+   endif()
+endif()
+
 
 ### mulle-sde environment
 

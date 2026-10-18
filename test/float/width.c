@@ -2,6 +2,20 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h>
+#include <string.h>
+
+// NAN's sign bit is implementation-defined (gcc positive, tcc negative) and
+// the width/padding expectations below are written for a positive NaN. Pin it
+// instead of inheriting the compiler's choice.
+static double   positive_nan( void)
+{
+   uint64_t   bits = 0x7ff8000000000000ull;
+   double     value;
+
+   memcpy( &value, &bits, sizeof( value));
+   return( value);
+}
 
 static void   print( struct mulle_buffer *buffer, char *format, double value)
 {
@@ -25,7 +39,7 @@ int  main()
       print( buffer, "[% 012.2e]", 1.0);
       print( buffer, "[%020e]", INFINITY);
       print( buffer, "[%+020e]", INFINITY);
-      print( buffer, "[%020f]", NAN);
+      print( buffer, "[%020f]", positive_nan());
       print( buffer, "[%020a]", 1.0);
       print( buffer, "[%+020a]", 1.0);
 
