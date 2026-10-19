@@ -1,22 +1,4 @@
 #
-# mulle-buffer nodetype: ${MULLE__BUFFER_NODETYPE:-tar}
-#
-export MULLE__BUFFER_NODETYPE="git"
-
-
-#
-# mulle-buffer url: ${MULLE__BUFFER_URL:-https://github.com/mulle-c/mulle-buffer/archive/${MULLE_TAG}.tar.gz}
-#
-export MULLE__BUFFER_URL="https://github.com/mulle-c/mulle-buffer.git"
-
-
-#
-# mulle-buffer branch: ${MULLE__BUFFER_BRANCH}
-#
-export MULLE__BUFFER_BRANCH="prerelease"
-
-
-#
 # mulle-allocator nodetype: ${MULLE__ALLOCATOR_NODETYPE:-tar}
 #
 export MULLE__ALLOCATOR_NODETYPE="git"
@@ -32,6 +14,24 @@ export MULLE__ALLOCATOR_URL="https://github.com/mulle-c/mulle-allocator.git"
 # mulle-allocator branch: ${MULLE__ALLOCATOR_BRANCH}
 #
 export MULLE__ALLOCATOR_BRANCH="prerelease"
+
+
+#
+# mulle-buffer nodetype: ${MULLE__BUFFER_NODETYPE:-tar}
+#
+export MULLE__BUFFER_NODETYPE="git"
+
+
+#
+# mulle-buffer url: ${MULLE__BUFFER_URL:-https://github.com/mulle-c/mulle-buffer/archive/${MULLE_TAG}.tar.gz}
+#
+export MULLE__BUFFER_URL="https://github.com/mulle-c/mulle-buffer.git"
+
+
+#
+# mulle-buffer branch: ${MULLE__BUFFER_BRANCH}
+#
+export MULLE__BUFFER_BRANCH="prerelease"
 
 
 #
@@ -71,6 +71,42 @@ export MULLE__DATA_BRANCH="prerelease"
 
 
 #
+# mulle-dtostr nodetype: ${MULLE__DTOSTR_NODETYPE:-tar}
+#
+export MULLE__DTOSTR_NODETYPE="git"
+
+
+#
+# mulle-dtostr url: ${MULLE__DTOSTR_URL:-https://github.com/mulle-core/mulle-dtostr/archive/${MULLE_TAG}.tar.gz}
+#
+export MULLE__DTOSTR_URL="https://github.com/mulle-core/mulle-dtostr.git"
+
+
+#
+# mulle-dtostr branch: ${MULLE__DTOSTR_BRANCH}
+#
+export MULLE__DTOSTR_BRANCH="prerelease"
+
+
+#
+# mulle-thread nodetype: ${MULLE__THREAD_NODETYPE:-tar}
+#
+export MULLE__THREAD_NODETYPE="git"
+
+
+#
+# mulle-thread url: ${MULLE__THREAD_URL:-https://github.com/mulle-concurrent/mulle-thread/archive/${MULLE_TAG}.tar.gz}
+#
+export MULLE__THREAD_URL="https://github.com/mulle-concurrent/mulle-thread.git"
+
+
+#
+# mulle-thread branch: ${MULLE__THREAD_BRANCH}
+#
+export MULLE__THREAD_BRANCH="prerelease"
+
+
+#
 # mulle-utf nodetype: ${MULLE__UTF_NODETYPE:-tar}
 #
 export MULLE__UTF_NODETYPE="git"
@@ -104,41 +140,5 @@ export MULLE__VARARG_URL="https://github.com/mulle-c/mulle-vararg.git"
 # mulle-vararg branch: ${MULLE__VARARG_BRANCH}
 #
 export MULLE__VARARG_BRANCH="prerelease"
-
-
-#
-# mulle-thread nodetype: ${MULLE__THREAD_NODETYPE:-tar}
-#
-export MULLE__THREAD_NODETYPE="git"
-
-
-#
-# mulle-thread url: ${MULLE__THREAD_URL:-https://github.com/mulle-concurrent/mulle-thread/archive/${MULLE_TAG}.tar.gz}
-#
-export MULLE__THREAD_URL="https://github.com/mulle-concurrent/mulle-thread.git"
-
-
-#
-# mulle-thread branch: ${MULLE__THREAD_BRANCH}
-#
-export MULLE__THREAD_BRANCH="prerelease"
-
-
-#
-# mulle-dtostr nodetype: ${MULLE__DTOSTR_NODETYPE:-tar}
-#
-export MULLE__DTOSTR_NODETYPE="git"
-
-
-#
-# mulle-dtostr url: ${MULLE__DTOSTR_URL:-https://github.com/mulle-core/mulle-dtostr/archive/${MULLE_TAG}.tar.gz}
-#
-export MULLE__DTOSTR_URL="https://github.com/mulle-core/mulle-dtostr.git"
-
-
-#
-# mulle-dtostr branch: ${MULLE__DTOSTR_BRANCH}
-#
-export MULLE__DTOSTR_BRANCH="prerelease"
 
 
